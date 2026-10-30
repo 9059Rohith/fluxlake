@@ -49,7 +49,7 @@ Invoke-RestMethod http://localhost:18082/drift/compare -Method Post -Headers $au
 .venv\Scripts\python scripts/evaluate_drift.py --seed 20261030 --trials 60 --samples 400 --output evidence/driftlab-evaluation.json
 ```
 
-Choose ranges from your retained source; these example ranges may be empty. Identity allocation is **not commit order or a time window**. Late commits, rollback and pruning can change observed coverage. Correlated revisions make IID significance assumptions inappropriate, so thresholds are descriptive effects with minimum samples, without p-values or significance claims. The seeded synthetic evaluation observed 4/60 no-shift false alarms and 60/60 target detections for each deliberately large amount and currency-mix shift; [trial details and uncertainty](docs/driftlab.md#controlled-evaluation) expose finite-sample limitations. The existing hosted demo is a separately dated deployment; this repository change has been verified locally, with no new hosted release claimed.
+Choose ranges from your retained source; these example ranges may be empty. Identity allocation is **not commit order or a time window**. Late commits, rollback and pruning can change observed coverage. Correlated revisions make IID significance assumptions inappropriate, so thresholds are descriptive effects with minimum samples, without p-values or significance claims. The seeded synthetic evaluation observed 4/60 no-shift false alarms and 60/60 target detections for each deliberately large amount and currency-mix shift; [trial details and uncertainty](docs/driftlab.md#controlled-evaluation) expose finite-sample limitations. DriftLab is deployed and verified over public HTTPS; the small live seed correctly reports insufficient samples at the default threshold. [Actual protected feature proof](evidence/signature-public-feature.json).
 
 ## Run a real source-to-analytics demo
 
@@ -151,4 +151,6 @@ SQLite supplies transactional identity/order state that Parquet cannot provide. 
 
 [Requirement traceability](docs/requirements.md) · [Architecture decisions](docs/adr.md) · [Contributing](CONTRIBUTING.md) · [MIT license](LICENSE)
 
-The current operational feature also has [actual public HTTPS verification](evidence/review-public-feature.json) and a [fresh all-severity runtime image scan](evidence/review-image-scan.json). These complement the dated local experiments; they do not establish a production SLA.
+The current operational feature also has [actual public HTTPS verification](evidence/review-public-feature.json) and a [fresh all-severity runtime image scan](evidence/signature-image-scan.json). These complement the dated local experiments; they do not establish a production SLA.
+
+Current signature release: [actual protected HTTPS checks](evidence/signature-public-feature.json), [all-severity runtime scan](evidence/signature-image-scan.json), and [measured code changes](evidence/signature-code-metrics.json). Application, test and operational-script lines are counted separately; documentation, comments and docstrings are excluded.
