@@ -1,0 +1,52 @@
+name: fluxlake
+services:
+  postgres:
+    image: postgres:16.6-alpine
+    environment:
+      POSTGRES_DB: fluxlake
+      POSTGRES_USER: fluxlake
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}
+    ports: ["127.0.0.1:55433:5432"]
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./sql/source.sql:/docker-entrypoint-initdb.d/001-source.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U fluxlake -d fluxlake"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+  worker:
+    image: fluxlake:0.1.0
+    build: .
+    command: ["fluxlake", "worker", "--root", "/data"]
+    environment:
+      DATABASE_URL: postgresql://fluxlake:${POSTGRES_PASSWORD}@postgres:5432/fluxlake
+    volumes: ["lake:/data"]
+    depends_on:
+      postgres: {condition: service_healthy}
+    restart: unless-stopped
+    read_only: true
+    tmpfs: [/tmp]
+    security_opt: ["no-new-privileges:true"]
+    cap_drop: [ALL]
+  api:
+    image: fluxlake:0.1.0
+    build: .
+    command: ["fluxlake", "api", "--host", "0.0.0.0", "--root", "/data"]
+    environment:
+      FLUXLAKE_API_TOKEN: ${FLUXLAKE_API_TOKEN:?Set FLUXLAKE_API_TOKEN}
+    volumes: ["lake:/data"]
+    ports: ["127.0.0.1:18082:8000"]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/ready')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    read_only: true
+    tmpfs: [/tmp]
+    security_opt: ["no-new-privileges:true"]
+    cap_drop: [ALL]
+volumes:
+  pgdata:
+  lake:

@@ -1,0 +1,8 @@
+{
+  "terraform_version": "1.13.5",
+  "platform": "windows_amd64",
+  "provider_selections": {
+    "registry.terraform.io/hashicorp/aws": "6.71.0"
+  },
+  "terraform_outdated": true
+}

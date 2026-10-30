@@ -1,0 +1,15 @@
+# Security model
+
+Development services bind to loopback. Every write and quarantine route requires `FLUXLAKE_API_TOKEN`; missing configuration disables writes with 503 and incorrect credentials return 401. Comparison is constant-time. The raw event archive and SQLite file contain transaction data: keep the volume private and encrypt the host disk. No secrets belong in commits or event data.
+
+This demonstration deliberately exposes read-only transaction/gold/schema/metrics/dashboard endpoints on loopback. Before exposing a network ingress, put TLS and identity-aware authorization in front of **all** routes, restrict `/docs`, use tenant-aware data access where needed, and choose an API token from a secret manager. Read endpoints are not safe for anonymous public production access. The application has a 2 MB POST body limit and 1000-event batch bound; it does not implement a distributed rate limiter.
+
+The SQL demo initializes a database owner account for convenience. Production must split migration owner, application writer and relay: business writers need transaction DML and revision/outbox trigger privileges, relay needs SELECT and processed_at UPDATE on the outbox, and neither runtime needs DDL/TRUNCATE. The trigger is security invoker to avoid accidental privilege escalation. Reserve core transaction field names in JSON attributes; the source contract must be enforced at writes.
+
+Containers run as UID 10001 with read-only root filesystem, no Linux capabilities, no-new-privileges and tmpfs scratch. Only the data volume is writable. Dependency locks pin transitive versions; CI audits runtime dependencies. Image tags are versioned; production should additionally pin reviewed base image digests and run an image vulnerability scanner.
+
+Managed S3 blocks public access, enables versioning and encryption, and denies non-TLS requests. Kinesis uses KMS encryption. DMS endpoints reference an existing Secrets Manager secret, stay private, and require source TLS. Source network rules, WAL-enabled source, secret-access role, `dms-vpc-role` and IAM boundaries are administrator prerequisites. Terraform state can contain sensitive infrastructure metadata: use encrypted remote state with access controls before a real apply. The local state used for validation contains no provisioned resources.
+
+Report vulnerabilities privately to the repository owner. Do not include real transaction data or tokens in public issues. Rotate a leaked token/password immediately; remove it from repository history as a separate controlled remediation if a secret was committed.
+
+Runtime token configuration is stripped of surrounding whitespace and bounded to 4096 UTF-8 bytes; whitespace-only or invalid configuration disables protected routes. Presented credentials are compared as bytes, so non-ASCII Authorization bytes produce 401 rather than an exception. Use a random ASCII token of at least 32 characters, as in the quickstart. All event JSON strings are checked for strict UTF-8 before state commit; malformed surrogate escapes remain raw bronze/quarantine evidence and cannot poison Parquet publication or restart.

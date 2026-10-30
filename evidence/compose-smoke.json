@@ -1,0 +1,38 @@
+{
+  "checked_at_utc": "2026-10-30T13:19:35.221396+00:00",
+  "status": "passed",
+  "scope": "actual HTTP API + automatic relay + PostgreSQL + Parquet/DuckDB",
+  "postgres_version": "16.6",
+  "source_operations": [
+    "insert",
+    "update",
+    "delete"
+  ],
+  "observed_ms": {
+    "insert": 1149.527899979148,
+    "update": 1079.7427999787033,
+    "delete": 1073.273900023196
+  },
+  "gold": [
+    {
+      "currency": "INR",
+      "transaction_count": 10,
+      "total_minor": 126250
+    },
+    {
+      "currency": "USD",
+      "transaction_count": 9,
+      "total_minor": 102375
+    }
+  ],
+  "pipeline": {
+    "last_success": "2026-10-30T13:19:35.035187+00:00",
+    "rows": 0,
+    "age_seconds": 0.236369,
+    "status": "fresh"
+  },
+  "auth": "missing token rejected; configured bearer accepted",
+  "edge_cases": "non-ASCII authorization returned 401; surrogate JSON quarantined without silver mutation",
+  "restart_verified": true,
+  "restart_checked_at_utc": "2026-10-30T13:21:07.887720+00:00"
+}

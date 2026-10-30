@@ -1,0 +1,14 @@
+{
+  "read_only": true,
+  "user": "10001",
+  "created": "2026-10-30T13:17:07.865758156Z",
+  "size_bytes": 125415076,
+  "architecture": "amd64",
+  "status": "running",
+  "dropped_capabilities": [
+    "ALL"
+  ],
+  "image_id": "sha256:47a3cc52fbd05f29e30dda8a8c9f681653e30e0c6fc8c022bf27a018684074ce",
+  "os": "linux",
+  "health": "healthy"
+}
