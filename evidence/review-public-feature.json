@@ -1,0 +1,19 @@
+{
+  "verified_at_utc": "2026-10-30T15:34:54.511331+00:00",
+  "public_url": "https://rohith-fluxlake.vercel.app",
+  "scope": "Actual protected feature calls through the public production hostname; credentials excluded",
+  "checks": {
+    "anonymous_denied": true,
+    "selected_key_counts": {
+      "match": 2,
+      "mismatch": 0,
+      "absent": 0
+    },
+    "scope": "selected_keys_observed_snapshots",
+    "semantics": "Two observations, not a distributed snapshot; no replay, acknowledgement or repair. Latest retained outbox evidence, not source-table or global equality.",
+    "source_read_only": true,
+    "source_isolation": "repeatable read",
+    "invalid_key_422": true,
+    "instance_local_writes_403": true
+  }
+}

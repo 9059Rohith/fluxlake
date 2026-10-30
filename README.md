@@ -135,3 +135,5 @@ SQLite supplies transactional identity/order state that Parquet cannot provide. 
 5. Use the [interview guide](docs/interview.md) to discuss scaling, retention, quarantine, security and measured tradeoffs with evidence.
 
 [Requirement traceability](docs/requirements.md) · [Architecture decisions](docs/adr.md) · [Contributing](CONTRIBUTING.md) · [MIT license](LICENSE)
+
+The current operational feature also has [actual public HTTPS verification](evidence/review-public-feature.json) and a [fresh all-severity runtime image scan](evidence/review-image-scan.json). These complement the dated local experiments; they do not establish a production SLA.
