@@ -16,7 +16,8 @@ from fastapi.responses import HTMLResponse, JSONResponse, Response
 from prometheus_client import CollectorRegistry, Gauge, generate_latest
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 
-from fluxlake.lake import Lake, canonical
+from fluxlake.inspection import InspectionUnavailable, inspect
+from fluxlake.lake import IDENTIFIER, Lake, canonical
 from fluxlake.limits import MAX_EVENT_BYTES, check_json_depth, validate_shape
 from fluxlake.projection import ProjectionUnavailable, SourceProjection
 
@@ -210,6 +211,15 @@ def create_app(root: Path | str | None = None) -> FastAPI:
     @app.get("/pipeline", dependencies=[Depends(authorize)])
     def pipeline():
         return pipeline_value()
+
+    @app.get("/inspection", dependencies=[Depends(authorize)])
+    def inspection(key: list[str] = Query(min_length=1, max_length=100)):
+        if any(not IDENTIFIER.fullmatch(value) for value in key):
+            raise HTTPException(422, "Provide 1 to 100 safe keys")
+        try:
+            return inspect(lake, os.getenv("DATABASE_URL", ""), key)
+        except InspectionUnavailable:
+            raise HTTPException(503, "Inspection unavailable or beyond bounded capacity") from None
 
     @app.get("/openapi.json", dependencies=[Depends(authorize)])
     def openapi():

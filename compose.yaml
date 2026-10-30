@@ -34,6 +34,7 @@ services:
     build: .
     command: ["fluxlake", "api", "--host", "0.0.0.0", "--root", "/data", "--port", "8000"]
     environment:
+      DATABASE_URL: postgresql://fluxlake:${POSTGRES_PASSWORD}@postgres:5432/fluxlake
       FLUXLAKE_API_TOKEN: ${FLUXLAKE_API_TOKEN:?Set FLUXLAKE_API_TOKEN}
       FLUXLAKE_PUBLIC_DEMO: ${FLUXLAKE_PUBLIC_DEMO:-false}
       FLUXLAKE_ALLOWED_HOSTS: ${FLUXLAKE_ALLOWED_HOSTS:-localhost,127.0.0.1}

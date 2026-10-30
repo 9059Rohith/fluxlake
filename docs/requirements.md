@@ -23,3 +23,14 @@
 See evidence/verification.md for exact pass counts and limitations. A mapped implementation is not evidence of managed deployment.
 
 Public exposure and request-mode source replay have additional traceability in evidence/public-host-hardening.md, with60-test PostgreSQL-backed suites on Python3.12 and3.15, actual read-only-container HTTP verification, and a fresh complete image/secret scan.
+
+## Inspection traceability
+
+| Requirement | Implementation | Executed verification |
+|---|---|---|
+| Bounded private source/projection inspection | `inspection.inspect`, authenticated `GET /inspection` | `tests/test_inspection.py`: key/auth bounds, real PostgreSQL drift, deletion, absence, silver tampering and oversized data |
+| Explicit observation semantics | Locked local file/state plus PostgreSQL read-only repeatable-read snapshot ID/time | Concurrent writer commits after snapshot acquisition; inspected version remains the prior version |
+| Diagnostics preserve evidence | Inspection performs no replay, ack, repair or fixture write | Manifest bytes and source acknowledgements unchanged; request-mode cold inspection exposes missing projection before normal read |
+| No raw-data/credential disclosure | Difference categories/revisions only; sanitized unavailable errors | Source failure redaction and tampered amount omitted from result |
+
+Current source and documentation verification is recorded in [inspection-verification.md](../evidence/inspection-verification.md). Historical counts elsewhere remain explicitly dated.

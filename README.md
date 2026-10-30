@@ -1,35 +1,44 @@
 # FluxLake
 
-[![CI](https://github.com/9059Rohith/fluxlake/actions/workflows/verify.yml/badge.svg)](https://github.com/9059Rohith/fluxlake/actions/workflows/verify.yml)
+**Payment changes → durable event history → inspectable, currency-safe analytics.**
 
-Hosted CI is currently blocked by an account-level runner restriction. [Executed local verification](evidence/verification.md) is recorded separately; no hosted pass is claimed.
+[Live synthetic dashboard](https://rohith-fluxlake.vercel.app) · [Live summary API](https://rohith-fluxlake.vercel.app/demo/summary) · [Source](https://github.com/9059Rohith/fluxlake) · [Hosted release evidence](evidence/public-release-verification.json)
 
-**Verified public synthetic demo:** [Open FluxLake](https://rohith-fluxlake.vercel.app) · [Live summary API](https://rohith-fluxlake.vercel.app/demo/summary) · [Hosted deployment details](docs/public-deployment.md) · [Release evidence](evidence/public-release-verification.json).
+A payment update should reach analytics once in its final state—even when a relay crashes, delivery repeats, or an older insert arrives after a delete. FluxLake makes those failure cases visible and reproducible. PostgreSQL captures business changes atomically; a Python relay builds an immutable raw archive, typed Parquet snapshots and DuckDB aggregates. A private diagnostic compares selected projected keys with retained source revisions.
 
-The live service runs a Docker/OCI HTTP function on Vercel Hobby with durable PostgreSQL on Neon Free. It replays real retained outbox history on requests into disposable Parquet projections; it does not claim an always-on streaming worker. The verified source contains 22 real synthetic change events and produces 19 live rows across INR and USD.
+The public demo uses real **synthetic** PostgreSQL writes, including an update and a delete. Its Vercel HTTP instances reconstruct disposable projections from Neon history on requests. It demonstrates request-synchronized recovery; the local Compose profile runs a continuous polling relay. [Deployment details and actual scope](docs/public-deployment.md).
 
-A near-real-time transaction lakehouse you can run and break locally. PostgreSQL commits each transaction change and its outbox record atomically. A Python worker delivers those records at least once; the sink keeps one correctly ordered result, immutable bronze evidence, real Parquet silver snapshots, and currency-safe gold SQL aggregates.
+## Five engineering capabilities worth inspecting
 
-**Local: transactional outbox polling, not WAL capture.** The optional AWS profile performs actual DMS WAL capture of the outbox into Kinesis and a Glue PySpark Iceberg `MERGE`. Managed infrastructure is supplied as deployable code; see [verification evidence](evidence/verification.md) for exactly what has run. The optional managed AWS stack remains unprovisioned; the verified public Vercel/Neon service uses the separate request-sync profile. No managed AWS capacity or production throughput is implied.
+| Capability | Concrete implementation | Evidence to inspect |
+|---|---|---|
+| **Capture that survives inconvenient commit order** | An AFTER trigger writes an outbox envelope and durable per-key revision in the business transaction. The relay acknowledges exact locked rows; identity sequence values never become commit-order checkpoints. | [Source schema](sql/source.sql), [relay](src/fluxlake/worker.py), real PostgreSQL late-lower-ID and rollback tests in [test_postgres.py](tests/test_postgres.py) |
+| **Replay-safe state with recoverable publication** | SHA-256 bronze objects preserve canonical inputs. SQLite commits receipts, tombstones and current state together; fsynced Parquet publication follows that commit. Restart reconstructs an interrupted publication. | [Sink commit protocol](src/fluxlake/lake.py), [crash matrix](docs/architecture.md#crash-matrix), [fault and replay tests](tests/test_lake.py) |
+| **Explicit data contracts instead of silent drift** | Integer minor units and currency-separated gold SQL; additive typed scalar columns; conflicting schema changes quarantine with raw evidence. Stale events cannot resurrect tombstones. | [Validation and schema registry](src/fluxlake/lake.py), [gold SQL](sql/gold.sql), literal expected-currency tests in [test_lake.py](tests/test_lake.py) |
+| **Explainable projection drift** | Authenticated `GET /inspection?key=A&key=B` compares up to 100 selected keys across latest retained outbox events, SQLite state and one immutable Parquet file. Returns revisions, difference categories and both observation identifiers; never repairs or refreshes first. | [Inspection implementation](src/fluxlake/inspection.py), [concurrent snapshot and corruption tests](tests/test_inspection.py), [inspection contract](docs/architecture.md#selected-key-inspection) |
+| **A deployable operating model with honest boundaries** | Separate durable polling and ephemeral request-replay profiles, SELECT-only replay capability, fail-closed admin routes, synthetic-only public aggregates, pinned dependencies and a digest-pinned nonroot Python 3.15 image. | [Hosting](docs/hosting.md), [API boundary](src/fluxlake/api.py), [Dockerfile](Dockerfile), [current verification](evidence/inspection-verification.md) |
+
+## Architecture
 
 ```mermaid
 flowchart LR
-  A[PostgreSQL transactions] -->|same SQL transaction / trigger| B[Outbox + per-key revision]
-  B -->|SKIP LOCKED / exact-row ack| C[Python relay]
-  C --> D[Bronze content-addressed JSON]
-  C --> E[SQLite receipts + tombstones]
-  E --> F[Atomic Parquet snapshot + manifest]
-  F --> G[DuckDB gold SQL]
-  G --> H[FastAPI dashboard / metrics]
-  B -. WAL / DMS managed alternative .-> K[Kinesis]
-  K --> L[Glue PySpark]
-  L --> M[S3 bronze + Iceberg silver]
-  M --> N[Athena]
+  PG[PostgreSQL business tables] -->|atomic trigger + revision| O[Retained outbox]
+  O -->|poll exact rows / acknowledge after publish| R[Python relay]
+  O -->|read-only full history on request| E[Ephemeral HTTP projection]
+  R --> L[Bronze + SQLite receipts / tombstones]
+  E --> L
+  L -->|fsync + atomic manifest| P[Typed Parquet snapshot]
+  P --> D[DuckDB currency aggregates]
+  D --> API[Authenticated API / synthetic public view]
+  O -. repeatable-read selected keys .-> I[Private inspection]
+  P -. immutable observation .-> I
 ```
 
-## Run locally
+The profiles are deployment alternatives. Acknowledged polling workers share one durable lake volume; request-mode instances each own a disposable lake and never acknowledge source records. The optional [AWS profile](infra/aws/README.md) supplies DMS WAL capture → Kinesis → Glue/Iceberg → Athena code; its managed execution has not been provisioned or measured.
 
-Requirements: Python 3.12–3.15 and Docker Engine / Docker Compose. Commands below use PowerShell; equivalent shell environment variables work on Linux.
+## Run a real source-to-analytics demo
+
+Requirements: Python 3.12–3.15, Docker Engine and Compose. The commands use PowerShell and assume a fresh checkout/database volume. Keep the same database password when reusing a volume. Linux users can use the corresponding environment and virtualenv commands.
 
 ```powershell
 python -m venv .venv
@@ -37,9 +46,9 @@ python -m venv .venv
 .venv\Scripts\python -m pip install --no-deps -e .
 $env:POSTGRES_PASSWORD = [guid]::NewGuid().ToString('N')
 $env:FLUXLAKE_API_TOKEN = [guid]::NewGuid().ToString('N')
-$env:FLUXLAKE_PUBLIC_DEMO = "true"
-$env:FLUXLAKE_ALLOWED_HOSTS = "localhost,127.0.0.1"
-# Persist these values in an ignored .env if you need to reuse the same DB volume.
+$env:FLUXLAKE_PUBLIC_DEMO = 'true'
+$env:FLUXLAKE_ALLOWED_HOSTS = 'localhost,127.0.0.1'
+# Save values privately in ignored .env to reuse this database later.
 docker compose up -d --build
 $env:DATABASE_URL = "postgresql://fluxlake:$($env:POSTGRES_PASSWORD)@127.0.0.1:55433/fluxlake"
 .venv\Scripts\python scripts/seed.py
@@ -47,19 +56,38 @@ Start-Process 'http://localhost:18082'
 Invoke-RestMethod http://localhost:18082/demo/summary
 ```
 
-Source writes go to PostgreSQL. `/events` is an authenticated fixture/replay route; use an isolated lake root when replaying arbitrary inputs. Operational reads, metrics, OpenAPI (`/openapi.json`) and writes require a strong bearer token. The optional public dashboard exposes only aggregates explicitly marked `synthetic=true`. Terminate TLS at public ingress; see [public hosting and request-sync configuration](docs/hosting.md).
-
-Run the worker and API directly when Docker builds are unavailable:
+The seeder commits 20 inserts, one update and one delete with a fresh key prefix each run. Allow the relay to poll, then inspect actual projected keys:
 
 ```powershell
-# PostgreSQL still runs in Compose; worker and API share the same --root.
-docker compose up -d postgres
-.venv\Scripts\fluxlake worker --root data
-# In another terminal, with FLUXLAKE_API_TOKEN set:
-.venv\Scripts\fluxlake api --root data --port 18082
+$auth = @{Authorization = "Bearer $($env:FLUXLAKE_API_TOKEN)"}
+$rows = Invoke-RestMethod http://localhost:18082/transactions -Headers $auth
+$key = $rows[0].key
+Invoke-RestMethod "http://localhost:18082/inspection?key=$key" -Headers $auth
+Invoke-RestMethod http://localhost:18082/pipeline -Headers $auth
 ```
 
-To test with PostgreSQL:
+An inspection returns `match`, `mismatch` or `absent` for every distinct requested key, source/local revisions, difference categories, PostgreSQL snapshot ID/time and Parquet filename/time. It compares **selected keys at two observations**, not the whole source database at one distributed instant. A source commit newer than the projection is legitimate observed drift. `absent` means no retained event and no local row/state for that key; it cannot prove that a pruned event never existed.
+
+To watch drift deliberately: `docker compose stop worker`, change the selected source transaction through PostgreSQL, and repeat inspection. It should report revision/payload differences while leaving the projection unchanged. `docker compose start worker` lets the normal relay catch up. The endpoint does not repair, replay, acknowledge, or bypass quarantine. [Walkthrough and response categories](docs/runbook.md#investigate-projection-drift).
+
+## Invariants and failure walkthrough
+
+| Trigger | Required outcome |
+|---|---|
+| Business SQL transaction rolls back | Its outbox event rolls back too. |
+| A lower identity commits after a higher identity was delivered | Exact-row acknowledgements leave it eligible for the next poll. |
+| Same event ID/body reappears | Duplicate receipt; one resulting state. A changed body under that identity quarantines. |
+| Older revision arrives after deletion | Durable tombstone prevents resurrection. |
+| Crash after SQLite commit, before Parquet publication | Source stays unacknowledged; restart republishes committed state and replay is idempotent. |
+| Attribute changes type or input violates the contract | Preserve raw evidence and quarantine; do not mutate silver. |
+| Source unavailable or bounded request replay exceeds capacity | Request-backed data fails closed with 503. No fabricated totals replace it. |
+| Inspection runs while a source writer commits | One repeatable-read source observation is compared with one locked local observation; later commits wait for the next inspection. |
+
+Example: a settled USD transaction changes from 100 to 200 minor units. The relay durably commits version 2 but crashes before acknowledgement. On restart, the event arrives again; the receipt identifies the same body, silver contains version 2 once, and gold counts 200 once. If version 1 later arrives, it is recorded as stale. [Full commit/crash protocol](docs/architecture.md).
+
+## Reproduce verification
+
+Use a **dedicated disposable test database** because integration tests create source tables, roles, revisions and temporary bootstrap databases. The local test login needs database-creation permission for that bootstrap test; the hosted application does not.
 
 ```powershell
 docker compose exec postgres createdb -U fluxlake fluxlake_test
@@ -67,66 +95,43 @@ $env:TEST_DATABASE_URL = "postgresql://fluxlake:$($env:POSTGRES_PASSWORD)@127.0.
 .venv\Scripts\python -m pytest -q
 .venv\Scripts\ruff check .
 .venv\Scripts\ruff format --check .
+.venv\Scripts\python -m pip check
 .venv\Scripts\pip-audit --disable-pip --no-deps -r requirements.lock
-.venv\Scripts\python scripts/benchmark.py --events 200
+.venv\Scripts\python scripts/benchmark.py --events 200 --batch-size 10 --output evidence/benchmark-local.json
 ```
 
-Without `TEST_DATABASE_URL`, the database integration tests explicitly skip. [The reproducible benchmark](evidence/benchmark.json) reports measured durable sink latency and raw samples, with no simulated cloud claims. Batch size controls snapshot rewrite cost.
+Without `TEST_DATABASE_URL`, PostgreSQL tests explicitly skip. Current inspection work passed **68 tests with no skips on both Python 3.12 and pinned Python 3.15**, each against real PostgreSQL; see [verification evidence](evidence/inspection-verification.md); initial [local](evidence/verification.md), [public runtime hardening](evidence/public-host-hardening.md) and [hosted release](evidence/public-release-verification.json) evidence remain separately dated. The [workflow](.github/workflows/verify.yml) defines PostgreSQL tests, lint, audit, Docker build and Terraform validation. **Hosted Actions cannot currently start because of an account-level runner restriction; no hosted CI pass is claimed.**
 
-## Contract and guarantees
+## Measured performance, with the sample visible
 
-An event contains `event_id`, `key`, positive integer `version`, `op` (`insert`, `update`, `delete`), timezone-aware `occurred_at`, and `data`. Live data requires nonnegative integer `amount_minor`, uppercase three-letter `currency`, and `status` (`pending`, `settled`, `failed`). All JSON strings must encode as strict UTF-8; unpaired surrogate escapes quarantine before state commit. Extra safe scalar attributes evolve the registry and appear as nullable typed Parquet columns; changing an existing attribute type goes to quarantine. Money is never summed across currencies.
+These are durable **sink batch return timings**, including bronze file fsync, SQLite commit and a full Parquet snapshot rewrite. They exclude PostgreSQL polling, network delay, inspection and AWS. Both runs used Windows 11 / Python 3.12.0 on the local development machine; ten warmup events were excluded. Raw samples and exact library versions are retained.
 
-- Same event ID and body â†’ duplicate, no state mutation.
-- Same event ID with a different body, or equal key/version with a different event â†’ quarantine.
-- Older revision â†’ durably record as stale, preserve newer state.
-- Delete â†’ retain a durable tombstone so old inserts cannot resurrect the row.
-- Crash after state commit â†’ reconstruct Parquet on restart. Crash before PostgreSQL ack â†’ replay; receipts avoid double application.
-- Every accepted JSON input is preserved in content-addressed bronze, including quarantined and stale events. Exact replay reuses the same object. This is a raw event archive, not a per-delivery audit log.
-- Source queue checkpoint is each outbox row's `processed_at`; sequence IDs are not assumed to be commit order.
-
-SQLite state/receipts plus bronze and Parquet live on the same durable volume. This is a single-node correctness-oriented profile with serialized writers and full snapshot rewrites per batch. It does not provide multi-host consensus, cross-key transactional visibility, or infinite-scale streaming. See [architecture](docs/architecture.md), [decisions](docs/adr.md), [security](SECURITY.md), [operations](docs/runbook.md), [AWS deployment](infra/aws/README.md), and [interview guide](docs/interview.md).
-
-## Project map
-
-| Area | Implementation |
-|---|---|
-| Durable sink | `src/fluxlake/lake.py` |
-| PostgreSQL source and relay | `sql/source.sql`, `src/fluxlake/worker.py` |
-| API, freshness, dashboard, metrics | `src/fluxlake/api.py` |
-| AWS managed deployment | `infra/aws/main.tf`, `infra/aws/glue_job.py` |
-| Correctness and integration tests | `tests/` |
-| Benchmarks, verification, traceability | `evidence/`, `docs/requirements.md` |
-
-CI runs tests with PostgreSQL, lint/format, dependency audit, Docker build, and Terraform validation. An optional manual OIDC workflow generates a cloud plan; it never applies infrastructure automatically.
-
-
-## Measured local performance
-
-The following historical initial-build measurements were recorded on Windows/Python 3.12 with the exact older dependency versions stored in each evidence file. They are not capacity claims for the upgraded public runtime or request-sync profile:
-
-| Workload | Measured batches | p50 / p95 / p99 batch latency | Throughput |
+| Run / workload | Measured batches | p50 / p95 / p99 batch latency | Events/s |
 |---|---:|---:|---:|
-| 200 events, batch size 1 | 200 | 95 / 236 / 375 ms | 8.34 events/s |
-| 1000 events, batch size 10 | 100 | 192 / 366 / 466 ms | 45.83 events/s |
+| [Current pinned libraries](evidence/benchmark-inspection.json), 200 events / batch 10 | 20 | 193.9 / 273.1 / 320.9 ms | 49.61 |
+| [Historical initial build](evidence/benchmark-batched.json), 1000 events / batch 10 | 100 | 192.0 / 365.9 / 465.6 ms | 45.83 |
 
-These are durable local sink timings, including raw-file fsync, SQLite commit and a complete Parquet snapshot publication. They exclude PostgreSQL polling, network and AWS. The batch p99 is not per-event latency. Raw timings and dependency versions are in [single-event evidence](evidence/benchmark.json) and [batched evidence](evidence/benchmark-batched.json). Reproduce the second workload with `python scripts/benchmark.py --events 1000 --batch-size 10 --output evidence/benchmark-batched.json`.
+The current run uses PyArrow 26.0.0, DuckDB 2.0.0 and Psycopg 3.3.6. The historical run uses older versions listed in its JSON and a different workload size; this table is not a controlled before/after comparison. Twenty batches make the current p99 the largest observation. These small runs expose snapshot-rewrite cost, not production capacity or an end-to-end freshness SLO.
 
-## Ephemeral public HTTP hosting
+## Deployment scope and decisions
 
-The optional `FLUXLAKE_SOURCE_SYNC=request` profile reconstructs each instance from retained PostgreSQL outbox history on requests. It never acknowledges records, catches late lower-ID commits without a high-watermark, and requires no exclusive lock between replicas. It is explicitly request-synchronized, not a continuously running worker. Source failures or defensive history limits return 503; no static/fabricated results replace the pipeline.
+| Surface | What actually exists | Boundary |
+|---|---|---|
+| Public Vercel + Neon | HTTPS synthetic dashboard and actual retained-history request projection; [recorded hosted checks](docs/public-deployment.md) | Requests trigger replay, cached five seconds. No continuously running worker. Complete source history required; max 5000 events / 16 MiB replay. |
+| Local Compose | PostgreSQL, acknowledged worker, API and durable volumes; real integration/crash tests | Serialized local writers and O(live rows) snapshot rewrites. No multi-host consensus or cross-key source-transaction visibility guarantee. |
+| Private inspection | Source/latest-outbox, SQLite and silver comparison, tested locally and in the pinned runtime | 1–100 submitted keys, at most 5000 local rows / 16 MiB Parquet, 64 KiB per source event / 1 MiB selected canonical data. Latest outbox evidence must remain trusted and retained. |
+| Optional AWS | Terraform and Glue PySpark source; provider-schema validation recorded | DMS/Glue/Iceberg/Athena execution and managed throughput remain unverified. |
 
-Set `FLUXLAKE_PUBLIC_DEMO=true`, exact `FLUXLAKE_ALLOWED_HOSTS`, a private `DATABASE_URL`, a random 32+ character `FLUXLAKE_API_TOKEN`, and `FLUXLAKE_ROOT=/tmp/fluxlake` for a read-only container filesystem. `PORT` controls the listening port (container default8080). The host must supply TLS and ingress limits. `/events` fixture writes are disabled in this profile; actual source changes go through PostgreSQL.
+The public surface excludes IDs, arbitrary attributes and unmarked rows. Operational reads, metrics, OpenAPI and writes require a private strong bearer token; input bounds and exact allowed hosts are enforced. `/events` is a fixture/replay route, disabled in request mode. Production ingress must supply TLS and rate limits. Hosted PostgreSQL uses verified TLS and an isolated identity; replay/inspection need only schema USAGE and outbox SELECT. [Security decisions](SECURITY.md) and [hosting configuration](docs/hosting.md).
 
-For a **dedicated empty demo database only**, `FLUXLAKE_SEED_DEMO=true` opts into once-only source initialization: 20 real synthetic inserts, one update and one delete, committed with a durable bootstrap marker. Existing nonempty unmarked sources are refused. Multiple instances coordinate initialization through a PostgreSQL transaction advisory lock; subsequent full-history reads are independent and read-only. After bootstrap, unset that flag and replace the migration credential with a SELECT-only source identity.
+SQLite supplies transactional identity/order state that Parquet cannot provide. This makes recovery small enough to inspect, while full rewrites deliberately trade scale for clarity. Money stays in integer minor units grouped by currency; FX conversion and currency reference scales require an explicit model. The outbox is application-level polling locally; only the optional AWS path uses WAL CDC. No exactly-once transport claim is made.
 
-The digest-pinned minimal image runs Python3.15.1 with PyArrow26, DuckDB2 and Psycopg3.3.6. Detailed bounds, privilege setup, retention invariants and verification scope are in [hosting.md](docs/hosting.md) and [public hardening evidence](evidence/public-host-hardening.md).
+## Reviewer and interview path
 
-The public deployment enforces hostname-verified PostgreSQL TLS (`sslmode=verify-full`, a trusted CA file and required channel binding), uses a separate isolated non-superuser SQL identity, and was verified to deny cross-project database connections. Server-role defaults are 15 seconds for statements, 10 seconds for lock waits and 30 seconds idle in a transaction; application replay uses stricter 5-second connect/statement and 2-second lock limits. See the [hosted verification](docs/public-deployment.md) for exact scope and the 12-request warm HTTPS measurement.
+1. Read the [source trigger](sql/source.sql) and [relay transaction](src/fluxlake/worker.py); explain why `MAX(id)` loses a late commit.
+2. Follow [Lake.apply](src/fluxlake/lake.py) through bronze → SQLite commit → Parquet manifest → source acknowledgement; use the [crash matrix](docs/architecture.md#crash-matrix).
+3. Run [inspection tests](tests/test_inspection.py), including an actual concurrent source commit and Parquet tampering; explain why `match` has selected-key observation scope.
+4. Compare the [poll/request operating models](docs/hosting.md), [failure runbook](docs/runbook.md) and [AWS alternative](infra/aws/README.md).
+5. Use the [interview guide](docs/interview.md) to discuss scaling, retention, quarantine, security and measured tradeoffs with evidence.
 
-
-## Public deployment evidence
-
-![Verified public dashboard](evidence/public-dashboard.jpg)
-
-Captured from the actual public HTTPS deployment. [Executed public checks](evidence/public-release-verification.json) record real backend responses, authentication results and a small warm-request sample.
+[Requirement traceability](docs/requirements.md) · [Architecture decisions](docs/adr.md) · [Contributing](CONTRIBUTING.md) · [MIT license](LICENSE)

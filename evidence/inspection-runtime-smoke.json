@@ -1,0 +1,114 @@
+{
+  "measured_at_utc": "2026-10-30T15:21:42.689724+00:00",
+  "scope": "local final minimal runtime HTTP smoke, actual isolated PostgreSQL; not a hosted release",
+  "image": "fluxlake:inspection",
+  "read_only_root": true,
+  "tmpfs_root": "/tmp/fluxlake",
+  "user": "10001:10001",
+  "capabilities_dropped": "ALL",
+  "cold": {
+    "scope": "selected_keys_observed_snapshots",
+    "semantics": "Two observations, not a distributed snapshot; no replay, acknowledgement or repair. Latest retained outbox evidence, not source-table or global equality.",
+    "source_snapshot": {
+      "id": "1387:1387:",
+      "captured_at": "2026-10-30T15:21:42.749633+00:00",
+      "isolation": "repeatable read",
+      "read_only": true
+    },
+    "projection_snapshot": {
+      "file": "snapshot-2aa13a48f29c47608a0f1ea8d5eaa0e6.parquet",
+      "rows": 0,
+      "captured_at": "2026-10-30T15:21:42.582814+00:00"
+    },
+    "requested_keys": 1,
+    "counts": {
+      "match": 0,
+      "mismatch": 1,
+      "absent": 0
+    },
+    "results": [
+      {
+        "key": "inspection-demo",
+        "status": "mismatch",
+        "source_version": 1,
+        "projection_version": null,
+        "source_deleted": false,
+        "differences": [
+          "state_missing",
+          "silver_missing"
+        ]
+      }
+    ]
+  },
+  "matched": {
+    "scope": "selected_keys_observed_snapshots",
+    "semantics": "Two observations, not a distributed snapshot; no replay, acknowledgement or repair. Latest retained outbox evidence, not source-table or global equality.",
+    "source_snapshot": {
+      "id": "1387:1387:",
+      "captured_at": "2026-10-30T15:21:43.050135+00:00",
+      "isolation": "repeatable read",
+      "read_only": true
+    },
+    "projection_snapshot": {
+      "file": "snapshot-130c10b806a04ff3a69e29b0de6b8cf1.parquet",
+      "rows": 1,
+      "captured_at": "2026-10-30T15:21:42.975682+00:00"
+    },
+    "requested_keys": 1,
+    "counts": {
+      "match": 1,
+      "mismatch": 0,
+      "absent": 0
+    },
+    "results": [
+      {
+        "key": "inspection-demo",
+        "status": "match",
+        "source_version": 1,
+        "projection_version": 1,
+        "source_deleted": false,
+        "differences": []
+      }
+    ]
+  },
+  "drift": {
+    "scope": "selected_keys_observed_snapshots",
+    "semantics": "Two observations, not a distributed snapshot; no replay, acknowledgement or repair. Latest retained outbox evidence, not source-table or global equality.",
+    "source_snapshot": {
+      "id": "1388:1388:",
+      "captured_at": "2026-10-30T15:21:43.225392+00:00",
+      "isolation": "repeatable read",
+      "read_only": true
+    },
+    "projection_snapshot": {
+      "file": "snapshot-130c10b806a04ff3a69e29b0de6b8cf1.parquet",
+      "rows": 1,
+      "captured_at": "2026-10-30T15:21:43.160795+00:00"
+    },
+    "requested_keys": 1,
+    "counts": {
+      "match": 0,
+      "mismatch": 1,
+      "absent": 0
+    },
+    "results": [
+      {
+        "key": "inspection-demo",
+        "status": "mismatch",
+        "source_version": 2,
+        "projection_version": 1,
+        "source_deleted": false,
+        "differences": [
+          "revision",
+          "event_identity",
+          "state_payload",
+          "silver_payload"
+        ]
+      }
+    ]
+  },
+  "source_acknowledged_rows": 0,
+  "anonymous_inspection": 401,
+  "fixture_write": 403,
+  "untrusted_host": 400
+}

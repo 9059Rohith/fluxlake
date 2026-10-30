@@ -1,0 +1,47 @@
+{
+  "measured_at_utc": "2026-10-30T15:15:53.341553+00:00",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "python": "3.12.0",
+  "dependencies": {
+    "pyarrow": "26.0.0",
+    "duckdb": "2.0.0",
+    "filelock": "4.2.1",
+    "psycopg": "3.3.6"
+  },
+  "scope": "local sink apply batch latency; excludes PostgreSQL poll, network and AWS",
+  "events": 200,
+  "batch_size": 10,
+  "batches": 20,
+  "warmup_events": 10,
+  "elapsed_seconds": 4.0314575000084005,
+  "events_per_second": 49.609849539424204,
+  "latency_ms": {
+    "p50": 193.919,
+    "p95": 273.1376,
+    "p99": 320.8907,
+    "min": 128.1036,
+    "max": 320.8907
+  },
+  "samples_ms": [
+    159.3097,
+    174.9335,
+    152.3644,
+    156.2884,
+    154.3463,
+    162.7034,
+    195.2579,
+    153.9624,
+    128.1036,
+    273.1376,
+    237.2918,
+    245.084,
+    216.9399,
+    237.7838,
+    320.8907,
+    270.0526,
+    205.5697,
+    193.919,
+    187.3175,
+    203.0299
+  ]
+}
