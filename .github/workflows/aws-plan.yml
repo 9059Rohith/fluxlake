@@ -1,0 +1,29 @@
+name: optional-aws-plan
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+  id-token: write
+jobs:
+  plan:
+    environment: aws-plan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_PLAN_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+      - uses: hashicorp/setup-terraform@v3
+        with: {terraform_version: 1.13.5}
+      - run: terraform -chdir=infra/aws init -backend=false -input=false
+      - name: Produce reviewed plan (does not apply)
+        env:
+          TF_VAR_region: ${{ vars.AWS_REGION }}
+          TF_VAR_private_subnet_ids: ${{ vars.PRIVATE_SUBNET_IDS }}
+          TF_VAR_dms_security_group_ids: ${{ vars.DMS_SECURITY_GROUP_IDS }}
+          TF_VAR_source_database_name: ${{ vars.SOURCE_DATABASE_NAME }}
+          TF_VAR_source_secret_arn: ${{ vars.SOURCE_SECRET_ARN }}
+          TF_VAR_source_secret_access_role_arn: ${{ vars.SOURCE_SECRET_ACCESS_ROLE_ARN }}
+          TF_VAR_dms_vpc_role_ready: 'true'
+        run: terraform -chdir=infra/aws plan -input=false -no-color

@@ -1,0 +1,41 @@
+name: verify
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16.6-alpine
+        env:
+          POSTGRES_DB: fluxlake
+          POSTGRES_USER: fluxlake
+          POSTGRES_PASSWORD: ci-only-password
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U fluxlake -d fluxlake"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      TEST_DATABASE_URL: postgresql://fluxlake:ci-only-password@localhost:5432/fluxlake
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12', cache: pip}
+      - run: pip install --no-deps -r requirements-dev.lock
+      - run: pip install --no-deps -e .
+      - run: ruff check .
+      - run: ruff format --check .
+      - run: pytest -q --junitxml=evidence/junit.xml
+      - run: pip-audit --disable-pip --no-deps -r requirements.lock
+      - run: docker build -t fluxlake:ci .
+      - uses: hashicorp/setup-terraform@v3
+        with: {terraform_version: 1.13.5}
+      - run: terraform -chdir=infra/aws fmt -check
+      - run: terraform -chdir=infra/aws init -backend=false -input=false
+      - run: terraform -chdir=infra/aws validate
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: {name: test-evidence, path: evidence/junit.xml}
