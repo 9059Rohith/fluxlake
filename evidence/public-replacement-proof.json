@@ -1,0 +1,11 @@
+{
+  "source_rows": 19,
+  "outbox_events": 22,
+  "acknowledged_events": 0,
+  "history_sha256": "e783675baf55dffa6f44d6997ac6bf44ae207dd384cc9a302bdc4c5bdfbf9407",
+  "seeded_at": "2026-10-30T14:47:20.754Z",
+  "history_unchanged_after_public_container_replacement": true,
+  "previous_deployment": "dpl_AgnFESSygCmn525W8rMArMxYcixu",
+  "replacement_deployment": "dpl_753qWRTuQ4yYxvWUf6dENFAhuk1c",
+  "public_projection_rebuilt_to_19_rows": true
+}

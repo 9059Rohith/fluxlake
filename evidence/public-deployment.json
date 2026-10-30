@@ -1,0 +1,13 @@
+{
+  "verified_at": "2026-10-30T15:07:58.376322+00:00",
+  "provider": "Vercel",
+  "plan": "Hobby",
+  "runtime": "OCI Container (Beta)",
+  "durable_database": "isolated Neon Free PostgreSQL",
+  "public_url": "https://rohith-fluxlake.vercel.app",
+  "deployment_id": "dpl_753qWRTuQ4yYxvWUf6dENFAhuk1c",
+  "provider_state": "READY",
+  "deployed_commit": "b43d946313ceec720babe4ae19a8e1e84f69f611",
+  "source_repo": "https://github.com/9059Rohith/fluxlake",
+  "scope": "Synthetic portfolio workloads; protected administrative APIs; free usage and cold-start limits apply"
+}

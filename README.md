@@ -123,3 +123,10 @@ For a **dedicated empty demo database only**, `FLUXLAKE_SEED_DEMO=true` opts int
 The digest-pinned minimal image runs Python3.15.1 with PyArrow26, DuckDB2 and Psycopg3.3.6. Detailed bounds, privilege setup, retention invariants and verification scope are in [hosting.md](docs/hosting.md) and [public hardening evidence](evidence/public-host-hardening.md).
 
 The public deployment enforces hostname-verified PostgreSQL TLS (`sslmode=verify-full`, a trusted CA file and required channel binding), uses a separate isolated non-superuser SQL identity, and was verified to deny cross-project database connections. Server-role defaults are 15 seconds for statements, 10 seconds for lock waits and 30 seconds idle in a transaction; application replay uses stricter 5-second connect/statement and 2-second lock limits. See the [hosted verification](docs/public-deployment.md) for exact scope and the 12-request warm HTTPS measurement.
+
+
+## Public deployment evidence
+
+![Verified public dashboard](evidence/public-dashboard.jpg)
+
+Captured from the actual public HTTPS deployment. [Executed public checks](evidence/public-release-verification.json) record real backend responses, authentication results and a small warm-request sample.
