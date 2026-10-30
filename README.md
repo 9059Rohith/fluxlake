@@ -8,10 +8,11 @@ A payment update should reach analytics once in its final state—even when a re
 
 The public demo uses real **synthetic** PostgreSQL writes, including an update and a delete. Its Vercel HTTP instances reconstruct disposable projections from Neon history on requests. It demonstrates request-synchronized recovery; the local Compose profile runs a continuous polling relay. [Deployment details and actual scope](docs/public-deployment.md).
 
-## Five engineering capabilities worth inspecting
+## Six engineering capabilities worth inspecting
 
 | Capability | Concrete implementation | Evidence to inspect |
 |---|---|---|
+| **Statistical DriftLab over retained CDC evidence** | An authenticated comparison of two explicit outbox identity windows returns currency-isolated amount KS/PSI, status JS, a separate currency-mix JS, sample gates and reproducible SHA-256 fingerprints from one read-only PostgreSQL snapshot. | [DriftLab contract and mathematics](docs/driftlab.md), [engine](src/fluxlake/drift.py), [synthetic evaluation](evidence/driftlab-evaluation.json), [current verification](evidence/driftlab-verification.md) |
 | **Capture that survives inconvenient commit order** | An AFTER trigger writes an outbox envelope and durable per-key revision in the business transaction. The relay acknowledges exact locked rows; identity sequence values never become commit-order checkpoints. | [Source schema](sql/source.sql), [relay](src/fluxlake/worker.py), real PostgreSQL late-lower-ID and rollback tests in [test_postgres.py](tests/test_postgres.py) |
 | **Replay-safe state with recoverable publication** | SHA-256 bronze objects preserve canonical inputs. SQLite commits receipts, tombstones and current state together; fsynced Parquet publication follows that commit. Restart reconstructs an interrupted publication. | [Sink commit protocol](src/fluxlake/lake.py), [crash matrix](docs/architecture.md#crash-matrix), [fault and replay tests](tests/test_lake.py) |
 | **Explicit data contracts instead of silent drift** | Integer minor units and currency-separated gold SQL; additive typed scalar columns; conflicting schema changes quarantine with raw evidence. Stale events cannot resurrect tombstones. | [Validation and schema registry](src/fluxlake/lake.py), [gold SQL](sql/gold.sql), literal expected-currency tests in [test_lake.py](tests/test_lake.py) |
@@ -31,10 +32,24 @@ flowchart LR
   P --> D[DuckDB currency aggregates]
   D --> API[Authenticated API / synthetic public view]
   O -. repeatable-read selected keys .-> I[Private inspection]
+  O -. explicit identity windows / read-only snapshot .-> S[Statistical DriftLab]
   P -. immutable observation .-> I
 ```
 
 The profiles are deployment alternatives. Acknowledged polling workers share one durable lake volume; request-mode instances each own a disposable lake and never acknowledge source records. The optional [AWS profile](infra/aws/README.md) supplies DMS WAL capture → Kinesis → Glue/Iceberg → Athena code; its managed execution has not been provisioned or measured.
+
+## Compare distribution changes with DriftLab
+
+`POST /drift/compare` compares retained insert/update **events**, including acknowledged history, in two explicit disjoint inclusive identity-index ranges. It groups integer amounts by currency, uses a tied-sample KS distance and baseline-fixed smoothed PSI, compares status distributions with JS divergence in bits, and reports currency-mix JS separately. Reports include source snapshot provenance, observed gaps/tombstones/repeated keys, fixed histogram cells and immutable evidence/configuration fingerprints. It never refreshes the projection or acknowledges an event.
+
+```powershell
+$body = '{"baseline":{"start":1,"end":400},"candidate":{"start":401,"end":800}}'
+Invoke-RestMethod http://localhost:18082/drift/compare -Method Post -Headers $auth -ContentType 'application/json' -Body $body
+.venv\Scripts\fluxlake drift --url http://localhost:18082 --baseline 1:400 --candidate 401:800
+.venv\Scripts\python scripts/evaluate_drift.py --seed 20261030 --trials 60 --samples 400 --output evidence/driftlab-evaluation.json
+```
+
+Choose ranges from your retained source; these example ranges may be empty. Identity allocation is **not commit order or a time window**. Late commits, rollback and pruning can change observed coverage. Correlated revisions make IID significance assumptions inappropriate, so thresholds are descriptive effects with minimum samples, without p-values or significance claims. The seeded synthetic evaluation observed 4/60 no-shift false alarms and 60/60 target detections for each deliberately large amount and currency-mix shift; [trial details and uncertainty](docs/driftlab.md#controlled-evaluation) expose finite-sample limitations. The existing hosted demo is a separately dated deployment; this repository change has been verified locally, with no new hosted release claimed.
 
 ## Run a real source-to-analytics demo
 
@@ -100,7 +115,7 @@ $env:TEST_DATABASE_URL = "postgresql://fluxlake:$($env:POSTGRES_PASSWORD)@127.0.
 .venv\Scripts\python scripts/benchmark.py --events 200 --batch-size 10 --output evidence/benchmark-local.json
 ```
 
-Without `TEST_DATABASE_URL`, PostgreSQL tests explicitly skip. Current inspection work passed **68 tests with no skips on both Python 3.12 and pinned Python 3.15**, each against real PostgreSQL; see [verification evidence](evidence/inspection-verification.md); initial [local](evidence/verification.md), [public runtime hardening](evidence/public-host-hardening.md) and [hosted release](evidence/public-release-verification.json) evidence remain separately dated. The [workflow](.github/workflows/verify.yml) defines PostgreSQL tests, lint, audit, Docker build and Terraform validation. **Hosted Actions cannot currently start because of an account-level runner restriction; no hosted CI pass is claimed.**
+Without `TEST_DATABASE_URL`, PostgreSQL tests explicitly skip. Current DriftLab work passed **134 tests with no skips on both Python 3.12 and pinned Python 3.15**, each against real PostgreSQL; see [DriftLab verification](evidence/driftlab-verification.md). Prior [inspection](evidence/inspection-verification.md), [local](evidence/verification.md), [public runtime hardening](evidence/public-host-hardening.md) and [hosted release](evidence/public-release-verification.json) evidence remain separately dated. The [workflow](.github/workflows/verify.yml) defines PostgreSQL tests, lint, audit, Docker build and Terraform validation. **Hosted Actions cannot currently start because of an account-level runner restriction; no hosted CI pass is claimed.**
 
 ## Measured performance, with the sample visible
 

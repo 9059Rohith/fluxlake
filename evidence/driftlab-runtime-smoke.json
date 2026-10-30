@@ -1,0 +1,256 @@
+{
+  "algorithm": "fluxlake-drift-v1",
+  "anonymous": 401,
+  "baseline": {
+    "analyzed_events": 300,
+    "distinct_keys": 300,
+    "evidence_sha256": "15cbd55096d81b105ce5ccac8b159c16bc4699a3f9deb86f97da2fb1025daff4",
+    "missing_identity_positions": 0,
+    "observed_max_index": 300,
+    "observed_min_index": 1,
+    "observed_rows": 300,
+    "occurred_at_max": "2026-10-30T15:57:56.044638+00:00",
+    "occurred_at_min": "2026-10-30T15:57:55.811857+00:00",
+    "repeated_key_events": 0,
+    "tombstones": 0,
+    "window": {
+      "end": 300,
+      "start": 1
+    }
+  },
+  "candidate": {
+    "analyzed_events": 300,
+    "distinct_keys": 300,
+    "evidence_sha256": "fc0f1aa560244b1f6a50eb7c6b07f7db3b3cd94ebfe8bd44443f0a733c5226d0",
+    "missing_identity_positions": 0,
+    "observed_max_index": 600,
+    "observed_min_index": 301,
+    "observed_rows": 300,
+    "occurred_at_max": "2026-10-30T15:57:56.372702+00:00",
+    "occurred_at_min": "2026-10-30T15:57:56.105216+00:00",
+    "repeated_key_events": 0,
+    "tombstones": 0,
+    "window": {
+      "end": 600,
+      "start": 301
+    }
+  },
+  "cli_fingerprint_matches": true,
+  "currencies": [
+    {
+      "amount": {
+        "baseline": {
+          "count": 96,
+          "maximum": 298242,
+          "minimum": 22938,
+          "p50_nearest_rank": 66292,
+          "p90_nearest_rank": 127714
+        },
+        "baseline_counts": [
+          0,
+          20,
+          19,
+          19,
+          19,
+          19,
+          0
+        ],
+        "bin_cuts": [
+          49764,
+          59014,
+          76191,
+          103903,
+          298242
+        ],
+        "bin_semantics": "Baseline nearest-rank quantile upper cuts, duplicate cuts collapsed; first/last cells are strictly below/above baseline support. Interior cells are right-closed; candidate uses unchanged cuts.",
+        "candidate": {
+          "count": 109,
+          "maximum": 637284,
+          "minimum": 35054,
+          "p50_nearest_rank": 179118,
+          "p90_nearest_rank": 286975
+        },
+        "candidate_counts": [
+          0,
+          2,
+          0,
+          1,
+          7,
+          91,
+          8
+        ],
+        "ks_distance": 0.7649082568807339,
+        "psi": 2.8347075116457257,
+        "smoothing_pseudocount": 0.5
+      },
+      "amount_effect_detected": true,
+      "baseline_samples": 96,
+      "candidate_samples": 109,
+      "currency": "INR",
+      "status": {
+        "counts": [
+          {
+            "baseline": 6,
+            "candidate": 3,
+            "category": "failed"
+          },
+          {
+            "baseline": 29,
+            "candidate": 15,
+            "category": "pending"
+          },
+          {
+            "baseline": 61,
+            "candidate": 91,
+            "category": "settled"
+          }
+        ],
+        "effect_detected": false,
+        "js_divergence": 0.037558308868133626,
+        "sufficient_samples": true
+      },
+      "status_effect_detected": false,
+      "sufficient_samples": true
+    },
+    {
+      "amount": {
+        "baseline": {
+          "count": 204,
+          "maximum": 3235,
+          "minimum": 324,
+          "p50_nearest_rank": 1002,
+          "p90_nearest_rank": 1611
+        },
+        "baseline_counts": [
+          0,
+          42,
+          40,
+          41,
+          41,
+          40,
+          0
+        ],
+        "bin_cuts": [
+          742,
+          919,
+          1076,
+          1372,
+          3235
+        ],
+        "bin_semantics": "Baseline nearest-rank quantile upper cuts, duplicate cuts collapsed; first/last cells are strictly below/above baseline support. Interior cells are right-closed; candidate uses unchanged cuts.",
+        "candidate": {
+          "count": 191,
+          "maximum": 7998,
+          "minimum": 863,
+          "p50_nearest_rank": 2404,
+          "p90_nearest_rank": 4500
+        },
+        "candidate_counts": [
+          0,
+          0,
+          1,
+          3,
+          17,
+          126,
+          44
+        ],
+        "ks_distance": 0.7308541217534134,
+        "psi": 3.5960766992288598,
+        "smoothing_pseudocount": 0.5
+      },
+      "amount_effect_detected": true,
+      "baseline_samples": 204,
+      "candidate_samples": 191,
+      "currency": "USD",
+      "status": {
+        "counts": [
+          {
+            "baseline": 11,
+            "candidate": 9,
+            "category": "failed"
+          },
+          {
+            "baseline": 43,
+            "candidate": 46,
+            "category": "pending"
+          },
+          {
+            "baseline": 150,
+            "candidate": 136,
+            "category": "settled"
+          }
+        ],
+        "effect_detected": false,
+        "js_divergence": 0.001021825687575916,
+        "sufficient_samples": true
+      },
+      "status_effect_detected": false,
+      "sufficient_samples": true
+    }
+  ],
+  "currency_mix": {
+    "counts": [
+      {
+        "baseline": 96,
+        "candidate": 109,
+        "category": "INR"
+      },
+      {
+        "baseline": 204,
+        "candidate": 191,
+        "category": "USD"
+      }
+    ],
+    "effect_detected": false,
+    "js_divergence": 0.0015062566297480498,
+    "sufficient_samples": true
+  },
+  "disposition": "effect_detected",
+  "fingerprint": "92b732d93b11ee465f28842f32dee17b7f60310f3c92ac3cd70a88e73bf0a041",
+  "http": "actual running API, authenticated HTTP and CLI",
+  "manifest_sha256": "c716739394a55d2ba55979267f1e0df6091def58709dde2778ed00c5e9e120b6",
+  "oversized_body": 413,
+  "projection_manifest_unchanged": true,
+  "redacted_validation": 422,
+  "request": {
+    "baseline": {
+      "end": 300,
+      "start": 1
+    },
+    "candidate": {
+      "end": 600,
+      "start": 301
+    },
+    "policy": {
+      "bins": 5,
+      "currency_js_threshold": 0.05,
+      "ks_threshold": 0.25,
+      "min_samples": 30,
+      "psi_threshold": 0.2,
+      "smoothing": 0.5,
+      "status_js_threshold": 0.1
+    }
+  },
+  "scope": "retained_outbox_event_index_windows",
+  "source_rows_and_acknowledgements_unchanged": true,
+  "source_snapshot": {
+    "captured_at": "2026-10-30T15:57:56.928495+00:00",
+    "id": "1918:1920:1918",
+    "isolation": "repeatable read",
+    "read_only": true
+  },
+  "synthetic": true,
+  "runtime": {
+    "image": "fluxlake:driftlab",
+    "image_id": "sha256:83bbebfd9ccf04d248849753ac91b19a67c151b74698bd396a8475a7ba79e6e5",
+    "user": "10001:10001",
+    "readonly_rootfs": true,
+    "cap_drop": [
+      "ALL"
+    ],
+    "security_opt": [
+      "no-new-privileges:true"
+    ],
+    "python": "Python 3.15.1"
+  }
+}

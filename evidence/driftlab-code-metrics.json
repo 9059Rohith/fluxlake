@@ -1,0 +1,7 @@
+{
+  "method": "Net new Python lines containing non-comment tokens, excluding docstrings; punctuation-only code lines count. Physical net additions also reported. Tests separate; documentation/JSON/XML excluded.",
+  "production_and_operational_scripts_code_lines": 933,
+  "production_and_operational_scripts_physical_net_lines": 1091,
+  "test_code_lines": 574,
+  "test_physical_lines": 701
+}

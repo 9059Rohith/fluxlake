@@ -13,14 +13,38 @@ from fluxlake.worker import run
 
 def main():
     parser = argparse.ArgumentParser(description="FluxLake local lakehouse")
-    parser.add_argument("command", choices=["api", "worker", "init-source", "replay", "gold"])
+    parser.add_argument(
+        "command", choices=["api", "worker", "init-source", "replay", "gold", "drift"]
+    )
     parser.add_argument("--root", default=os.getenv("FLUXLAKE_ROOT", "data"))
     parser.add_argument("--file", type=Path)
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=int(os.getenv("PORT", "8000")))
+    parser.add_argument("--baseline", help="Drift baseline inclusive outbox identity START:END")
+    parser.add_argument("--candidate", help="Drift candidate inclusive outbox identity START:END")
+    parser.add_argument("--url", default=os.getenv("FLUXLAKE_URL", "http://127.0.0.1:8000"))
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(message)s")
-    if args.command == "api":
+    if args.command == "drift":
+        from fluxlake.drift_client import fetch_report, parse_window
+        from fluxlake.drift_contracts import CompareRequest
+
+        if not args.baseline or not args.candidate:
+            parser.error("drift requires --baseline START:END and --candidate START:END")
+        try:
+            request = CompareRequest.model_validate(
+                {
+                    "baseline": parse_window(args.baseline),
+                    "candidate": parse_window(args.candidate),
+                }
+            )
+            report = fetch_report(args.url, os.getenv("FLUXLAKE_API_TOKEN", ""), request)
+        except (ValueError, RuntimeError):
+            parser.error(
+                "Drift request invalid or unavailable; verify windows, origin, token and source"
+            )
+        print(report.model_dump_json(indent=2))
+    elif args.command == "api":
         from fluxlake.api import create_app
 
         uvicorn.run(

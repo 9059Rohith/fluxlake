@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import hmac
 import json
 import os
@@ -17,6 +18,8 @@ from prometheus_client import CollectorRegistry, Gauge, generate_latest
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 
 from fluxlake.inspection import InspectionUnavailable, inspect
+from fluxlake.drift_contracts import CompareRequest, DriftReport
+from fluxlake.drift_source import DriftUnavailable, compare_source
 from fluxlake.lake import IDENTIFIER, Lake, canonical
 from fluxlake.limits import MAX_EVENT_BYTES, check_json_depth, validate_shape
 from fluxlake.projection import ProjectionUnavailable, SourceProjection
@@ -24,6 +27,7 @@ from fluxlake.projection import ProjectionUnavailable, SourceProjection
 CSS = """body{background:#0d1523;color:#ecf5ff;font:16px system-ui;max-width:1000px;margin:60px auto;padding:24px}h1{font-size:48px}small,a{color:#7de0cc}pre{background:#162337;padding:24px;overflow:auto;border-radius:12px}"""
 JS = """async function refresh(){const e=document.getElementById('summary');try{const r=await fetch('/demo/summary');if(!r.ok){e.textContent='Public synthetic view is disabled. Operational routes require authentication.';return}e.textContent=JSON.stringify(await r.json(),null,2)}catch(_){e.textContent='Service unavailable'}}refresh();setInterval(refresh,5000);"""
 CSP = "default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'"
+DRIFT_BODY_TIMEOUT = 5.0
 
 
 def create_app(root: Path | str | None = None) -> FastAPI:
@@ -117,6 +121,58 @@ def create_app(root: Path | str | None = None) -> FastAPI:
 
     @app.middleware("http")
     async def boundary(request: Request, call_next):
+        if request.method == "POST" and request.url.path == "/drift/compare":
+            try:
+                authorize(request.headers.get("authorization", ""))
+            except HTTPException as exc:
+                return secure(
+                    JSONResponse(
+                        {"detail": exc.detail}, status_code=exc.status_code, headers=exc.headers
+                    ),
+                    request,
+                )
+            body = bytearray()
+            try:
+                async with asyncio.timeout(DRIFT_BODY_TIMEOUT):
+                    async for chunk in request.stream():
+                        if len(body) + len(chunk) > 4096:
+                            return secure(
+                                JSONResponse({"detail": "Request too large"}, status_code=413),
+                                request,
+                            )
+                        body.extend(chunk)
+            except TimeoutError:
+                return secure(
+                    JSONResponse({"detail": "Request body deadline exceeded"}, status_code=408),
+                    request,
+                )
+            try:
+                check_json_depth(body)
+            except ValueError:
+                return secure(
+                    JSONResponse({"detail": "JSON nesting exceeds limits"}, status_code=413),
+                    request,
+                )
+            try:
+
+                def finite(_):
+                    raise ValueError("Nonfinite JSON")
+
+                def unique(pairs):
+                    result = {}
+                    for key, value in pairs:
+                        if key in result:
+                            raise ValueError("Duplicate JSON field")
+                        result[key] = value
+                    return result
+
+                json.loads(body, parse_constant=finite, object_pairs_hook=unique)
+            except (ValueError, UnicodeError, RecursionError):
+                return secure(
+                    JSONResponse({"detail": "Invalid bounded comparison request"}, status_code=422),
+                    request,
+                )
+            request._body = bytes(body)
         if request.method == "POST" and request.url.path == "/events":
             try:
                 authorize(request.headers.get("authorization", ""))
@@ -224,6 +280,15 @@ def create_app(root: Path | str | None = None) -> FastAPI:
     @app.get("/openapi.json", dependencies=[Depends(authorize)])
     def openapi():
         return app.openapi()
+
+    @app.post("/drift/compare", dependencies=[Depends(authorize)], response_model=DriftReport)
+    def drift_compare(request: CompareRequest):
+        try:
+            return compare_source(os.getenv("DATABASE_URL", ""), request)
+        except DriftUnavailable:
+            raise HTTPException(
+                503, "Drift comparison unavailable or beyond bounded capacity"
+            ) from None
 
     @app.post("/events", dependencies=[Depends(authorize)])
     def ingest(events: list[dict]):
