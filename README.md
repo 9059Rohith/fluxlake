@@ -1,5 +1,9 @@
 # FluxLake
 
+[![CI](https://github.com/9059Rohith/fluxlake/actions/workflows/verify.yml/badge.svg)](https://github.com/9059Rohith/fluxlake/actions/workflows/verify.yml)
+
+Hosted CI is currently blocked by an account-level runner restriction. [Executed local verification](evidence/verification.md) is recorded separately; no hosted pass is claimed.
+
 A near-real-time transaction lakehouse you can run and break locally. PostgreSQL commits each transaction change and its outbox record atomically. A Python worker delivers those records at least once; the sink keeps one correctly ordered result, immutable bronze evidence, real Parquet silver snapshots, and currency-safe gold SQL aggregates.
 
 **Local: transactional outbox polling, not WAL capture.** The optional AWS profile performs actual DMS WAL capture of the outbox into Kinesis and a Glue PySpark Iceberg `MERGE`. Managed infrastructure is supplied as deployable code; see [verification evidence](evidence/verification.md) for exactly what has run. No cloud deployment or production throughput is implied.
@@ -67,11 +71,11 @@ Without `TEST_DATABASE_URL`, the database integration tests explicitly skip. [Th
 
 An event contains `event_id`, `key`, positive integer `version`, `op` (`insert`, `update`, `delete`), timezone-aware `occurred_at`, and `data`. Live data requires nonnegative integer `amount_minor`, uppercase three-letter `currency`, and `status` (`pending`, `settled`, `failed`). All JSON strings must encode as strict UTF-8; unpaired surrogate escapes quarantine before state commit. Extra safe scalar attributes evolve the registry and appear as nullable typed Parquet columns; changing an existing attribute type goes to quarantine. Money is never summed across currencies.
 
-- Same event ID and body → duplicate, no state mutation.
-- Same event ID with a different body, or equal key/version with a different event → quarantine.
-- Older revision → durably record as stale, preserve newer state.
-- Delete → retain a durable tombstone so old inserts cannot resurrect the row.
-- Crash after state commit → reconstruct Parquet on restart. Crash before PostgreSQL ack → replay; receipts avoid double application.
+- Same event ID and body â†’ duplicate, no state mutation.
+- Same event ID with a different body, or equal key/version with a different event â†’ quarantine.
+- Older revision â†’ durably record as stale, preserve newer state.
+- Delete â†’ retain a durable tombstone so old inserts cannot resurrect the row.
+- Crash after state commit â†’ reconstruct Parquet on restart. Crash before PostgreSQL ack â†’ replay; receipts avoid double application.
 - Every accepted JSON input is preserved in content-addressed bronze, including quarantined and stale events. Exact replay reuses the same object. This is a raw event archive, not a per-delivery audit log.
 - Source queue checkpoint is each outbox row's `processed_at`; sequence IDs are not assumed to be commit order.
 
