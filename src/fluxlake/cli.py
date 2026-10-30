@@ -17,13 +17,22 @@ def main():
     parser.add_argument("--root", default=os.getenv("FLUXLAKE_ROOT", "data"))
     parser.add_argument("--file", type=Path)
     parser.add_argument("--host", default="127.0.0.1")
-    parser.add_argument("--port", type=int, default=8000)
+    parser.add_argument("--port", type=int, default=int(os.getenv("PORT", "8000")))
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(message)s")
     if args.command == "api":
         from fluxlake.api import create_app
 
-        uvicorn.run(create_app(args.root), host=args.host, port=args.port)
+        uvicorn.run(
+            create_app(args.root),
+            host=args.host,
+            port=args.port,
+            limit_concurrency=32,
+            backlog=64,
+            timeout_keep_alive=5,
+            server_header=False,
+            forwarded_allow_ips=os.getenv("FORWARDED_ALLOW_IPS", "127.0.0.1"),
+        )
     elif args.command == "worker":
         run(args.root)
     elif args.command == "init-source":

@@ -1,0 +1,29 @@
+{
+  "checked_at_utc": "2026-10-30T14:43:26.561124+00:00",
+  "status": "passed",
+  "runtime": "Python 3.15.1 minimal nonroot image",
+  "read_only_root": true,
+  "ephemeral_tmpfs": true,
+  "port_env": 8000,
+  "source_profile": "request-triggered full-history read-only replay",
+  "source_replay_observed_ms": 261.9547999929637,
+  "gold": [
+    {
+      "currency": "INR",
+      "transaction_count": 10,
+      "total_minor": 126250
+    },
+    {
+      "currency": "USD",
+      "transaction_count": 9,
+      "total_minor": 102375
+    }
+  ],
+  "source_events": 22,
+  "source_acknowledged": 0,
+  "restart_rebuilt_same_projection": true,
+  "anonymous_admin_read_status": 401,
+  "admin_fixture_write_status": 403,
+  "untrusted_host_status": 400,
+  "source_bootstrap": "real 20 inserts, update, delete exactly once"
+}

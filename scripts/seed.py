@@ -19,7 +19,7 @@ def main():
                         10000 + 125 * index,
                         "USD" if index % 2 else "INR",
                         "settled",
-                        json.dumps({"region": "APAC", "channel": "api"}),
+                        json.dumps({"region": "APAC", "channel": "api", "synthetic": True}),
                     ),
                 )
             conn.execute("UPDATE transactions SET amount_minor=25000 WHERE id=%s", (f"{prefix}-0",))

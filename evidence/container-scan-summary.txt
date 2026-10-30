@@ -10,4 +10,3 @@
   - Version 0.76.1 of Trivy is now available, current version is 0.76.0
 
 To suppress version checks, run Trivy scans with the --skip-version-check flag
-

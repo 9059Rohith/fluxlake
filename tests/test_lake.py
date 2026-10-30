@@ -254,3 +254,24 @@ def test_valid_multibyte_utf8_attribute_survives_restart(tmp_path):
     lake = Lake(tmp_path)
     assert lake.apply([event(region="東京 🚀")])["applied"] == 1
     assert Lake(tmp_path).current()[0]["attributes"]["region"] == "東京 🚀"
+
+
+def test_attribute_and_schema_growth_is_bounded_before_state_commit(tmp_path):
+    lake = Lake(tmp_path)
+    lake.apply([event()])
+    too_wide = event("wide", 2, "update", **{f"field{i}": i for i in range(33)})
+    assert lake.apply([too_wide])["quarantined"] == 1
+    assert lake.current()[0]["version"] == 1
+    for batch in range(8):
+        lake.apply(
+            [event(f"schema-{batch}", key=f"s{batch}", **{f"k{batch}_{i}": i for i in range(32)})]
+        )
+    assert lake.apply([event("overflow", key="extra", extra_field=1)])["quarantined"] == 1
+    assert len(lake.schema()["attributes"]) == 256
+
+
+def test_synthetic_marker_is_boolean_and_large_strings_are_quarantined(tmp_path):
+    lake = Lake(tmp_path)
+    assert lake.apply([event(synthetic="true")])["quarantined"] == 1
+    assert lake.apply([event("large", region="x" * 5000)])["quarantined"] == 1
+    assert lake.current() == []

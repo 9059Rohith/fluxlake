@@ -32,9 +32,11 @@ services:
   api:
     image: fluxlake:0.1.0
     build: .
-    command: ["fluxlake", "api", "--host", "0.0.0.0", "--root", "/data"]
+    command: ["fluxlake", "api", "--host", "0.0.0.0", "--root", "/data", "--port", "8000"]
     environment:
       FLUXLAKE_API_TOKEN: ${FLUXLAKE_API_TOKEN:?Set FLUXLAKE_API_TOKEN}
+      FLUXLAKE_PUBLIC_DEMO: ${FLUXLAKE_PUBLIC_DEMO:-false}
+      FLUXLAKE_ALLOWED_HOSTS: ${FLUXLAKE_ALLOWED_HOSTS:-localhost,127.0.0.1}
     volumes: ["lake:/data"]
     ports: ["127.0.0.1:18082:8000"]
     healthcheck:

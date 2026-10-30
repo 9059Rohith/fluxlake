@@ -55,3 +55,12 @@ for package in distributions():
 Path("requirements-dev.lock").write_text(
     header + "".join(f"{name}=={version}\n" for name, version in sorted(dev.items()))
 )
+
+# A minimal, fully pinned test harness for the Python 3.15 container verification target.
+seen.clear()
+versions.clear()
+for root in ("pytest", "httpx"):
+    visit(root)
+Path("requirements-test.lock").write_text(
+    header + "".join(f"{name}=={version}\n" for name, version in sorted(versions.items()))
+)

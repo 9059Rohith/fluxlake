@@ -1,6 +1,6 @@
 # Verification evidence â€” 2026-10-30
 
-This evidence distinguishes executed local checks from supplied managed-cloud code. Commands ran on Windows 11 with Python 3.12.0, Docker Desktop Linux Engine, and Terraform 1.13.5. No AWS resources were provisioned by this repository build.
+This is historical initial-build evidence; current public-host authorization and runtime changes are recorded in [public-host-hardening.md](public-host-hardening.md). This evidence distinguishes executed local checks from supplied managed-cloud code. Commands ran on Windows 11 with Python 3.12.0, Docker Desktop Linux Engine, and Terraform 1.13.5. No AWS resources were provisioned by this repository build.
 
 ## Executed checks
 
@@ -47,7 +47,7 @@ See [benchmark.json](benchmark.json) and [benchmark-batched.json](benchmark-batc
 - Process interruption/recovery is tested; hardware power-loss and disk-controller guarantees are environment-dependent. POSIX parent directories are now fsynced for new directories, bronze objects, Parquet targets and manifest replacements; fault tests verify commit/publication ordering. Windows uses file fsync plus atomic rename and retains the documented process-crash scope. Off-host backups remain necessary.
 - The local profile serializes writers and rewrites all live rows per batch. It is intentionally single-node, with unbounded retained history until an explicit retention policy is applied. It does not give atomic visibility across a whole source transaction spanning multiple relay batches.
 - The audit covers locked Python runtime packages, not the base OS image, PostgreSQL image, Python interpreter or AWS-managed runtime. The development PostgreSQL image must receive normal patch/security review before production use.
-- Read endpoints are loopback-only and unauthenticated by design; authenticate all sensitive ingress before exposing it beyond the development host.
+- Initial-build read endpoints were loopback-only and unauthenticated. This has been superseded: operational reads now require authentication; public mode returns only explicitly synthetic aggregates.
 
 ## Publication and additional image check
 

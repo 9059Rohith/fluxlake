@@ -36,3 +36,5 @@ Follow `infra/aws/README.md`. Start and test DMS endpoint connections before its
 For teardown, stop Glue and DMS first. Export needed evidence. Terraform destroy removes billable compute/stream resources; the versioned nonempty S3 bucket is intentionally not force-destroyed and requires an explicit retention/deletion decision. Iceberg metadata and historical object versions continue to cost storage until removed.
 
 Source initialization adds `transaction_attributes_safe` as a NOT VALID check to support upgrading an existing demonstration database. New writes are checked immediately; clean pre-existing invalid rows and run `ALTER TABLE transactions VALIDATE CONSTRAINT transaction_attributes_safe` before production migration signoff.
+
+Operational reads, metrics, quarantine and OpenAPI now require a32+byte bearer token. Public synthetic summaries are separate at /demo/summary and require explicit public mode/hostnames. For ephemeral HTTP hosting use the request-triggered read-only profile in hosting.md; never run independent acknowledged workers against disposable sinks.

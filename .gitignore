@@ -15,3 +15,7 @@ benchmark-data/
 *.key
 build/
 dist/
+
+.downloads/
+
+.vercel/

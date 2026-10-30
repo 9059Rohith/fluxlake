@@ -21,3 +21,5 @@
 | Documentation | Architecture, ADRs, security, runbook, interview | docs/ and SECURITY.md |
 
 See evidence/verification.md for exact pass counts and limitations. A mapped implementation is not evidence of managed deployment.
+
+Public exposure and request-mode source replay have additional traceability in evidence/public-host-hardening.md, with60-test PostgreSQL-backed suites on Python3.12 and3.15, actual read-only-container HTTP verification, and a fresh complete image/secret scan.

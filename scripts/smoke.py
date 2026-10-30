@@ -17,7 +17,10 @@ base = os.getenv("FLUXLAKE_URL", "http://127.0.0.1:18082")
 
 
 def get(path):
-    with urllib.request.urlopen(base + path, timeout=10) as response:
+    request = urllib.request.Request(
+        base + path, headers={"Authorization": "Bearer " + os.environ["FLUXLAKE_API_TOKEN"]}
+    )
+    with urllib.request.urlopen(request, timeout=10) as response:
         return json.load(response)
 
 

@@ -16,6 +16,8 @@ import pyarrow as pa
 import pyarrow.parquet as pq
 from filelock import FileLock
 
+from fluxlake.limits import MAX_ATTRIBUTES, MAX_EVENT_BYTES, MAX_SCHEMA_ATTRIBUTES, validate_shape
+
 IDENTIFIER = re.compile(r"^[A-Za-z0-9_-]{1,128}$")
 ATTRIBUTE = re.compile(r"^[A-Za-z][A-Za-z0-9_]{0,63}$")
 BASE = pa.schema(
@@ -138,7 +140,10 @@ class Lake:
     def _validate(event: Any) -> tuple[dict, dict]:
         if not isinstance(event, dict):
             raise ValueError("event must be an object")
+        validate_shape(event, max_nodes=4096)
         validate_utf8(event)
+        if len(canonical(event)) > MAX_EVENT_BYTES:
+            raise ValueError("Event exceeds 65536 bytes")
         for name in ("event_id", "key"):
             if not isinstance(event.get(name), str) or not IDENTIFIER.fullmatch(event[name]):
                 raise ValueError(f"{name} must be a bounded safe identifier")
@@ -164,6 +169,10 @@ class Lake:
             if data.get("status") not in ("pending", "settled", "failed"):
                 raise ValueError("invalid transaction status")
         attrs = {k: v for k, v in data.items() if k not in ("amount_minor", "currency", "status")}
+        if len(attrs) > MAX_ATTRIBUTES:
+            raise ValueError("Event exceeds 32 attributes")
+        if "synthetic" in attrs and type(attrs["synthetic"]) is not bool:
+            raise ValueError("synthetic marker must be boolean")
         for key, value in attrs.items():
             if key in {"key", "version", "occurred_at", "attributes", "event_id", "op"}:
                 raise ValueError("attribute name collides with envelope")
@@ -204,6 +213,11 @@ class Lake:
                             if state and state["version"] > event["version"]:
                                 outcome = "stale"
                             else:
+                                registered_names = {
+                                    r[0] for r in db.execute("SELECT name FROM attributes")
+                                }
+                                if len(registered_names | attrs.keys()) > MAX_SCHEMA_ATTRIBUTES:
+                                    raise ValueError("Lake schema exceeds 256 attributes")
                                 for name, value in attrs.items():
                                     typename = type(value).__name__
                                     registered = db.execute(
@@ -295,14 +309,48 @@ class Lake:
             raise ValueError("invalid snapshot pointer")
         return self.root / "silver" / name
 
-    def current(self) -> list[dict]:
-        rows = pq.read_table(self._snapshot()).to_pylist()
+    def current(self, limit: int | None = None, offset: int = 0) -> list[dict]:
+        if limit is None:
+            rows = pq.read_table(self._snapshot()).to_pylist()
+        else:
+            rows = []
+            skipped = 0
+            for batch in pq.ParquetFile(self._snapshot()).iter_batches(batch_size=500):
+                if skipped + batch.num_rows <= offset:
+                    skipped += batch.num_rows
+                    continue
+                start = max(0, offset - skipped)
+                rows.extend(
+                    batch.slice(start, min(batch.num_rows - start, limit - len(rows))).to_pylist()
+                )
+                skipped += batch.num_rows
+                if len(rows) >= limit:
+                    break
         for row in rows:
             row["attributes"] = json.loads(row.pop("attributes_json"))
             for name in list(row):
                 if name.startswith("attr_"):
                     del row[name]
         return rows
+
+    def row_count(self) -> int:
+        return pq.read_metadata(self._snapshot()).num_rows
+
+    def demo_gold(self) -> list[dict]:
+        snapshot = self._snapshot()
+        schema = pq.read_schema(snapshot)
+        if (
+            "attr_synthetic" not in schema.names
+            or schema.field("attr_synthetic").type != pa.bool_()
+        ):
+            return []
+        with duckdb.connect() as db:
+            cursor = db.execute(
+                GOLD_SQL.replace("WHERE status", "WHERE attr_synthetic = true AND status"),
+                [str(snapshot)],
+            )
+            names = [col[0] for col in cursor.description]
+            return [dict(zip(names, row)) for row in cursor.fetchall()]
 
     def gold(self) -> list[dict]:
         with duckdb.connect() as db:
@@ -316,12 +364,13 @@ class Lake:
                 "attributes": dict(db.execute("SELECT name,type FROM attributes ORDER BY name"))
             }
 
-    def quarantine(self) -> list[dict]:
+    def quarantine(self, limit: int = 500, offset: int = 0) -> list[dict]:
         with self._connect() as db:
             return [
                 dict(row)
                 for row in db.execute(
-                    "SELECT event_hash,reason FROM quarantine ORDER BY event_hash"
+                    "SELECT event_hash,reason FROM quarantine ORDER BY event_hash LIMIT ? OFFSET ?",
+                    (limit, offset),
                 )
             ]
 

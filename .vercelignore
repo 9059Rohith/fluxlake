@@ -1,0 +1,17 @@
+.venv
+.git
+.vercel
+.env
+.env.*
+!.env.example
+.downloads
+evidence
+__pycache__
+.pytest_cache
+.ruff_cache
+*.egg-info
+data
+benchmark-data
+infra/aws/.terraform
+*.tfstate*
+*.tfvars
