@@ -1,4 +1,4 @@
-# Verification evidence — 2026-10-30
+# Verification evidence â€” 2026-10-30
 
 This evidence distinguishes executed local checks from supplied managed-cloud code. Commands ran on Windows 11 with Python 3.12.0, Docker Desktop Linux Engine, and Terraform 1.13.5. No AWS resources were provisioned by this repository build.
 
@@ -48,3 +48,7 @@ See [benchmark.json](benchmark.json) and [benchmark-batched.json](benchmark-batc
 - The local profile serializes writers and rewrites all live rows per batch. It is intentionally single-node, with unbounded retained history until an explicit retention policy is applied. It does not give atomic visibility across a whole source transaction spanning multiple relay batches.
 - The audit covers locked Python runtime packages, not the base OS image, PostgreSQL image, Python interpreter or AWS-managed runtime. The development PostgreSQL image must receive normal patch/security review before production use.
 - Read endpoints are loopback-only and unauthenticated by design; authenticate all sensitive ingress before exposing it beyond the development host.
+
+## Publication and additional image check
+
+Complete source and both workflows are published at https://github.com/9059Rohith/fluxlake; the local and remote trees were compared. A separate Trivy image scan of the running fluxlake:0.1.0 image found **0 fixable HIGH/CRITICAL findings**, using a read-only cached advisory database updated **2026-10-20**. Reports: container-scan.json and container-scan-summary.txt. This is a dated image check, not assurance against newer advisories; the current Python dependency audit above remains separate.
