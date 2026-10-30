@@ -1,0 +1,48 @@
+{
+  "verified_at": "2026-10-30T14:53:29.685580+00:00",
+  "base": "https://rohith-fluxlake.vercel.app",
+  "checks": {
+    "/health": 200,
+    "/ready": 200,
+    "/demo/summary": 200,
+    "/metrics": 401,
+    "/transactions": 401,
+    "/pipeline": 401,
+    "/openapi.json": 401,
+    "unauthenticated_mutation": 401,
+    "authenticated_operational_read": 200,
+    "instance_local_writes_disabled": true
+  },
+  "summary": {
+    "synthetic": true,
+    "label": "Explicitly marked synthetic demonstration data only",
+    "capture": "PostgreSQL outbox request-triggered replay",
+    "gold": [
+      {
+        "currency": "INR",
+        "transaction_count": 10,
+        "total_minor": 126250
+      },
+      {
+        "currency": "USD",
+        "transaction_count": 9,
+        "total_minor": 102375
+      }
+    ],
+    "source_status": "request-synchronized",
+    "cache_seconds": 5
+  },
+  "request_measurement": {
+    "samples": 12,
+    "method": "nearest rank; sequential warm public HTTPS requests from India; not a load test",
+    "p50_ms": 515.939,
+    "p95_ms": 823.604,
+    "p99_ms": 823.604
+  },
+  "security": {
+    "database_identity_verified_tls": true,
+    "database_role": "isolated non-superuser",
+    "cross_project_connect_denied": true,
+    "administrative_token_public": false
+  }
+}

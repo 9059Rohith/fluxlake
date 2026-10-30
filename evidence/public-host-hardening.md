@@ -26,3 +26,7 @@ Actual PostgreSQL privilege tests prove the polling relay capability role can SE
 This is a request-synchronized synthetic demo when `FLUXLAKE_SOURCE_SYNC=request`, not a continuously running streaming worker. Complete unpruned outbox history is mandatory. Replay caps are5000 events,16 MiB total,64 KiB per event, with connection/query timeouts. PostgreSQL is durable; each HTTP instance's lake files are disposable derived state. A static host cannot run it. One API process must own each projection directory. Root provisioning/deployment and live external URLs are verified separately; this local evidence does not claim a hosted deployment or hosted CI pass.
 
 Reproduce container verification with `docker build --target verify -t fluxlake:verify .`, then run that image with `TEST_DATABASE_URL` pointing at a disposable PostgreSQL database and an `/evidence` output mount. Build the final runtime with `docker build -t fluxlake:public .`. See [hosting configuration](../docs/hosting.md) for public environment variables and source-role boundaries.
+
+## Verified hosted release
+
+The coordinating release task subsequently verified [https://rohith-fluxlake.vercel.app](https://rohith-fluxlake.vercel.app), including real rendered dashboard data, protected operational routes and the request-sync profile. See [public-release-verification.json](public-release-verification.json) and [hosted deployment details](../docs/public-deployment.md). Hosted checks are separate from the local image/tests reported above and do not imply a GitHub Actions pass.

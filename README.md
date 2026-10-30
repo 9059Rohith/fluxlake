@@ -4,9 +4,13 @@
 
 Hosted CI is currently blocked by an account-level runner restriction. [Executed local verification](evidence/verification.md) is recorded separately; no hosted pass is claimed.
 
+**Verified public synthetic demo:** [Open FluxLake](https://rohith-fluxlake.vercel.app) · [Live summary API](https://rohith-fluxlake.vercel.app/demo/summary) · [Hosted deployment details](docs/public-deployment.md) · [Release evidence](evidence/public-release-verification.json).
+
+The live service runs a Docker/OCI HTTP function on Vercel Hobby with durable PostgreSQL on Neon Free. It replays real retained outbox history on requests into disposable Parquet projections; it does not claim an always-on streaming worker. The verified source contains 22 real synthetic change events and produces 19 live rows across INR and USD.
+
 A near-real-time transaction lakehouse you can run and break locally. PostgreSQL commits each transaction change and its outbox record atomically. A Python worker delivers those records at least once; the sink keeps one correctly ordered result, immutable bronze evidence, real Parquet silver snapshots, and currency-safe gold SQL aggregates.
 
-**Local: transactional outbox polling, not WAL capture.** The optional AWS profile performs actual DMS WAL capture of the outbox into Kinesis and a Glue PySpark Iceberg `MERGE`. Managed infrastructure is supplied as deployable code; see [verification evidence](evidence/verification.md) for exactly what has run. No cloud deployment or production throughput is implied.
+**Local: transactional outbox polling, not WAL capture.** The optional AWS profile performs actual DMS WAL capture of the outbox into Kinesis and a Glue PySpark Iceberg `MERGE`. Managed infrastructure is supplied as deployable code; see [verification evidence](evidence/verification.md) for exactly what has run. The optional managed AWS stack remains unprovisioned; the verified public Vercel/Neon service uses the separate request-sync profile. No managed AWS capacity or production throughput is implied.
 
 ```mermaid
 flowchart LR
@@ -117,3 +121,5 @@ Set `FLUXLAKE_PUBLIC_DEMO=true`, exact `FLUXLAKE_ALLOWED_HOSTS`, a private `DATA
 For a **dedicated empty demo database only**, `FLUXLAKE_SEED_DEMO=true` opts into once-only source initialization: 20 real synthetic inserts, one update and one delete, committed with a durable bootstrap marker. Existing nonempty unmarked sources are refused. Multiple instances coordinate initialization through a PostgreSQL transaction advisory lock; subsequent full-history reads are independent and read-only. After bootstrap, unset that flag and replace the migration credential with a SELECT-only source identity.
 
 The digest-pinned minimal image runs Python3.15.1 with PyArrow26, DuckDB2 and Psycopg3.3.6. Detailed bounds, privilege setup, retention invariants and verification scope are in [hosting.md](docs/hosting.md) and [public hardening evidence](evidence/public-host-hardening.md).
+
+The public deployment enforces hostname-verified PostgreSQL TLS (`sslmode=verify-full`, a trusted CA file and required channel binding), uses a separate isolated non-superuser SQL identity, and was verified to deny cross-project database connections. Server-role defaults are 15 seconds for statements, 10 seconds for lock waits and 30 seconds idle in a transaction; application replay uses stricter 5-second connect/statement and 2-second lock limits. See the [hosted verification](docs/public-deployment.md) for exact scope and the 12-request warm HTTPS measurement.
