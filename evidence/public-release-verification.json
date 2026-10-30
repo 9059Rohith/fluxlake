@@ -1,5 +1,5 @@
 {
-  "verified_at": "2026-10-30T14:53:29.685580+00:00",
+  "verified_at": "2026-10-30T15:37:32.363525+00:00",
   "base": "https://rohith-fluxlake.vercel.app",
   "checks": {
     "/health": 200,
@@ -35,9 +35,9 @@
   "request_measurement": {
     "samples": 12,
     "method": "nearest rank; sequential warm public HTTPS requests from India; not a load test",
-    "p50_ms": 515.939,
-    "p95_ms": 823.604,
-    "p99_ms": 823.604
+    "p50_ms": 493.272,
+    "p95_ms": 842.558,
+    "p99_ms": 842.558
   },
   "security": {
     "database_identity_verified_tls": true,
