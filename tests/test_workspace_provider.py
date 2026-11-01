@@ -95,6 +95,7 @@ def test_gemini_opaque_signatures_survive_tool_round_trip_but_not_user_trace(gem
             == "test-only-opaque-signature"
         )
         assert json.loads(messages[-1]["content"])["counts"]["events"] == 10
+        assert json.loads(messages[-1]["content"])["source_api"] == "/api/workspace/overview"
         return {"role": "assistant", "content": "The test store contains ten events."}
 
     result = run_agent(Store(), "Count the retained events", provider=provider)
@@ -136,3 +137,30 @@ def test_quota_retries_once_when_short_and_honors_long_retry_after(gemini, monke
     assert exc.value.retry_after == 90 and sleeps == [2]
     assert retry_interval("nonsense") == 1
     assert retry_interval("NaN") == 60
+
+
+def test_authenticated_quota_response_preserves_retry_header(tmp_path, monkeypatch):
+    from fastapi.testclient import TestClient
+
+    from fluxlake.api import create_app
+
+    token = "test-only-quota-token-01234567890123456789"
+    monkeypatch.setenv("FLUXLAKE_API_TOKEN", token)
+
+    def limited(*_):
+        raise AgentQuotaExceeded(90)
+
+    monkeypatch.setattr("fluxlake.workspace_web.run_agent", limited)
+    client = TestClient(create_app(tmp_path))
+    response = client.post(
+        "/api/workspace/agent",
+        json={"question": "Inspect the retained sample"},
+        headers={"Authorization": "Bearer " + token},
+    )
+    assert response.status_code == 429
+    assert response.headers["Retry-After"] == "90"
+    assert response.headers["Cache-Control"] == "no-store"
+    assert (
+        client.post("/api/workspace/agent", json={"question": "Inspect the sample"}).status_code
+        == 401
+    )

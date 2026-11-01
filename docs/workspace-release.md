@@ -1,5 +1,7 @@
 # Public workspace release — 2026-11-01
 
+The initial AI credential limitation below was superseded by the [Gemini connection on 2026-11-02](gemini-release.md). The historical verification remains dated here.
+
 This release replaces the public synthetic dashboard with 13 connected workflow pages over the official GitHub public-events API. It preserves the separately authenticated private CDC API. The coordinated visual concept uses a slate/teal analytical workspace: dark navigation rail, light surfaces, tables, restrained accents and responsive shared controls.
 
 ## Persistence and actual workflows
