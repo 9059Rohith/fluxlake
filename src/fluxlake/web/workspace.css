@@ -17,3 +17,7 @@ footer{display:flex;align-items:center;gap:12px;border-top:1px solid var(--line)
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 
 .reverse-icon{transform:rotate(180deg)}
+@media(min-width:761px){#close-navigation,#menu-toggle{display:none}}
+@media(min-width:1151px) and (max-width:1499px){.sidebar nav a{padding-block:8px;margin-block:1px}.nav-group{padding-block:10px}.nav-group:first-child{padding-top:0}}
+.composition-chart .chart-label{font-size:12px}.composition-chart .chart-value{font-size:12px}.composition-chart .chart-grid text{font-size:11px}
+@media(max-width:760px){.composition-chart .chart-label{font-size:20px}.composition-chart .chart-value{font-size:18px}.composition-chart .chart-grid text{font-size:17px}.rank-chart .chart-label{font-size:16px}.rank-chart .chart-value{font-size:18px}.drift-plot .chart-label,.drift-plot .chart-grid text{font-size:17px}}

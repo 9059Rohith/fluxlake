@@ -1,0 +1,307 @@
+{
+  "checked_at": "2026-11-01T20:17:49.657594+00:00",
+  "base_url": "https://rohith-fluxlake.vercel.app",
+  "page_count": 13,
+  "checks": [
+    {
+      "path": "/api/workspace/agent",
+      "method": "POST anonymous malformed body",
+      "status": 401
+    },
+    {
+      "path": "/api/workspace/agent/status",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/bronze?limit=5",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/drift",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/events/18822217915",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/export.csv",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/gold?group=event_type",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/ingest",
+      "method": "POST anonymous malformed body",
+      "status": 401
+    },
+    {
+      "path": "/api/workspace/migrate",
+      "method": "POST anonymous malformed body",
+      "status": 401
+    },
+    {
+      "path": "/api/workspace/overview",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/quarantine",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/runs",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/schema",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/silver?event_type=PullRequestEvent",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/silver?limit=5",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/silver?q=18822217915",
+      "status": 200
+    },
+    {
+      "path": "/api/workspace/sources",
+      "status": 200
+    },
+    {
+      "path": "/demo/summary",
+      "status": 410
+    },
+    {
+      "path": "/gold",
+      "status": 401
+    },
+    {
+      "path": "/metrics",
+      "status": 401
+    },
+    {
+      "path": "/openapi.json",
+      "status": 401
+    },
+    {
+      "path": "/pipeline",
+      "status": 401
+    },
+    {
+      "path": "/quarantine",
+      "status": 401
+    },
+    {
+      "path": "/schema",
+      "status": 401
+    },
+    {
+      "path": "/transactions",
+      "status": 401
+    },
+    {
+      "path": "/workspace/access",
+      "status": 200
+    },
+    {
+      "path": "/workspace/agent",
+      "status": 200
+    },
+    {
+      "path": "/workspace/bronze",
+      "status": 200
+    },
+    {
+      "path": "/workspace/drift",
+      "status": 200
+    },
+    {
+      "path": "/workspace/gold",
+      "status": 200
+    },
+    {
+      "path": "/workspace/ingestion",
+      "status": 200
+    },
+    {
+      "path": "/workspace/lineage",
+      "status": 200
+    },
+    {
+      "path": "/workspace/overview",
+      "status": 200
+    },
+    {
+      "path": "/workspace/quarantine",
+      "status": 200
+    },
+    {
+      "path": "/workspace/runs",
+      "status": 200
+    },
+    {
+      "path": "/workspace/schema",
+      "status": 200
+    },
+    {
+      "path": "/workspace/silver",
+      "status": 200
+    },
+    {
+      "path": "/workspace/sources",
+      "status": 200
+    }
+  ],
+  "actual_counts": {
+    "events": 200,
+    "repositories": 198,
+    "actors": 164,
+    "event_types": 4,
+    "earliest_event": "2026-10-30T05:53:51+00:00",
+    "latest_event": "2026-11-01T18:08:20+00:00",
+    "bronze_events": 200,
+    "bronze_bytes": 133426,
+    "quarantined": 0,
+    "run_count": 2
+  },
+  "source": {
+    "id": "github-public-events",
+    "name": "GitHub public events",
+    "endpoint": "https://api.github.com/events?per_page=100",
+    "docs": "https://docs.github.com/en/rest/activity/events#list-public-events",
+    "authentication": "Public REST endpoint; no GitHub token",
+    "mode": "Operator-triggered, up to 100 events per acquisition",
+    "latency": "GitHub documents 30 seconds to 6 hours of upstream latency",
+    "storage": "Dedicated PostgreSQL bronze, typed silver and SQL aggregates",
+    "latest_run": {
+      "id": "145d3c65-6c00-42c5-9016-8cb5486decb3",
+      "started_at": "2026-11-01T18:13:21.757873+00:00",
+      "finished_at": "2026-11-01T18:13:21.757873+00:00",
+      "status": "succeeded",
+      "source_url": "https://api.github.com/events?per_page=100",
+      "fetched": 100,
+      "inserted": 100,
+      "duplicates": 0,
+      "quarantined": 0,
+      "response_sha256": "3982c186f011af5f26e91d2bcf5171ccfd4da5e628bce87475e8d1aabbc89ae9",
+      "http_status": 200,
+      "rate_remaining": 53,
+      "poll_seconds": 60,
+      "error": null,
+      "duration_ms": 752
+    }
+  },
+  "latest_run": {
+    "id": "145d3c65-6c00-42c5-9016-8cb5486decb3",
+    "started_at": "2026-11-01T18:13:21.757873+00:00",
+    "finished_at": "2026-11-01T18:13:21.757873+00:00",
+    "status": "succeeded",
+    "source_url": "https://api.github.com/events?per_page=100",
+    "fetched": 100,
+    "inserted": 100,
+    "duplicates": 0,
+    "quarantined": 0,
+    "response_sha256": "3982c186f011af5f26e91d2bcf5171ccfd4da5e628bce87475e8d1aabbc89ae9",
+    "http_status": 200,
+    "rate_remaining": 53,
+    "poll_seconds": 60,
+    "error": null,
+    "duration_ms": 752
+  },
+  "drift": {
+    "status": "compared",
+    "runs": [
+      {
+        "id": "145d3c65-6c00-42c5-9016-8cb5486decb3",
+        "started_at": "2026-11-01T18:13:21.757873+00:00",
+        "inserted": 100
+      },
+      {
+        "id": "59208a2d-4af2-4ad0-a056-7b7c7fbe598b",
+        "started_at": "2026-11-01T18:10:11.080641+00:00",
+        "inserted": 100
+      }
+    ],
+    "baseline": "59208a2d-4af2-4ad0-a056-7b7c7fbe598b",
+    "candidate": "145d3c65-6c00-42c5-9016-8cb5486decb3",
+    "baseline_n": 100,
+    "candidate_n": 100,
+    "js_bits": 0.05346767300105157,
+    "rows": [
+      {
+        "event_type": "CreateEvent",
+        "baseline": 12,
+        "candidate": 10,
+        "baseline_share": 0.12,
+        "candidate_share": 0.1
+      },
+      {
+        "event_type": "DeleteEvent",
+        "baseline": 1,
+        "candidate": 14,
+        "baseline_share": 0.01,
+        "candidate_share": 0.14
+      },
+      {
+        "event_type": "PullRequestEvent",
+        "baseline": 4,
+        "candidate": 2,
+        "baseline_share": 0.04,
+        "candidate_share": 0.02
+      },
+      {
+        "event_type": "PushEvent",
+        "baseline": 83,
+        "candidate": 74,
+        "baseline_share": 0.83,
+        "candidate_share": 0.74
+      }
+    ],
+    "caveat": "Descriptive Jensen\u2013Shannon distance in bits, 0\u20131. Samples are correlated and incomplete; no significance or global-change claim."
+  },
+  "quarantine_count": 0,
+  "evidence_event_id": "18822217915",
+  "canonical_hash_verified": true,
+  "csv_rows": 200,
+  "provider": {
+    "configured": true,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Google Gemini",
+    "access": "Public demo: 3 requests per 10 minutes per client; shared 2 per minute and 30 per day. Operator endpoint remains authenticated.",
+    "data_scope": "Public GitHub event evidence and the operator question only; no private CDC data or uploads",
+    "quota": "Free-tier quotas apply; rate limits return an explicit retry interval",
+    "read_only": true,
+    "max_tool_calls": 6,
+    "reason": null,
+    "demo_endpoint": "/api/workspace/agent/demo",
+    "demo_limits": {
+      "per_client": {
+        "requests": 3,
+        "seconds": 600
+      },
+      "shared_minute": {
+        "requests": 2,
+        "seconds": 60
+      },
+      "shared_day": {
+        "requests": 30,
+        "seconds": 86400
+      }
+    },
+    "public_demo_configured": true,
+    "client_identity_source": "vercel-overwritten-x-forwarded-for",
+    "vercel_runtime": true
+  },
+  "limitations": [
+    "Incomplete operator-acquired GitHub sample",
+    "No live provider verification without authorized credentials",
+    "HTTP smoke is separate from database fault/concurrency validation; see workspace-postgres-junit.xml"
+  ]
+}
