@@ -58,7 +58,7 @@ def provider_status():
         else "OpenAI"
         if provider == "openai"
         else "Unsupported provider",
-        "access": "Operator bearer required; six read-only tool calls maximum",
+        "access": "Public demo: 3 requests per 10 minutes per client; shared 2 per minute and 30 per day. Operator endpoint remains authenticated.",
         "data_scope": "Public GitHub event evidence and the operator question only; no private CDC data or uploads",
         "quota": "Free-tier quotas apply; rate limits return an explicit retry interval"
         if provider == "gemini"
@@ -202,7 +202,8 @@ def execute_tool(store, name, arguments):
     raise ValueError("Tool or arguments are not authorized")
 
 
-def run_agent(store, question, provider=call_provider):
+def run_agent(store, question, provider=None):
+    provider = provider or call_provider
     if not provider_status()["configured"]:
         raise AgentUnavailable("AI provider is not configured. No model answer has been generated.")
     messages = [

@@ -32,3 +32,10 @@ CREATE TABLE IF NOT EXISTS public.flux_public_schema (
   last_seen timestamptz NOT NULL DEFAULT now(), observations integer NOT NULL DEFAULT 1,
   PRIMARY KEY(path,value_type)
 );
+CREATE TABLE IF NOT EXISTS public.flux_public_demo_limits (
+  bucket_key text PRIMARY KEY,
+  window_start bigint NOT NULL,
+  attempts integer NOT NULL CHECK (attempts >= 0),
+  expires_at bigint NOT NULL
+);
+CREATE INDEX IF NOT EXISTS flux_public_demo_expiry ON public.flux_public_demo_limits(expires_at);

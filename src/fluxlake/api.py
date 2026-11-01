@@ -120,16 +120,18 @@ def create_app(root: Path | str | None = None) -> FastAPI:
             "/api/workspace/ingest",
             "/api/workspace/agent",
             "/api/workspace/migrate",
+            "/api/workspace/agent/demo",
         }:
-            try:
-                authorize(request.headers.get("authorization", ""))
-            except HTTPException as exc:
-                return secure(
-                    JSONResponse(
-                        {"detail": exc.detail}, status_code=exc.status_code, headers=exc.headers
-                    ),
-                    request,
-                )
+            if request.url.path != "/api/workspace/agent/demo":
+                try:
+                    authorize(request.headers.get("authorization", ""))
+                except HTTPException as exc:
+                    return secure(
+                        JSONResponse(
+                            {"detail": exc.detail}, status_code=exc.status_code, headers=exc.headers
+                        ),
+                        request,
+                    )
             body = bytearray()
             try:
                 async with asyncio.timeout(DRIFT_BODY_TIMEOUT):

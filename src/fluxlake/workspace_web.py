@@ -2,12 +2,22 @@
 
 from __future__ import annotations
 
+import os
 from pathlib import Path
 from typing import Literal
 
-from fastapi import Depends, HTTPException, Query
+from fastapi import Depends, HTTPException, Query, Request
 from fastapi.responses import HTMLResponse, Response
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
+
+from fluxlake.public_demo import (
+    POLICY,
+    DemoBudgetUnavailable,
+    DemoLimitExceeded,
+    PersistentDemoLimiter,
+    check_origin,
+    request_identity,
+)
 
 from fluxlake.workspace import IngestionBusy, PublicWorkspace, WorkspaceUnavailable
 from fluxlake.workspace_agent import (
@@ -81,7 +91,7 @@ PAGES = {
     "access": (
         "Operator access",
         "Connect your operator session.",
-        "Public exploration is open. Acquisition and AI investigations require the existing private bearer token.",
+        "Public exploration is open. Acquisition and private operating tools require the existing bearer token.",
     ),
 }
 
@@ -89,6 +99,19 @@ PAGES = {
 class AgentQuestion(BaseModel):
     model_config = ConfigDict(extra="forbid", strict=True)
     question: str = Field(min_length=5, max_length=1200)
+
+
+class PublicAgentQuestion(BaseModel):
+    model_config = ConfigDict(extra="forbid", strict=True)
+    question: str = Field(min_length=5, max_length=600)
+
+    @field_validator("question")
+    @classmethod
+    def meaningful_question(cls, value):
+        value = value.strip()
+        if len(value) < 5:
+            raise ValueError("Ask a question about the retained public sample")
+        return value
 
 
 def page_html(key):
@@ -125,6 +148,10 @@ def page_html(key):
 def install_workspace(app, authorize):
     store = PublicWorkspace()
     app.state.public_workspace = store
+    app.state.public_demo_limiter = PersistentDemoLimiter(
+        store.database_url,
+        sqlite_path=os.getenv("FLUXLAKE_DEMO_RATE_SQLITE") if os.getenv("VERCEL") != "1" else None,
+    )
 
     def query(operation):
         try:
@@ -201,7 +228,15 @@ def install_workspace(app, authorize):
 
     @app.get("/api/workspace/agent/status")
     def agent_status():
-        return provider_status()
+        return {
+            **provider_status(),
+            "demo_endpoint": "/api/workspace/agent/demo",
+            "demo_limits": POLICY,
+            "client_identity_source": "vercel-overwritten-x-forwarded-for"
+            if os.getenv("VERCEL") == "1"
+            else "socket-peer",
+            "vercel_runtime": os.getenv("VERCEL") == "1",
+        }
 
     @app.post("/api/workspace/ingest", dependencies=[Depends(authorize)])
     def ingest():
@@ -222,6 +257,29 @@ def install_workspace(app, authorize):
     def agent(question: AgentQuestion):
         try:
             return run_agent(store, question.question)
+        except AgentQuotaExceeded as exc:
+            raise HTTPException(
+                429, str(exc), headers={"Retry-After": str(exc.retry_after)}
+            ) from None
+        except AgentUnavailable as exc:
+            raise HTTPException(503, str(exc)) from None
+
+    @app.post("/api/workspace/agent/demo")
+    def public_agent(question: PublicAgentQuestion, request: Request):
+        check_origin(request)
+        identity = request_identity(request)
+        try:
+            budget = app.state.public_demo_limiter.reserve(identity)
+        except DemoLimitExceeded as exc:
+            raise HTTPException(
+                429, str(exc), headers={"Retry-After": str(exc.retry_after)}
+            ) from None
+        except DemoBudgetUnavailable as exc:
+            raise HTTPException(503, str(exc)) from None
+        # Reservation occurs before any model call; failed provider attempts also
+        # consume a slot. Public tools and output budgets are the same bounded loop.
+        try:
+            return {**run_agent(store, question.question), "demo": True, "demo_budget": budget}
         except AgentQuotaExceeded as exc:
             raise HTTPException(
                 429, str(exc), headers={"Retry-After": str(exc.retry_after)}
