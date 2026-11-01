@@ -1,0 +1,25 @@
+{
+  "verified_at": "2026-11-01T18:47:13.427367+00:00",
+  "url": "https://rohith-fluxlake.vercel.app/workspace/agent",
+  "method": "Operator-authenticated real browser form submission",
+  "provider": "Google Gemini",
+  "model": "gemini-3.5-flash-lite",
+  "tools": [
+    "lake_overview",
+    "aggregate_events"
+  ],
+  "observed_ms": 2351,
+  "actual_events": 200,
+  "event_counts": {
+    "PushEvent": 157,
+    "CreateEvent": 22,
+    "DeleteEvent": 15,
+    "PullRequestEvent": 6
+  },
+  "citations": [
+    "/api/workspace/overview",
+    "/api/workspace/gold?group=event_type"
+  ],
+  "private_session_cleared": true,
+  "screenshot": "gemini-browser.png"
+}
