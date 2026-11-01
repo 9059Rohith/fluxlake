@@ -6,6 +6,8 @@
 
 FluxLake is a 13-page analytical workspace over real public GitHub events. An operator acquisition fetches up to 100 records from the official fixed-origin REST endpoint, then atomically publishes original JSON, typed silver records, observed schema and a durable run receipt in PostgreSQL. Public exploration never reads private payment CDC tables. The former synthetic public summary is retired with HTTP 410.
 
+The dark observatory interface includes native count/share and distribution charts, a keyboard command palette that searches retained records, sortable explorers, CSV export and an original-evidence drawer. The anonymous analyst formats real answers with inspectable tool evidence. [Design concepts and component system](docs/observatory-design.md) document the visual direction and factual corrections made during implementation.
+
 ## Workflows
 
 | Page | Working capability |

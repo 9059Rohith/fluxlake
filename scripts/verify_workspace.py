@@ -118,7 +118,7 @@ def main():
         "provider": status,
         "limitations": [
             "Incomplete operator-acquired GitHub sample",
-            "No live provider verification without authorized credentials",
+            "This HTTP smoke does not consume model quota; actual model/browser evidence is recorded separately",
             "HTTP smoke is separate from database fault/concurrency validation; see workspace-postgres-junit.xml",
         ],
     }
