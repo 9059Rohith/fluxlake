@@ -22,6 +22,8 @@ def demo(tmp_path, monkeypatch):
     monkeypatch.setenv("FLUXLAKE_DEMO_RATE_SQLITE", str(tmp_path / "rate.sqlite"))
     monkeypatch.setenv("FLUXLAKE_AI_KEY", "test-only-provider")
     monkeypatch.setenv("FLUXLAKE_AI_MODEL", "test-only-model")
+    monkeypatch.setenv("GEMINI_API_KEY", "test-only-free-provider")
+    monkeypatch.setenv("AI_PROVIDER", "gemini")
     app = create_app(tmp_path / "lake")
     calls = []
 
@@ -89,6 +91,24 @@ def test_public_input_and_origin_fail_before_provider(demo):
     assert client.post("/api/workspace/agent/demo", content="x" * 4097).status_code == 413
     assert not calls
     assert post(client, headers={"Origin": "http://testserver"}).status_code == 200
+
+
+def test_public_never_uses_paid_legacy_adapter_but_private_adapter_still_works(demo, monkeypatch):
+    app, client, calls = demo
+    monkeypatch.delenv("GEMINI_API_KEY", raising=False)
+    monkeypatch.setenv("AI_PROVIDER", "openai")
+    response = post(client)
+    assert response.status_code == 503
+    assert not calls
+    with sqlite3.connect(app.state.public_demo_limiter.sqlite_path) as conn:
+        assert conn.execute("SELECT count(*) FROM flux_public_demo_limits").fetchone()[0] == 0
+    private = client.post(
+        "/api/workspace/agent",
+        json={"question": "Count the retained public sample"},
+        headers={"Authorization": "Bearer " + TOKEN},
+    )
+    assert private.status_code == 200 and private.json()["provider"] == "OpenAI"
+    assert calls == ["required", "auto"]
 
 
 def test_forwarded_headers_are_trusted_only_on_vercel(demo, monkeypatch):
@@ -185,6 +205,8 @@ def test_global_daily_budget_and_database_failure_fail_closed(tmp_path, monkeypa
     monkeypatch.setenv("FLUXLAKE_API_TOKEN", TOKEN)
     monkeypatch.delenv("DATABASE_URL", raising=False)
     monkeypatch.delenv("FLUXLAKE_DEMO_RATE_SQLITE", raising=False)
+    monkeypatch.setenv("GEMINI_API_KEY", "test-only-free-provider")
+    monkeypatch.setenv("AI_PROVIDER", "gemini")
     monkeypatch.setattr(
         "fluxlake.workspace_web.run_agent",
         lambda *_: pytest.fail("Provider must not run when budget storage is unavailable"),

@@ -71,6 +71,11 @@ def provider_status():
     }
 
 
+def public_gemini_configured():
+    # Public free capacity must never activate the legacy paid-account adapter.
+    return bool(os.getenv("GEMINI_API_KEY", "").strip()) and provider_configuration()[0] == "gemini"
+
+
 TOOLS = [
     {
         "type": "function",

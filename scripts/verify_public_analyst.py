@@ -24,7 +24,11 @@ def main():
     headers = {"Origin": origin}
     if args.phase == "first":
         status = httpx.get(origin + "/api/workspace/agent/status", timeout=45).json()
-        assert status["configured"] and status["vercel_runtime"] is True
+        assert (
+            status["configured"]
+            and status["public_demo_configured"]
+            and status["vercel_runtime"] is True
+        )
         assert status["client_identity_source"] == "vercel-overwritten-x-forwarded-for"
         controls = []
         for payload, extra_headers, expected in [

@@ -24,6 +24,7 @@ from fluxlake.workspace_agent import (
     AgentQuotaExceeded,
     AgentUnavailable,
     provider_status,
+    public_gemini_configured,
     run_agent,
 )
 
@@ -232,6 +233,7 @@ def install_workspace(app, authorize):
             **provider_status(),
             "demo_endpoint": "/api/workspace/agent/demo",
             "demo_limits": POLICY,
+            "public_demo_configured": public_gemini_configured(),
             "client_identity_source": "vercel-overwritten-x-forwarded-for"
             if os.getenv("VERCEL") == "1"
             else "socket-peer",
@@ -267,6 +269,10 @@ def install_workspace(app, authorize):
     @app.post("/api/workspace/agent/demo")
     def public_agent(question: PublicAgentQuestion, request: Request):
         check_origin(request)
+        if not public_gemini_configured():
+            raise HTTPException(
+                503, "The free public Gemini analyst is unavailable. No paid provider is used."
+            )
         identity = request_identity(request)
         try:
             budget = app.state.public_demo_limiter.reserve(identity)
