@@ -119,7 +119,7 @@ def main():
         "limitations": [
             "Incomplete operator-acquired GitHub sample",
             "No live provider verification without authorized credentials",
-            "27 local PostgreSQL tests skipped without disposable test database",
+            "HTTP smoke is separate from database fault/concurrency validation; see workspace-postgres-junit.xml",
         ],
     }
     Path(args.output).write_text(

@@ -290,7 +290,15 @@
   },
   "limitations": [
     "Incomplete operator-acquired GitHub sample",
-    "No live provider verification without authorized credentials",
-    "27 local PostgreSQL tests skipped without disposable test database"
-  ]
+    "No live provider verification without authorized credentials"
+  ],
+  "local_database_validation": {
+    "tests": 158,
+    "failures": 0,
+    "skips": 0,
+    "duration_seconds": 54.45,
+    "database": "Dedicated disposable local PostgreSQL on 127.0.0.1:55433",
+    "production_used_for_destructive_tests": false,
+    "evidence": "evidence/workspace-postgres-junit.xml"
+  }
 }

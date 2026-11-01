@@ -235,9 +235,10 @@ def test_request_profile_exposes_actual_synthetic_source_without_fixture_writes(
     )
     client = TestClient(create_app(tmp_path))
     assert client.get("/ready").status_code == 200
-    summary = client.get("/demo/summary").json()
-    assert summary["source_status"] == "request-synchronized"
-    assert "request" in summary["capture"]
+    assert client.get("/demo/summary").status_code == 410
+    pipeline = client.get("/pipeline", headers={"Authorization": "Bearer " + token}).json()
+    assert pipeline["status"] == "request-synchronized"
+    assert "request" in pipeline["profile"]
     rows = client.get("/transactions", headers={"Authorization": "Bearer " + token}).json()
     assert [r for r in rows if r["key"] == key][0]["amount_minor"] == 11
     assert (
@@ -290,16 +291,23 @@ def test_opt_in_synthetic_bootstrap_is_real_and_once_per_empty_database(db, tmp_
         monkeypatch.setenv("FLUXLAKE_SEED_DEMO", "true")
         monkeypatch.setenv("FLUXLAKE_PUBLIC_DEMO", "true")
         monkeypatch.setenv("FLUXLAKE_ALLOWED_HOSTS", "testserver")
+        token = "test-only-fluxlake-token-0123456789"
+        monkeypatch.setenv("FLUXLAKE_API_TOKEN", token)
+        auth = {"Authorization": "Bearer " + token}
         first = TestClient(create_app(tmp_path / "one"))
         assert first.get("/ready").status_code == 200
-        summary = first.get("/demo/summary").json()
-        assert summary["gold"] == [
+        assert first.get("/demo/summary").status_code == 410
+        gold = first.get("/gold", headers=auth).json()
+        assert sorted(gold, key=lambda row: row["currency"]) == [
             {"currency": "INR", "transaction_count": 10, "total_minor": 126250},
             {"currency": "USD", "transaction_count": 9, "total_minor": 102375},
         ]
         second = TestClient(create_app(tmp_path / "two"))
         assert second.get("/ready").status_code == 200
-        assert second.get("/demo/summary").json()["gold"] == summary["gold"]
+        assert second.get("/demo/summary").status_code == 410
+        assert sorted(
+            second.get("/gold", headers=auth).json(), key=lambda row: row["currency"]
+        ) == sorted(gold, key=lambda row: row["currency"])
         with psycopg.connect(url, autocommit=True) as source:
             assert source.execute("SELECT count(*) FROM transaction_outbox").fetchone()[0] == 22
             assert (

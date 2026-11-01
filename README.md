@@ -57,7 +57,7 @@ The constant-time bearer boundary, exact-host middleware, CSP without inline scr
 node --check src/fluxlake/web/workspace.js
 ```
 
-Current local verification: **128 passed, 27 PostgreSQL integration tests explicitly skipped** because no disposable test database was reachable. The pinned dependency audit found no known vulnerabilities. [Current release verification](docs/workspace-release.md) separates real cloud source/database checks from unit/protocol tests. Historical evidence is separately dated.
+Current local verification: **158 passed, zero failures, zero skips**, including the complete PostgreSQL fault/concurrency suite and three public-workspace database integration tests. These ran against a newly created disposable local database on port 55433; production data was never used for destructive tests. The pinned dependency audit found no known vulnerabilities. [Current release verification](docs/workspace-release.md) separates real cloud source/database checks from unit/protocol tests. Historical evidence is separately dated.
 
 The public workspace shares the existing isolated application database login with private CDC. Separate read/write principals, managed operator identity/RBAC and scheduled acquisition remain production hardening work. Operator tokens live in tab session storage after explicit connect and should be cleared on shared devices. No payment processing or simulated checkout is added.
 
