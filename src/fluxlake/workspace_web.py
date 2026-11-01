@@ -10,7 +10,12 @@ from fastapi.responses import HTMLResponse, Response
 from pydantic import BaseModel, ConfigDict, Field
 
 from fluxlake.workspace import IngestionBusy, PublicWorkspace, WorkspaceUnavailable
-from fluxlake.workspace_agent import AgentUnavailable, provider_status, run_agent
+from fluxlake.workspace_agent import (
+    AgentQuotaExceeded,
+    AgentUnavailable,
+    provider_status,
+    run_agent,
+)
 
 PAGES = {
     "overview": (
@@ -217,6 +222,10 @@ def install_workspace(app, authorize):
     def agent(question: AgentQuestion):
         try:
             return run_agent(store, question.question)
+        except AgentQuotaExceeded as exc:
+            raise HTTPException(
+                429, str(exc), headers={"Retry-After": str(exc.retry_after)}
+            ) from None
         except AgentUnavailable as exc:
             raise HTTPException(503, str(exc)) from None
 

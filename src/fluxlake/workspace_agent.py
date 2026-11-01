@@ -3,8 +3,12 @@
 from __future__ import annotations
 
 import json
+import math
 import os
 import time
+from datetime import datetime, timezone
+from email.utils import parsedate_to_datetime
+from urllib.error import HTTPError
 from urllib.request import Request, build_opener
 
 from fluxlake.workspace import NoRedirect, WorkspaceUnavailable
@@ -14,14 +18,56 @@ class AgentUnavailable(RuntimeError):
     pass
 
 
+class AgentQuotaExceeded(AgentUnavailable):
+    def __init__(self, retry_after):
+        self.retry_after = retry_after
+        super().__init__(
+            "AI provider free quota is temporarily exhausted. Retry after the indicated interval; no answer was fabricated."
+        )
+
+
+def provider_configuration():
+    provider = os.getenv(
+        "AI_PROVIDER", "gemini" if os.getenv("GEMINI_API_KEY") else "openai"
+    ).lower()
+    if provider == "gemini":
+        return (
+            provider,
+            "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions",
+            os.getenv("GEMINI_API_KEY", ""),
+            os.getenv("AI_MODEL") or os.getenv("FLUXLAKE_AI_MODEL") or "gemini-3.5-flash-lite",
+        )
+    if provider == "openai":
+        return (
+            provider,
+            "https://api.openai.com/v1/chat/completions",
+            os.getenv("FLUXLAKE_AI_KEY", ""),
+            os.getenv("FLUXLAKE_AI_MODEL", ""),
+        )
+    return (provider, "", "", "")
+
+
 def provider_status():
+    provider, _, key, model = provider_configuration()
+    configured = bool(key and model)
     return {
-        "configured": bool(os.getenv("FLUXLAKE_AI_KEY") and os.getenv("FLUXLAKE_AI_MODEL")),
-        "model": os.getenv("FLUXLAKE_AI_MODEL") or None,
-        "provider": "OpenAI",
+        "configured": configured,
+        "model": model or None,
+        "provider": "Google Gemini"
+        if provider == "gemini"
+        else "OpenAI"
+        if provider == "openai"
+        else "Unsupported provider",
+        "access": "Operator bearer required; six read-only tool calls maximum",
+        "data_scope": "Public GitHub event evidence and the operator question only; no private CDC data or uploads",
+        "quota": "Free-tier quotas apply; rate limits return an explicit retry interval"
+        if provider == "gemini"
+        else "Provider account limits apply",
         "read_only": True,
         "max_tool_calls": 6,
-        "reason": "Configure FLUXLAKE_AI_KEY and FLUXLAKE_AI_MODEL to enable actual model reasoning",
+        "reason": None
+        if configured
+        else "Configure GEMINI_API_KEY with AI_PROVIDER=gemini, or FLUXLAKE_AI_KEY and FLUXLAKE_AI_MODEL for OpenAI",
     }
 
 
@@ -73,34 +119,64 @@ TOOLS = [
 ]
 
 
+def retry_interval(value):
+    try:
+        seconds = float(value)
+    except (ValueError, TypeError):
+        try:
+            seconds = (parsedate_to_datetime(value) - datetime.now(timezone.utc)).total_seconds()
+        except (ValueError, TypeError, OverflowError):
+            seconds = 1
+    if not math.isfinite(seconds):
+        seconds = 60
+    return max(1, min(3600, math.ceil(seconds)))
+
+
 def call_provider(messages, tools, tool_choice="auto"):
+    provider, endpoint, key, model = provider_configuration()
+    if not key or not model or not endpoint:
+        raise AgentUnavailable("AI provider is not configured. No model answer has been generated.")
+    payload = {
+        "model": model,
+        "messages": messages,
+        "tools": tools,
+        "tool_choice": tool_choice,
+        "max_tokens" if provider == "gemini" else "max_completion_tokens": 1500
+        if provider == "gemini"
+        else 1000,
+    }
     request = Request(
-        "https://api.openai.com/v1/chat/completions",
-        data=json.dumps(
-            {
-                "model": os.environ["FLUXLAKE_AI_MODEL"],
-                "messages": messages,
-                "tools": tools,
-                "tool_choice": tool_choice,
-                "max_completion_tokens": 1000,
-            }
-        ).encode(),
+        endpoint,
+        data=json.dumps(payload).encode(),
         headers={
-            "Authorization": "Bearer " + os.environ["FLUXLAKE_AI_KEY"],
+            "Authorization": "Bearer " + key,
             "Content-Type": "application/json",
         },
         method="POST",
     )
-    try:
-        with build_opener(NoRedirect).open(request, timeout=18) as response:
-            raw = response.read(256_001)
-            if len(raw) > 256_000:
-                raise ValueError()
-            return json.loads(raw)["choices"][0]["message"]
-    except Exception:
-        raise AgentUnavailable(
-            "AI provider request failed; no generated answer is available"
-        ) from None
+    for attempt in range(2):
+        try:
+            with build_opener(NoRedirect).open(request, timeout=18) as response:
+                raw = response.read(256_001)
+                if len(raw) > 256_000:
+                    raise ValueError()
+                return json.loads(raw)["choices"][0]["message"]
+        except HTTPError as exc:
+            if exc.code == 429:
+                delay = retry_interval(exc.headers.get("Retry-After"))
+                exc.close()
+                if attempt == 0 and delay <= 2:
+                    time.sleep(delay)
+                    continue
+                raise AgentQuotaExceeded(delay) from None
+            exc.close()
+            raise AgentUnavailable(
+                "AI provider rejected the request or is unavailable; no generated answer is available"
+            ) from None
+        except Exception:
+            raise AgentUnavailable(
+                "AI provider request failed; no generated answer is available"
+            ) from None
 
 
 def execute_tool(store, name, arguments):
@@ -160,16 +236,17 @@ def run_agent(store, question, provider=call_provider):
             return {
                 "answer": content[:12000],
                 "trace": trace,
-                "model": os.getenv("FLUXLAKE_AI_MODEL"),
+                "model": provider_status()["model"],
+                "provider": provider_status()["provider"],
                 "tool_calls": calls,
                 "read_only": True,
                 "duration_ms": round((time.monotonic() - began) * 1000),
             }
         if not isinstance(requested, list) or len(requested) + calls > 6 or step == 3:
             raise AgentUnavailable("AI investigation exceeded its six-tool budget")
-        messages.append(
-            {"role": "assistant", "content": message.get("content"), "tool_calls": requested}
-        )
+        # Gemini carries opaque thought signatures in the original assistant/tool
+        # objects. Replay them unchanged to the provider; never return them in trace.
+        messages.append(message)
         for tool in requested:
             try:
                 name = tool["function"]["name"]
