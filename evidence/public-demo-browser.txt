@@ -1,0 +1,124 @@
+- link "Skip to content":
+  - /url: "#main"
+- complementary:
+  - link "F FluxLake":
+    - /url: /
+    - generic: F
+    - text: FluxLake
+  - generic: G
+  - text: Public observatory
+  - generic: GitHub events
+  - generic: ⌄
+  - navigation "Workspace":
+    - paragraph: WORKSPACE
+    - link "◈ Overview":
+      - /url: /workspace/overview
+      - generic: ◈
+      - text: Overview
+    - link "↗ Sources":
+      - /url: /workspace/sources
+      - generic: ↗
+      - text: Sources
+    - link "↓ Ingestion":
+      - /url: /workspace/ingestion
+      - generic: ↓
+      - text: Ingestion
+    - paragraph: DATA LAYERS
+    - link "▤ Bronze archive":
+      - /url: /workspace/bronze
+      - generic: ▤
+      - text: Bronze archive
+    - link "▥ Silver explorer":
+      - /url: /workspace/silver
+      - generic: ▥
+      - text: Silver explorer
+    - link "◫ Gold analytics":
+      - /url: /workspace/gold
+      - generic: ◫
+      - text: Gold analytics
+    - paragraph: OBSERVABILITY
+    - link "⌘ Schema registry":
+      - /url: /workspace/schema
+      - generic: ⌘
+      - text: Schema registry
+    - link "≈ Distribution drift":
+      - /url: /workspace/drift
+      - generic: ≈
+      - text: Distribution drift
+    - link "◇ Quarantine":
+      - /url: /workspace/quarantine
+      - generic: ◇
+      - text: Quarantine
+    - link "◷ Run history":
+      - /url: /workspace/runs
+      - generic: ◷
+      - text: Run history
+    - link "⌁ Lineage":
+      - /url: /workspace/lineage
+      - generic: ⌁
+      - text: Lineage
+    - paragraph: INTELLIGENCE
+    - link "✧ Lake analyst":
+      - /url: /workspace/agent
+      - generic: ✧
+      - text: Lake analyst
+  - generic: Public source · real evidence
+  - link "Operator access ↗":
+    - /url: /workspace/access
+    - text: Operator access
+    - generic: ↗
+  - generic: Sampled events. Honest boundaries.
+- banner:
+  - text: Workspace
+  - generic: /
+  - strong: Lake analyst
+  - link "GitHub source ↗":
+    - /url: https://docs.github.com/en/rest/activity/events#list-public-events
+- main:
+  - heading "Ask a question. Inspect the evidence." [level=1]
+  - paragraph: A provider-backed analyst selects bounded read-only tools and shows the results behind its answer.
+  - button "Refresh current data":
+    - text: ↻
+    - generic: Refresh
+  - status
+  - generic: Connected to Google Gemini · gemini-3.5-flash-lite. No sign-in or operator token is needed for this public demo.
+  - strong: Free shared demo.
+  - text: "Up to 3 investigations per client per 10 minutes. Shared capacity: 2 per minute and 30 per UTC day. Every attempt reserves a slot; cooldowns and provider quota limits are shown honestly."
+  - heading "Investigate the public lake" [level=2]
+  - paragraph: Real model-selected tools · real GitHub evidence · no sign-in
+  - generic: What would you like to investigate?
+  - paragraph: Ask only about this public GitHub sample. Do not enter secrets or private records. Your question and selected public evidence are sent to the configured free provider.
+  - textbox "What would you like to investigate?":
+    - /placeholder: How many events are retained, and which event types appear most often?
+    - text: Use lake_overview and aggregate_events by event_type. Give exact event counts, cite source API paths, and explain the sample limitations.
+  - button "Explain this sample"
+  - button "Compare recent acquisitions"
+  - button "✧ Investigate public sample"
+  - generic: Public data only · 600 characters maximum
+  - heading "Investigation result" [level=3]
+  - generic: 2 tools · 2,319 ms
+  - generic: "- PushEvent: 157 events (Source API: /api/workspace/overview and /api/workspace/gold?group=event_type) - CreateEvent: 22 events (Source API: /api/workspace/overview and /api/workspace/gold?group=event_type) - DeleteEvent: 15 events (Source API: /api/workspace/overview and /api/workspace/gold?group=event_type) - PullRequestEvent: 6 events (Source API: /api/workspace/overview and /api/workspace/gold?group=event_type) - Total retained events in sample: 200 events across 198 repositories and 164 actors (Source API: /api/workspace/overview) - Sample limitations: The data represents only a retained sample of public GitHub events (200 total events from 2 ingestion runs) rather than a complete stream or realtime global GitHub total."
+  - heading "Evidence trace" [level=3]
+  - 'generic "lake_overview · {}"'
+  - 'generic "aggregate_events · {\"group\":\"event_type\"}"'
+  - heading "A bounded public analyst" [level=2]
+  - paragraph: Useful evidence with a predictable free allowance
+  - term: Public access
+  - definition: No operator token or account required.
+  - term: Tool access
+  - definition: Public overview, bounded event search, fixed aggregates and latest-run drift.
+  - term: Execution
+  - definition: At most 6 read-only tools across 4 model turns.
+  - term: Privacy
+  - definition: Client addresses are HMAC-hashed before quota storage. No private CDC data or uploads reach the model.
+  - term: Capacity
+  - definition: 3 per client / 10 minutes; shared 2 / minute and 30 / UTC day.
+  - term: Provider failure
+  - definition: Explicit error or cooldown. No paid fallback or canned answer.
+  - term: Operations
+  - definition: Ingestion and private operating tools remain protected.
+  - text: FluxLake
+  - generic: ·
+  - text: PostgreSQL evidence → typed events → SQL insight
+  - link "View source JSON ↗":
+    - /url: /api/workspace/overview

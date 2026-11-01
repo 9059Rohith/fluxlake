@@ -48,7 +48,7 @@ For cloud environments without direct database access, authenticated `POST /api/
 
 ## Security and verification
 
-The constant-time bearer boundary, exact-host middleware, CSP without inline scripts/styles, security headers and private CDC authorization remain. New mutations authenticate before bounded body parsing. Source acquisition is fixed to `api.github.com`, rejects redirects, and caps responses at 2 MiB and records at 64 KiB. Public SQL reads are bounded, parameterized and read-only. Aggregate columns use a fixed enum. CSV cells resist spreadsheet formula execution. UI strings and raw JSON are HTML-escaped.
+The constant-time bearer boundary, exact-host middleware, CSP without inline scripts/styles, security headers and private CDC authorization remain. Private operations authenticate before bounded body parsing. Public inference uses a separate origin, input and persistent-capacity boundary. Source acquisition is fixed to `api.github.com`, rejects redirects, and caps responses at 2 MiB and records at 64 KiB. Public SQL reads are bounded, parameterized and read-only. Aggregate columns use a fixed enum. CSV cells resist spreadsheet formula execution. UI strings and raw JSON are HTML-escaped.
 
 ```powershell
 .venv\Scripts\python -m pytest -q --junitxml=evidence/workspace-junit.xml
@@ -59,7 +59,7 @@ The constant-time bearer boundary, exact-host middleware, CSP without inline scr
 node --check src/fluxlake/web/workspace.js
 ```
 
-Recorded PostgreSQL baseline (2026-11-01): **158 passed, zero failures, zero skips**, including the complete PostgreSQL fault/concurrency suite and three public-workspace database integration tests. These ran against a newly created disposable local database on port 55433; production data was never used for destructive tests. The Gemini provider release subsequently passed 134 tests with 30 database tests explicitly skipped while Docker was stopped. Actual hosted Gemini + public database tool + grounded-answer verification is recorded in [Gemini release evidence](docs/gemini-release.md). The pinned dependency audit found no known vulnerabilities. [Current release verification](docs/workspace-release.md) separates real cloud source/database checks from unit/protocol tests. Historical evidence is separately dated.
+Current public-demo verification: **174 passed, zero failures, zero skips**, including the complete PostgreSQL fault/concurrency suite, public-workspace integration tests and persistent rate-limit concurrency checks. Tests used newly created disposable local databases on port 55433 and removed them afterward. Production data was never used for destructive tests. [Public analyst verification](docs/public-analyst-demo.md) distinguishes actual anonymous hosted model/tool/answer checks from controlled local provider tests. The pinned dependency audit found no known vulnerabilities; separately dated earlier verification remains in repository history.
 
 The public workspace shares the existing isolated application database login with private CDC. Separate read/write principals, managed operator identity/RBAC and scheduled acquisition remain production hardening work. Operator tokens live in tab session storage after explicit connect and should be cleared on shared devices. No payment processing or simulated checkout is added.
 

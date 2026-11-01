@@ -1,0 +1,310 @@
+{
+  "checked_at": "2026-11-01T19:10:05.867999+00:00",
+  "origin": "https://rohith-fluxlake.vercel.app",
+  "endpoint": "/api/workspace/agent/demo",
+  "authorization_sent": false,
+  "status": {
+    "configured": true,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Google Gemini",
+    "access": "Public demo: 3 requests per 10 minutes per client; shared 2 per minute and 30 per day. Operator endpoint remains authenticated.",
+    "data_scope": "Public GitHub event evidence and the operator question only; no private CDC data or uploads",
+    "quota": "Free-tier quotas apply; rate limits return an explicit retry interval",
+    "read_only": true,
+    "max_tool_calls": 6,
+    "reason": null,
+    "demo_endpoint": "/api/workspace/agent/demo",
+    "demo_limits": {
+      "per_client": {
+        "requests": 3,
+        "seconds": 600
+      },
+      "shared_minute": {
+        "requests": 2,
+        "seconds": 60
+      },
+      "shared_day": {
+        "requests": 30,
+        "seconds": 86400
+      }
+    },
+    "client_identity_source": "vercel-overwritten-x-forwarded-for",
+    "vercel_runtime": true
+  },
+  "controls": [
+    {
+      "status": 403,
+      "case": "cross-origin"
+    },
+    {
+      "status": 422,
+      "case": "invalid bounded request"
+    },
+    {
+      "status": 422,
+      "case": "invalid bounded request"
+    }
+  ],
+  "http_status": 200,
+  "question": "Use lake_overview and aggregate_events grouped by event_type. Report exact retained event counts with source API paths and sample limitations.",
+  "result": {
+    "answer": "- Total retained events: 200 across 198 repositories and 164 actors (Source API: /api/workspace/overview)\n- PushEvent count: 157 (Source API: /api/workspace/gold?group=event_type)\n- CreateEvent count: 22 (Source API: /api/workspace/gold?group=event_type)\n- DeleteEvent count: 15 (Source API: /api/workspace/gold?group=event_type)\n- PullRequestEvent count: 6 (Source API: /api/workspace/gold?group=event_type)\n- Sample limitations: Data is restricted to the retained sample of 200 events from recent ingestion runs and does not represent global GitHub totals, a complete stream, or a realtime feed.",
+    "trace": [
+      {
+        "tool": "lake_overview",
+        "arguments": {},
+        "source": "/api/workspace/overview",
+        "result": {
+          "counts": {
+            "events": 200,
+            "repositories": 198,
+            "actors": 164,
+            "event_types": 4,
+            "earliest_event": "2026-10-30T05:53:51+00:00",
+            "latest_event": "2026-11-01T18:08:20+00:00",
+            "bronze_events": 200,
+            "bronze_bytes": 133426,
+            "quarantined": 0,
+            "run_count": 2
+          },
+          "latest_run": {
+            "id": "145d3c65-6c00-42c5-9016-8cb5486decb3",
+            "started_at": "2026-11-01T18:13:21.757873+00:00",
+            "finished_at": "2026-11-01T18:13:21.757873+00:00",
+            "status": "succeeded",
+            "source_url": "https://api.github.com/events?per_page=100",
+            "fetched": 100,
+            "inserted": 100,
+            "duplicates": 0,
+            "quarantined": 0,
+            "response_sha256": "3982c186f011af5f26e91d2bcf5171ccfd4da5e628bce87475e8d1aabbc89ae9",
+            "http_status": 200,
+            "rate_remaining": 53,
+            "poll_seconds": 60,
+            "error": null,
+            "duration_ms": 752
+          },
+          "event_types": [
+            {
+              "event_type": "PushEvent",
+              "events": 157
+            },
+            {
+              "event_type": "CreateEvent",
+              "events": 22
+            },
+            {
+              "event_type": "DeleteEvent",
+              "events": 15
+            },
+            {
+              "event_type": "PullRequestEvent",
+              "events": 6
+            }
+          ],
+          "recent": [
+            {
+              "event_id": "18822217915",
+              "event_type": "PullRequestEvent",
+              "repository": "agadek/smart-diff",
+              "actor": "agadek",
+              "occurred_at": "2026-11-01T18:08:20+00:00",
+              "action": "opened",
+              "organization": null,
+              "run_id": "145d3c65-6c00-42c5-9016-8cb5486decb3"
+            },
+            {
+              "event_id": "18822217919",
+              "event_type": "PullRequestEvent",
+              "repository": "cocoonstack/gateway",
+              "actor": "dependabot[bot]",
+              "occurred_at": "2026-11-01T18:08:19+00:00",
+              "action": "opened",
+              "organization": "cocoonstack",
+              "run_id": "145d3c65-6c00-42c5-9016-8cb5486decb3"
+            },
+            {
+              "event_id": "18822063881",
+              "event_type": "PullRequestEvent",
+              "repository": "k2b-dev/cloud",
+              "actor": "k2b-cloud-agents[bot]",
+              "occurred_at": "2026-11-01T18:05:09+00:00",
+              "action": "merged",
+              "organization": "k2b-dev",
+              "run_id": "59208a2d-4af2-4ad0-a056-7b7c7fbe598b"
+            },
+            {
+              "event_id": "18822063872",
+              "event_type": "PullRequestEvent",
+              "repository": "driessamyn/kapper",
+              "actor": "dependabot[bot]",
+              "occurred_at": "2026-11-01T18:05:09+00:00",
+              "action": "merged",
+              "organization": null,
+              "run_id": "59208a2d-4af2-4ad0-a056-7b7c7fbe598b"
+            },
+            {
+              "event_id": "18822063878",
+              "event_type": "PullRequestEvent",
+              "repository": "Starktastic-Homelab/apps",
+              "actor": "renovate[bot]",
+              "occurred_at": "2026-11-01T18:05:08+00:00",
+              "action": "merged",
+              "organization": "Starktastic-Homelab",
+              "run_id": "59208a2d-4af2-4ad0-a056-7b7c7fbe598b"
+            },
+            {
+              "event_id": "18822063864",
+              "event_type": "PullRequestEvent",
+              "repository": "tutur3u/platform",
+              "actor": "vhpx",
+              "occurred_at": "2026-11-01T18:04:46+00:00",
+              "action": "labeled",
+              "organization": "tutur3u",
+              "run_id": "59208a2d-4af2-4ad0-a056-7b7c7fbe598b"
+            },
+            {
+              "event_id": "25855852067",
+              "event_type": "PushEvent",
+              "repository": "LCahst/quiet-space",
+              "actor": "LCahst",
+              "occurred_at": "2026-10-31T08:27:35+00:00",
+              "action": null,
+              "organization": null,
+              "run_id": "145d3c65-6c00-42c5-9016-8cb5486decb3"
+            },
+            {
+              "event_id": "25855851970",
+              "event_type": "PushEvent",
+              "repository": "trendvidia/protowire-csharp",
+              "actor": "trendvidia",
+              "occurred_at": "2026-10-31T08:27:35+00:00",
+              "action": null,
+              "organization": null,
+              "run_id": "145d3c65-6c00-42c5-9016-8cb5486decb3"
+            }
+          ],
+          "source_url": "https://api.github.com/events?per_page=100",
+          "source_docs": "https://docs.github.com/en/rest/activity/events#list-public-events",
+          "scope": "Sampled public GitHub events; not a complete stream or a realtime feed",
+          "observed_at": "2026-11-01T19:10:05.549296+00:00"
+        }
+      },
+      {
+        "tool": "aggregate_events",
+        "arguments": {
+          "group": "event_type"
+        },
+        "source": "/api/workspace/gold?group=event_type",
+        "result": {
+          "group": "event_type",
+          "rows": [
+            {
+              "dimension": "PushEvent",
+              "events": 157,
+              "actors": 125,
+              "repositories": 155,
+              "first_event": "2026-10-30T05:53:51+00:00",
+              "last_event": "2026-10-31T08:27:35+00:00"
+            },
+            {
+              "dimension": "CreateEvent",
+              "events": 22,
+              "actors": 22,
+              "repositories": 22,
+              "first_event": "2026-10-30T05:53:51+00:00",
+              "last_event": "2026-10-31T08:24:51+00:00"
+            },
+            {
+              "dimension": "DeleteEvent",
+              "events": 15,
+              "actors": 15,
+              "repositories": 15,
+              "first_event": "2026-10-30T05:56:53+00:00",
+              "last_event": "2026-10-31T08:27:35+00:00"
+            },
+            {
+              "dimension": "PullRequestEvent",
+              "events": 6,
+              "actors": 5,
+              "repositories": 6,
+              "first_event": "2026-11-01T18:04:46+00:00",
+              "last_event": "2026-11-01T18:08:20+00:00"
+            }
+          ],
+          "scope": "Retained sample only; no global ranking claim"
+        }
+      }
+    ],
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Google Gemini",
+    "tool_calls": 2,
+    "read_only": true,
+    "duration_ms": 2232,
+    "demo": true,
+    "demo_budget": {
+      "policy": {
+        "per_client": {
+          "requests": 3,
+          "seconds": 600
+        },
+        "shared_minute": {
+          "requests": 2,
+          "seconds": 60
+        },
+        "shared_day": {
+          "requests": 30,
+          "seconds": 86400
+        }
+      },
+      "remaining": {
+        "per_client": 2,
+        "shared_minute": 1,
+        "shared_day": 29
+      },
+      "shared_minute_reset_seconds": 56
+    }
+  },
+  "browser_rate_limit_proof": {
+    "http_status": 429,
+    "cooldown_displayed_seconds": 2,
+    "retry_after_header_value_recorded": false,
+    "source": "Coordinator actual anonymous IAB response and saved cooldown screenshot",
+    "artifact": "evidence/public-demo-browser-cooldown.png"
+  },
+  "browser_success": {
+    "http_status": 200,
+    "authorization_sent": false,
+    "tool_calls": 2,
+    "duration_ms": 2319,
+    "retained_public_events": 200,
+    "source_paths": [
+      "/api/workspace/overview",
+      "/api/workspace/gold?group=event_type"
+    ],
+    "console_warnings": 0,
+    "console_errors": 0,
+    "artifacts": [
+      "evidence/public-demo-browser.png",
+      "evidence/public-demo-browser.txt"
+    ]
+  },
+  "local_verification": {
+    "passed": 174,
+    "failed": 0,
+    "skipped": 0,
+    "duration_seconds": 83.38,
+    "database": "Dedicated disposable local PostgreSQL; removed after validation",
+    "docker_restored_to_initial_stopped_state": true,
+    "user_data_or_volumes_deleted": false,
+    "junit": "evidence/public-analyst-junit.xml"
+  },
+  "deployment": {
+    "id": "dpl_Fc29GHan3uju137WxNBDhmC3FeVt",
+    "application_commit": "f5c2bde",
+    "url": "https://fluxlake-botgy0ztd-rohiths-projects-5e14931b.vercel.app",
+    "canonical": "https://rohith-fluxlake.vercel.app",
+    "image_digest": "sha256:e1004721fc6c99d069ab37eeb1dbd13e8bbf40c3b20d1833bfaa62326c4fa97c",
+    "rate_schema_migration_status": 200
+  }
+}

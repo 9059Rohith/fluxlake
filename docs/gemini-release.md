@@ -1,5 +1,7 @@
 # Real Gemini analyst connection — 2026-11-02
 
+The operator-only access described in this initial provider release is superseded by the [bounded anonymous public analyst](public-analyst-demo.md). The original operator endpoint remains protected.
+
 The previously unavailable analyst is connected to Google Gemini 3.5 Flash Lite through Google's fixed OpenAI-compatible HTTPS endpoint. The dedicated Google project has billing disabled, and its dedicated API key is restricted to the Generative Language API. Free quota is limited and can change; this is not an unlimited or availability guarantee.
 
 ## Actual model and data workflow
