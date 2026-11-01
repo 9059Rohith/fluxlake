@@ -25,3 +25,11 @@ The current complete local run passed **134 tests with 30 PostgreSQL tests expli
 Provider tests cover fixed endpoint selection, explicit account boundaries, key redaction, opaque signature round trips, bounded quota retry and authenticated API retry headers. Actual hosted model + database tool + final answer evidence is recorded separately in `evidence/gemini-live.json`; it is not a test double. The free tier has no billing-backed fallback. Operator identity remains the existing shared bearer model rather than per-user RBAC.
 
 Official integration reference: [Google Gemini OpenAI compatibility](https://ai.google.dev/gemini-api/docs/openai).
+
+## Final deployed proof
+
+Application commit `55bc0cf` is deployed as `dpl_79SzfGH2N54JPXpJWgEweXxv2xzJ`, with both production aliases updated. The final actual Gemini request returned HTTP 200, used two real database tools and cited `/api/workspace/overview` and `/api/workspace/gold?group=event_type` in its final answer. It correctly reproduced all 200 events and their type counts. This observed investigation took 2,293 ms inside the server; that is a single observation, not a latency guarantee.
+
+Provider credentials were scanned against tracked files: zero matches. Committed live evidence contains no provider keys, operator bearer token or Gemini thought signatures. The coordinator performs the final browser check through its available built-in IAB session; the subagent session had no browser provider available.
+
+The separate general workspace smoke passed 39 current live HTTP checks across all 13 pages, public data layers, canonical event hashes, CSV export, drift and authentication. Its provider status was configured=true. See `evidence/gemini-workspace-smoke.json`; actual provider reasoning remains separately proved in `evidence/gemini-live.json`.

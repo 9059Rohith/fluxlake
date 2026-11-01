@@ -1,0 +1,31 @@
+{
+  "deployment_id": "dpl_79SzfGH2N54JPXpJWgEweXxv2xzJ",
+  "url": "https://fluxlake-oicy6a4nt-rohiths-projects-5e14931b.vercel.app",
+  "aliases": [
+    "https://rohith-fluxlake.vercel.app",
+    "https://fluxlake.vercel.app"
+  ],
+  "source_commit": "55bc0cf",
+  "image_digest": "sha256:cb45845abb98e304ec9469e539e1045bf6d0bf27b1330eeba5a97a0f1f2619a2",
+  "provider": {
+    "configured": true,
+    "model": "gemini-3.5-flash-lite",
+    "provider": "Google Gemini",
+    "access": "Operator bearer required; six read-only tool calls maximum",
+    "data_scope": "Public GitHub event evidence and the operator question only; no private CDC data or uploads",
+    "quota": "Free-tier quotas apply; rate limits return an explicit retry interval",
+    "read_only": true,
+    "max_tool_calls": 6,
+    "reason": null
+  },
+  "google_project_billing_enabled": false,
+  "key_api_restriction": "Generative Language API only",
+  "credential_server_only": true,
+  "provider_http_status": 200,
+  "tool_calls": 2,
+  "observed_duration_ms": 2293,
+  "tracked_files_containing_actual_provider_credential": 0,
+  "live_quota_exhaustion_intentionally_triggered": false,
+  "quota_policy_unit_tested": true,
+  "browser_verification": "Coordinating root agent using built-in IAB; local subagent IAB provider unavailable"
+}
