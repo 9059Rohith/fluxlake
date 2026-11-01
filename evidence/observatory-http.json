@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-11-01T20:17:49.657594+00:00",
+  "checked_at": "2026-11-01T20:23:20.707144+00:00",
   "base_url": "https://rohith-fluxlake.vercel.app",
   "page_count": 13,
   "checks": [
@@ -301,7 +301,7 @@
   },
   "limitations": [
     "Incomplete operator-acquired GitHub sample",
-    "No live provider verification without authorized credentials",
+    "This HTTP smoke does not consume model quota; actual model/browser evidence is recorded separately",
     "HTTP smoke is separate from database fault/concurrency validation; see workspace-postgres-junit.xml"
   ]
 }

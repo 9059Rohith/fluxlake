@@ -1,0 +1,42 @@
+{
+  "checked_at": "2026-11-01T20:28:57.394508+00:00",
+  "base_url": "https://rohith-fluxlake.vercel.app",
+  "runtime_commit": "107ec05",
+  "deployment_id": "dpl_6RDSHwtommMsH4fAuDLoKnLDNMGU",
+  "checks": [
+    {
+      "path": "/assets/workspace.css",
+      "status": 200,
+      "bytes": 40431,
+      "content_type": "text/css; charset=utf-8"
+    },
+    {
+      "path": "/assets/workspace.js",
+      "status": 200,
+      "bytes": 49043,
+      "content_type": "text/javascript; charset=utf-8"
+    },
+    {
+      "path": "/assets/observatory.js",
+      "status": 200,
+      "bytes": 8949,
+      "content_type": "text/javascript; charset=utf-8"
+    },
+    {
+      "path": "/assets/icons.svg",
+      "status": 200,
+      "bytes": 3167,
+      "content_type": "image/svg+xml"
+    },
+    {
+      "path": "/assets/inter.woff2",
+      "status": 200,
+      "bytes": 352240,
+      "content_type": "font/woff2"
+    }
+  ],
+  "font_same_origin": true,
+  "desktop_navigation_refinement_present": true,
+  "mobile_chart_refinement_present": true,
+  "gemini_transmission_disclosure_present": true
+}
