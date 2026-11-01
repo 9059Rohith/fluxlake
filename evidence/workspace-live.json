@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-11-01T18:14:29.284245+00:00",
+  "checked_at": "2026-11-01T18:18:11.037893+00:00",
   "base_url": "https://fluxlake.vercel.app",
   "page_count": 13,
   "checks": [
@@ -7,6 +7,11 @@
       "path": "/api/workspace/agent",
       "method": "POST anonymous malformed body",
       "status": 401
+    },
+    {
+      "path": "/api/workspace/agent",
+      "method": "POST authenticated missing-provider",
+      "status": 503
     },
     {
       "path": "/api/workspace/agent/status",
@@ -93,6 +98,11 @@
     {
       "path": "/pipeline",
       "status": 401
+    },
+    {
+      "path": "/pipeline",
+      "method": "GET authenticated",
+      "status": 200
     },
     {
       "path": "/quarantine",

@@ -29,3 +29,13 @@ Local direct TCP to Neon timed out. Cloud authenticated migration/acquisition an
 - AI is implemented but unavailable until credentials/model are configured. Live provider quality, latency and cost are unverified.
 - No payment processing or fake checkout is included.
 - Hosted CI retains the previously documented account runner restriction. Local tests and deployment are not a hosted CI pass.
+
+## Verified deployed result
+
+Final application build: commit `cf6decd`, Vercel deployment `dpl_CnxdAs1qUYTSLFyFdpxtwURHWuFF`, production aliases [rohith-fluxlake.vercel.app](https://rohith-fluxlake.vercel.app) and [fluxlake.vercel.app](https://fluxlake.vercel.app).
+
+The final deployment retained **200 actual GitHub events across 198 repositories**, acquired in two successful 100-event runs. Both raw response fingerprints are stored. The second batched acquisition took 752 ms in the server's measured acquisition/publication section (not a latency guarantee). Two-run drift returned a descriptive distance of about 0.0535 bits, with actual baseline/candidate cells verified in the browser.
+
+**40 final live HTTP checks passed**: all 13 pages, source/bronze/silver/gold/schema/quarantine/run/drift reads, filtered search, type filters, raw JSON canonical hash, 200-row CSV export, legacy private-route authorization, anonymous mutation rejection before parsing, retired synthetic summary (410), valid private pipeline read (200), and actual missing-provider AI response (503). Persistence was observed after multiple independent container deployments.
+
+The built-in browser verified actual populated overview, repository filtering, original event evidence, reversed run selections, zero console warnings/errors and responsive desktop/mobile behavior. A mobile navigation closing defect was found and repaired; the final deployed sidebar closes and is removed from the accessibility tree when hidden. Screenshots and a browser verification ledger are committed under `evidence/workspace-*`.

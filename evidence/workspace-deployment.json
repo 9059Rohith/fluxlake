@@ -1,0 +1,13 @@
+{
+  "deployment_id": "dpl_CnxdAs1qUYTSLFyFdpxtwURHWuFF",
+  "url": "https://fluxlake-2wikrqcf4-rohiths-projects-5e14931b.vercel.app",
+  "aliases": [
+    "https://rohith-fluxlake.vercel.app",
+    "https://fluxlake.vercel.app"
+  ],
+  "ready_state": "READY",
+  "source_commit": "cf6decd0cc07",
+  "image_digest": "sha256:5b13399394221e96141f53558e75a60e4987e4123a5290d392a62f896af26741",
+  "synthetic_bootstrap_enabled": false,
+  "ai_provider_configured": false
+}

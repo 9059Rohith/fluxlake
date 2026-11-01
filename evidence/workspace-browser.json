@@ -1,0 +1,43 @@
+{
+  "browser": "Built-in IAB",
+  "desktop_viewport": {
+    "width": 1265,
+    "height": 712
+  },
+  "mobile_viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "mobile_body_scroll_width": 375,
+  "workflows": [
+    "Overview loaded actual retained events",
+    "Silver repository filter k2b-dev/cloud returned one real event",
+    "Evidence modal displayed original JSON and canonical SHA-256",
+    "Selected baseline/candidate runs reversed comparison counts correctly",
+    "Mobile overview reflow and navigation expansion checked",
+    "Final deployed mobile menu opens and closes; hidden sidebar is absent from accessibility tree"
+  ],
+  "browser_errors": [],
+  "visual_comparison": {
+    "concept": "Coordinated slate/teal FluxLake panel from supplied concept board",
+    "inspected": [
+      "Dark teal navigation rail",
+      "Light analytical surfaces",
+      "Teal active navigation and primary controls",
+      "Consistent compact tables and inputs",
+      "Responsive type hierarchy and mobile grid"
+    ],
+    "deviations": "Actual public GitHub event workflows replace the concept generic dataset controls; no artificial data or fabricated metrics"
+  },
+  "screenshots": [
+    "evidence/workspace-desktop.png",
+    "evidence/workspace-mobile.png"
+  ],
+  "ai": "Unavailable: no authorized provider credentials; actual tool loop exists",
+  "mobile_menu_final": {
+    "expanded_after_close": false,
+    "sidebar_visibility": "hidden",
+    "body_scroll_width": 375,
+    "viewport_width": 390
+  }
+}
