@@ -10,6 +10,7 @@ from fastapi import Depends, HTTPException, Query, Request
 from fastapi.responses import HTMLResponse, Response
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
+from fluxlake.observatory_icons import icon, sprite
 from fluxlake.public_demo import (
     POLICY,
     DemoBudgetUnavailable,
@@ -31,8 +32,8 @@ from fluxlake.workspace_agent import (
 PAGES = {
     "overview": (
         "Overview",
-        "Your data, from source to signal.",
-        "Trace a real public event sample through every layer of the lake.",
+        "Every event. A clearer signal.",
+        "A public GitHub sample, from original evidence to analytical insight.",
     ),
     "sources": (
         "Sources",
@@ -86,8 +87,8 @@ PAGES = {
     ),
     "agent": (
         "Lake analyst",
-        "Ask a question. Inspect the evidence.",
-        "A provider-backed analyst selects bounded read-only tools and shows the results behind its answer.",
+        "Ask the lake. Follow the evidence.",
+        "A read-only analyst grounded in the public GitHub sample.",
     ),
     "access": (
         "Operator access",
@@ -118,32 +119,56 @@ class PublicAgentQuestion(BaseModel):
 def page_html(key):
     title, headline, description = PAGES[key]
     groups = [
-        ("WORKSPACE", ["overview", "sources", "ingestion"]),
-        ("DATA LAYERS", ["bronze", "silver", "gold"]),
-        ("OBSERVABILITY", ["schema", "drift", "quarantine", "runs", "lineage"]),
-        ("INTELLIGENCE", ["agent"]),
+        ("Workspace", ["overview", "sources", "ingestion"]),
+        ("Data layers", ["bronze", "silver", "gold"]),
+        ("Observability", ["schema", "drift", "quarantine", "runs", "lineage"]),
+        ("Intelligence", ["agent"]),
     ]
+    names = {
+        "overview": "overview",
+        "sources": "database",
+        "ingestion": "upload",
+        "bronze": "database",
+        "silver": "layers",
+        "gold": "overview",
+        "schema": "file",
+        "drift": "activity",
+        "quarantine": "warning",
+        "runs": "clock",
+        "lineage": "lineage",
+        "agent": "message",
+    }
     navigation = ""
     for label, keys in groups:
-        navigation += f'<p class="nav-label">{label}</p>'
+        navigation += f'<div class="nav-group"><p class="nav-label">{label}</p>'
         for item in keys:
             active = ' aria-current="page"' if item == key else ""
-            navigation += f'<a href="/workspace/{item}"{active}><span class="nav-mark">{ {"overview": "◈", "sources": "↗", "ingestion": "↓", "bronze": "▤", "silver": "▥", "gold": "◫", "schema": "⌘", "drift": "≈", "quarantine": "◇", "runs": "◷", "lineage": "⌁", "agent": "✧"}[item] }</span>{PAGES[item][0]}</a>'
+            navigation += f'<a href="/workspace/{item}"{active}>{icon(names[item])}<span>{PAGES[item][0]}</span></a>'
+        navigation += "</div>"
+    primary = (
+        f'<a class="button" href="/workspace/agent">{icon("message")}Ask the lake analyst</a>'
+        if key == "overview"
+        else ""
+    )
     return f'''<!doctype html><html lang="en"><head><meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="description" content="Explore a real public GitHub event sample through immutable bronze, validated silver and SQL analytics.">
+    <meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="dark">
+    <meta name="description" content="A public GitHub sample, from original evidence to analytical insight. Explore real events, provenance and a bounded public analyst.">
     <title>{title} · FluxLake</title><link rel="icon" href="/assets/mark.svg" type="image/svg+xml">
-    <link rel="stylesheet" href="/assets/workspace.css"><script src="/assets/workspace.js" defer></script></head>
+    <link rel="preload" href="/assets/inter.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="/assets/workspace.css"><script src="/assets/observatory.js" defer></script><script src="/assets/workspace.js" defer></script></head>
     <body data-page="{key}"><a class="skip" href="#main">Skip to content</a>
-    <aside class="sidebar"><a class="brand" href="/"><span class="brand-mark">F</span>FluxLake<span class="brand-dot"></span></a><button class="sidebar-close" id="close-navigation" aria-label="Close navigation">×</button>
-    <div class="workspace-switch"><span class="workspace-avatar">G</span><div>Public observatory<small>GitHub events</small></div><span class="switch-arrow">⌄</span></div>
+    <aside class="sidebar" id="navigation" aria-label="Workspace navigation"><div class="brand-block"><a class="brand" href="/" aria-label="FluxLake overview"><svg class="brand-mark" viewBox="0 0 32 36" aria-hidden="true"><path d="M10 5h17M6 13h17M3 21h17M7 29h12"/></svg><span>FluxLake</span></a><p>Public observatory</p></div><button class="sidebar-close icon-button" id="close-navigation" aria-label="Close navigation">{icon("close")}</button>
     <nav aria-label="Workspace">{navigation}</nav>
-    <div class="sidebar-foot"><div class="source-indicator"><span></span>Public source · real evidence</div><a href="/workspace/access">Operator access <span>↗</span></a><small>Sampled events. Honest boundaries.</small></div></aside>
-    <div class="app"><header class="topbar"><button id="menu-toggle" class="menu-toggle" aria-label="Toggle navigation" aria-expanded="false">☰</button><div class="breadcrumb">Workspace <span>/</span> <strong>{title}</strong></div><a class="top-source" href="https://docs.github.com/en/rest/activity/events#list-public-events" target="_blank" rel="noopener">GitHub source ↗</a></header>
-    <main id="main"><div class="page-heading"><div><h1>{headline}</h1><p>{description}</p></div><button id="refresh" class="button secondary" aria-label="Refresh current data">↻ <span>Refresh</span></button></div>
-    <div id="notice" role="status" aria-live="polite"></div><div id="content"><div class="loading"><span class="spinner"></span>Reading the public event store…</div></div>
-    <footer>FluxLake <span>·</span> PostgreSQL evidence → typed events → SQL insight <a href="/api/workspace/overview">View source JSON ↗</a></footer>
-    </main></div><dialog id="detail"><div class="dialog-head"><h2 id="detail-title">Event evidence</h2><button class="icon-button" id="close-detail" aria-label="Close details">×</button></div><div id="detail-body"></div></dialog></body></html>'''
+    <div class="sidebar-foot"><a href="/workspace/access">{icon("user")}<span>Operator access</span>{icon("chevron")}</a><small>Public source. Inspectable evidence.</small></div></aside>
+    <div class="nav-backdrop" id="nav-backdrop"></div>
+    <div class="app"><header class="topbar"><button id="menu-toggle" class="menu-toggle icon-button" aria-label="Toggle navigation" aria-controls="navigation" aria-expanded="false">{icon("menu")}</button><div class="breadcrumb"><span>Workspace</span><span class="breadcrumb-separator">/</span><strong>{title}</strong></div><button id="command-trigger" class="command-trigger" aria-haspopup="dialog">{icon("search")}<span>Search the observatory</span><kbd>Ctrl K</kbd></button><a class="top-source" href="https://docs.github.com/en/rest/activity/events#list-public-events" target="_blank" rel="noopener">{icon("github")}<span>GitHub</span>{icon("external")}</a></header>
+    <main id="main"><div class="page-heading"><div><h1>{headline}</h1><p>{description}</p></div><div class="heading-actions">{primary}<button id="refresh" class="button secondary" aria-label="Refresh current data">{icon("refresh")}<span>Refresh</span></button></div></div>
+    <div id="notice" role="status" aria-live="polite"></div><div id="content" aria-busy="true"><div class="loading"><span class="spinner"></span>Reading actual source evidence…</div></div>
+    <footer><span>FluxLake</span><span class="footer-rule"></span><span>Public GitHub sample · PostgreSQL evidence</span><a href="/api/workspace/overview">Source JSON {icon("external")}</a></footer>
+    </main></div>
+    <dialog id="detail" class="evidence-drawer" aria-labelledby="detail-title"><div class="dialog-head"><div><span class="drawer-context">SOURCE EVIDENCE</span><h2 id="detail-title">Event evidence</h2></div><button class="icon-button" id="close-detail" aria-label="Close details">{icon("close")}</button></div><div id="detail-body"></div></dialog>
+    <dialog id="command-palette" class="command-dialog" aria-labelledby="command-title"><div class="command-input-row">{icon("search")}<label class="sr-only" id="command-title" for="command-query">Search pages and retained events</label><input id="command-query" autocomplete="off" maxlength="100" placeholder="Search pages, repositories, actors or event IDs…" role="combobox" aria-autocomplete="list" aria-expanded="true" aria-controls="command-results"><kbd>Esc</kbd><button id="close-command" class="icon-button" aria-label="Close search">{icon("close")}</button></div><div id="command-results" role="listbox" aria-label="Search results"></div><div class="command-footer"><span>Arrow keys to choose · Enter to open</span><span>Real retained evidence</span></div></dialog>
+    </body></html>'''
 
 
 def install_workspace(app, authorize):
@@ -295,6 +320,23 @@ def install_workspace(app, authorize):
 
     app.router.routes.append(layer_route)
 
+    @app.get("/assets/observatory.js", include_in_schema=False)
+    def observatory_script():
+        return Response(
+            (Path(__file__).parent / "web" / "observatory.js").read_text(encoding="utf-8"),
+            media_type="text/javascript",
+        )
+
+    @app.get("/assets/icons.svg", include_in_schema=False)
+    def icons():
+        return Response(sprite(), media_type="image/svg+xml")
+
+    @app.get("/assets/inter.woff2", include_in_schema=False)
+    def inter_font():
+        return Response(
+            (Path(__file__).parent / "web" / "inter.woff2").read_bytes(), media_type="font/woff2"
+        )
+
     @app.get("/assets/workspace.css", include_in_schema=False)
     def style():
         return Response(
@@ -312,7 +354,7 @@ def install_workspace(app, authorize):
     @app.get("/assets/mark.svg", include_in_schema=False)
     def mark():
         return Response(
-            '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"><rect width="32" height="32" rx="8" fill="#17a891"/><path d="M10 24V8h14v4H14v3h8v4h-8v5" fill="white"/></svg>',
+            '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36"><rect width="36" height="36" rx="8" fill="#0d1421"/><path d="M12 7h16M7 15h17M5 23h17M10 30h10" fill="none" stroke="#a38bff" stroke-width="4" stroke-linecap="round"/></svg>',
             media_type="image/svg+xml",
         )
 

@@ -1,0 +1,13 @@
+✔ model text cannot introduce executable markup or off-origin links (2.2228ms)
+✔ only fixed public evidence paths become markdown links (0.3154ms)
+✔ record sorting preserves precise long identities and stable equal values (13.1871ms)
+✔ native distributions derive counts and widths from supplied observations (11.3259ms)
+✔ untrusted dimension labels are escaped inside native SVG (1.1288ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 151.3483

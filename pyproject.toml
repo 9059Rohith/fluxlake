@@ -19,7 +19,7 @@ fluxlake = "fluxlake.cli:main"
 where = ["src"]
 
 [tool.setuptools.package-data]
-fluxlake = ["web/*.css", "web/*.js"]
+fluxlake = ["web/*.css", "web/*.js", "web/*.woff2", "web/*LICENSE.txt"]
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]

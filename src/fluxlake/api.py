@@ -23,7 +23,7 @@ from fluxlake.limits import MAX_EVENT_BYTES, check_json_depth, validate_shape
 from fluxlake.projection import ProjectionUnavailable, SourceProjection
 from fluxlake.workspace_web import install_workspace
 
-CSP = "default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'"
+CSP = "default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self'; font-src 'self'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'"
 DRIFT_BODY_TIMEOUT = 5.0
 
 
