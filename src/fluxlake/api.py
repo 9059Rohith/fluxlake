@@ -6,14 +6,12 @@ import json
 import os
 import re
 import sqlite3
-import threading
-import time
 from datetime import datetime, timezone
 from pathlib import Path
 
 from fastapi import Depends, FastAPI, Header, HTTPException, Query, Request
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import HTMLResponse, JSONResponse, Response
+from fastapi.responses import JSONResponse, Response
 from prometheus_client import CollectorRegistry, Gauge, generate_latest
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 
@@ -23,9 +21,8 @@ from fluxlake.drift_source import DriftUnavailable, compare_source
 from fluxlake.lake import IDENTIFIER, Lake, canonical
 from fluxlake.limits import MAX_EVENT_BYTES, check_json_depth, validate_shape
 from fluxlake.projection import ProjectionUnavailable, SourceProjection
+from fluxlake.workspace_web import install_workspace
 
-CSS = """body{background:#0d1523;color:#ecf5ff;font:16px system-ui;max-width:1000px;margin:60px auto;padding:24px}h1{font-size:48px}small,a{color:#7de0cc}pre{background:#162337;padding:24px;overflow:auto;border-radius:12px}"""
-JS = """async function refresh(){const e=document.getElementById('summary');try{const r=await fetch('/demo/summary');if(!r.ok){e.textContent='Public synthetic view is disabled. Operational routes require authentication.';return}e.textContent=JSON.stringify(await r.json(),null,2)}catch(_){e.textContent='Service unavailable'}}refresh();setInterval(refresh,5000);"""
 CSP = "default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'"
 DRIFT_BODY_TIMEOUT = 5.0
 
@@ -51,7 +48,7 @@ def create_app(root: Path | str | None = None) -> FastAPI:
         docs_url=None,
         redoc_url=None,
         openapi_url=None,
-        description="Authenticated operational lakehouse API. Optional public view contains only explicitly synthetic aggregates.",
+        description="Real public GitHub event lake and separately authenticated private CDC operations.",
     )
     configured_hosts = [
         host.strip() for host in os.getenv("FLUXLAKE_ALLOWED_HOSTS", "").split(",") if host.strip()
@@ -64,8 +61,6 @@ def create_app(root: Path | str | None = None) -> FastAPI:
     if not public_demo:
         allowed_hosts.append("testserver")
     app.add_middleware(TrustedHostMiddleware, allowed_hosts=allowed_hosts)
-    cached = {"until": 0.0, "value": None}
-    cache_lock = threading.Lock()
 
     def authorize(authorization: str = Header(default="")):
         try:
@@ -121,6 +116,43 @@ def create_app(root: Path | str | None = None) -> FastAPI:
 
     @app.middleware("http")
     async def boundary(request: Request, call_next):
+        if request.method == "POST" and request.url.path in {
+            "/api/workspace/ingest",
+            "/api/workspace/agent",
+            "/api/workspace/migrate",
+        }:
+            try:
+                authorize(request.headers.get("authorization", ""))
+            except HTTPException as exc:
+                return secure(
+                    JSONResponse(
+                        {"detail": exc.detail}, status_code=exc.status_code, headers=exc.headers
+                    ),
+                    request,
+                )
+            body = bytearray()
+            try:
+                async with asyncio.timeout(DRIFT_BODY_TIMEOUT):
+                    async for chunk in request.stream():
+                        if len(body) + len(chunk) > 4096:
+                            return secure(
+                                JSONResponse({"detail": "Request too large"}, status_code=413),
+                                request,
+                            )
+                        body.extend(chunk)
+            except TimeoutError:
+                return secure(
+                    JSONResponse({"detail": "Request body deadline exceeded"}, status_code=408),
+                    request,
+                )
+            try:
+                check_json_depth(body)
+            except ValueError:
+                return secure(
+                    JSONResponse({"detail": "JSON nesting exceeds limits"}, status_code=413),
+                    request,
+                )
+            request._body = bytes(body)
         if request.method == "POST" and request.url.path == "/drift/compare":
             try:
                 authorize(request.headers.get("authorization", ""))
@@ -337,46 +369,12 @@ def create_app(root: Path | str | None = None) -> FastAPI:
         ).set(read(lake.row_count))
         return Response(generate_latest(registry), media_type="text/plain; version=0.0.4")
 
-    @app.get("/demo/summary")
-    def demo():
-        if not public_demo:
-            raise HTTPException(404, "Public synthetic demo is disabled")
-        available()
-        with cache_lock:
-            now = time.monotonic()
-            if now >= cached["until"] or (
-                projection and cached.get("source_sync") != projection.last_success
-            ):
-                cached["value"] = {
-                    "synthetic": True,
-                    "label": "Explicitly marked synthetic demonstration data only",
-                    "capture": "PostgreSQL outbox request-triggered replay"
-                    if projection
-                    else "PostgreSQL transactional outbox polling",
-                    "gold": read(lake.demo_gold),
-                    "source_status": pipeline_value()["status"],
-                    "cache_seconds": 5,
-                }
-                cached["until"] = now + 5
-                cached["source_sync"] = projection.last_success if projection else None
-            return cached["value"]
+    @app.get("/demo/summary", include_in_schema=False)
+    def retired_demo():
+        raise HTTPException(
+            410,
+            "Synthetic public demonstration retired. Use /api/workspace/overview for real public-source evidence.",
+        )
 
-    @app.get("/assets/dashboard.css", include_in_schema=False)
-    def css():
-        return Response(CSS, media_type="text/css")
-
-    @app.get("/assets/dashboard.js", include_in_schema=False)
-    def javascript():
-        return Response(JS, media_type="text/javascript")
-
-    @app.get("/", response_class=HTMLResponse, include_in_schema=False)
-    def dashboard():
-        return """<!doctype html><html lang=en><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'>
-        <title>FluxLake synthetic demo</title><link rel=stylesheet href=/assets/dashboard.css>
-        <small>TRANSACTION CDC LAKEHOUSE</small><h1>FluxLake</h1>
-        <p>PostgreSQL outbox → immutable bronze → Parquet silver → SQL gold</p>
-        <p>This public view contains only explicitly marked <strong>synthetic demonstration data</strong>. Operational rows, metrics and administrative actions require authentication.</p>
-        <h2>Synthetic settled volume by currency</h2><pre id=summary>Loading actual lake data…</pre>
-        <script src=/assets/dashboard.js defer></script></html>"""
-
+    install_workspace(app, authorize)
     return app

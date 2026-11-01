@@ -101,7 +101,7 @@ def test_operational_reads_require_authentication(tmp_path, monkeypatch):
         assert client.get(path, headers=AUTH).status_code == 200
 
 
-def test_public_demo_exposes_only_explicit_synthetic_aggregates(tmp_path, monkeypatch):
+def test_retired_public_demo_never_exposes_private_or_synthetic_rows(tmp_path, monkeypatch):
     monkeypatch.setenv("FLUXLAKE_API_TOKEN", TOKEN)
     monkeypatch.setenv("FLUXLAKE_PUBLIC_DEMO", "true")
     monkeypatch.setenv("FLUXLAKE_ALLOWED_HOSTS", "testserver")
@@ -119,21 +119,18 @@ def test_public_demo_exposes_only_explicit_synthetic_aggregates(tmp_path, monkey
         == 200
     )
     response = client.get("/demo/summary")
-    assert response.status_code == 200
-    summary = response.json()
-    assert summary["synthetic"] is True
-    assert summary["gold"] == [{"currency": "USD", "transaction_count": 1, "total_minor": 12500}]
-    assert summary["source_status"] == "unknown"
+    assert response.status_code == 410
     assert "private-account" not in response.text
     assert "hidden-region" not in response.text
-    assert "synthetic" in client.get("/").text.lower()
+    assert "demo-id" not in response.text
+    assert "public GitHub" in client.get("/").text
     assert client.get("/transactions").status_code == 401
 
 
 def test_public_demo_disabled_without_opt_in(tmp_path, monkeypatch):
     monkeypatch.delenv("FLUXLAKE_PUBLIC_DEMO", raising=False)
     client = TestClient(create_app(tmp_path))
-    assert client.get("/demo/summary").status_code == 404
+    assert client.get("/demo/summary").status_code == 410
 
 
 def test_deep_and_large_leaf_inputs_rejected_before_persistence(tmp_path, monkeypatch):
@@ -212,6 +209,6 @@ def test_request_source_failure_is_closed_and_does_not_leak_credentials(
     ready = client.get("/ready")
     assert ready.status_code == 503
     summary = client.get("/demo/summary")
-    assert summary.status_code == 503
+    assert summary.status_code == 410
     assert marker not in ready.text + summary.text + caplog.text
     assert "private_db" not in summary.text
