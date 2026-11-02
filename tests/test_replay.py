@@ -170,7 +170,15 @@ def test_bounded_capacity_and_duplicate_identity_are_rejected():
         audit_publication([receipt()], [bronze], [silver], [])
 
 
-def test_read_only_acquisition_checks_budget_before_transferring_raw(monkeypatch):
+@pytest.mark.parametrize(
+    "budget",
+    [
+        {"events": 201, "total_bytes": 100, "largest": 10},
+        {"events": 1, "total_bytes": 4 * 1024 * 1024 + 1, "largest": 10},
+        {"events": 1, "total_bytes": 100, "largest": 131073},
+    ],
+)
+def test_read_only_acquisition_checks_budget_before_transferring_raw(monkeypatch, budget):
     from fluxlake.workspace import PublicWorkspace, WorkspaceUnavailable
 
     queries = []
@@ -192,7 +200,7 @@ def test_read_only_acquisition_checks_budget_before_transferring_raw(monkeypatch
                 return Result([receipt()])
             if "pg_current_snapshot" in sql:
                 return Result({"id": "1:2:", "captured_at": NOW})
-            return Result({"events": 201, "total_bytes": 100, "largest": 10})
+            return Result(budget)
 
     @contextmanager
     def connection(write=False):
@@ -205,6 +213,22 @@ def test_read_only_acquisition_checks_budget_before_transferring_raw(monkeypatch
         store.replay([RUN])
     assert all(sql.lstrip().startswith("SELECT") for sql in queries)
     assert not any("SELECT b.*" in sql for sql in queries)
+
+
+def test_total_payload_budget_and_large_numeric_identity_precision():
+    bronze, silver = zip(*(evidence(str(index)) for index in range(70)), strict=True)
+    for row in bronze:
+        row["raw"]["payload"] = {"bounded": "x" * 65000}
+    with pytest.raises(ValueError, match="payload budget"):
+        audit_publication([receipt()], bronze, silver, [])
+    bronze, silver = zip(
+        evidence("9007199254740993002"), evidence("9007199254740993001"), strict=True
+    )
+    report = audit_publication([receipt(inserted=2, fetched=2)], bronze, silver, [])
+    assert [row["event_id"] for row in report["events"]] == [
+        "9007199254740993001",
+        "9007199254740993002",
+    ]
 
 
 def test_replay_route_selection_download_and_private_boundary(tmp_path, monkeypatch):

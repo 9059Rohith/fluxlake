@@ -27,6 +27,9 @@ The dark observatory interface includes native count/share and distribution char
 | Lake analyst | Provider-backed read-only tool loop with visible arguments, results and sources |
 | Operator access | Verify private bearer token; connect/clear a tab-local session |
 
+[Replay release verification and benchmark](docs/replay-release.md) records the deployed
+publication checks, complete PostgreSQL suite and actual retained-source evidence.
+
 ## Data and AI boundaries
 
 The GitHub API is a **sample**, not a complete stream. GitHub documents upstream latency from 30 seconds to six hours. Ingestion is operator-triggered. There is no always-on or realtime completeness claim. Duplicate IDs are replay-safe; conflicting content goes to quarantine without overwriting original bronze. Event fingerprints use canonical JSON; run receipts additionally hash exact upstream response bytes.
