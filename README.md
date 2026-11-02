@@ -4,7 +4,7 @@
 
 [Open workspace](https://rohith-fluxlake.vercel.app) · [Real source API](https://rohith-fluxlake.vercel.app/api/workspace/overview) · [Source documentation](https://docs.github.com/en/rest/activity/events#list-public-events)
 
-FluxLake is a 13-page analytical workspace over real public GitHub events. An operator acquisition fetches up to 100 records from the official fixed-origin REST endpoint, then atomically publishes original JSON, typed silver records, observed schema and a durable run receipt in PostgreSQL. Public exploration never reads private payment CDC tables. The former synthetic public summary is retired with HTTP 410.
+FluxLake is a 14-page analytical workspace over real public GitHub events. An operator acquisition fetches up to 100 records from the official fixed-origin REST endpoint, then atomically publishes original JSON, typed silver records, observed schema and a durable run receipt in PostgreSQL. Public exploration never reads private payment CDC tables. The former synthetic public summary is retired with HTTP 410.
 
 The dark observatory interface includes native count/share and distribution charts, a keyboard command palette that searches retained records, sortable explorers, CSV export and an original-evidence drawer. The anonymous analyst formats real answers with inspectable tool evidence. [Design concepts and component system](docs/observatory-design.md) document the visual direction and factual corrections made during implementation; [verification evidence and limits](docs/observatory-verification.md) record the deployed checks.
 
@@ -20,6 +20,7 @@ The dark observatory interface includes native count/share and distribution char
 | Gold analytics | SQL aggregates by repository, actor or event type; navigate contributing events |
 | Schema registry | Observed field types, first/last observation and admission contract |
 | Distribution drift | Select retained runs; compare event-type mix with Jensen–Shannon distance |
+| [Replay audit](https://rohith-fluxlake.vercel.app/workspace/replay) | Reconstruct one/two acquisitions; reconcile hashes, byte counts, exact typed differences and receipts; download fingerprinted evidence |
 | Quarantine | Actual rejection reasons, run references and hashes; honest empty state |
 | Run history | Success/failure receipts, duplicates, quota, duration and response fingerprints |
 | Lineage | Trace event identity through source, acquisition, bronze, silver and gold |
@@ -29,6 +30,8 @@ The dark observatory interface includes native count/share and distribution char
 ## Data and AI boundaries
 
 The GitHub API is a **sample**, not a complete stream. GitHub documents upstream latency from 30 seconds to six hours. Ingestion is operator-triggered. There is no always-on or realtime completeness claim. Duplicate IDs are replay-safe; conflicting content goes to quarantine without overwriting original bronze. Event fingerprints use canonical JSON; run receipts additionally hash exact upstream response bytes.
+
+Replay audit re-runs the public normalization contract against actual retained JSON in one read-only database snapshot, bounded to two acquisitions, 200 events and 4 MiB. It detects missing silver records, changed normalized fields, identity/provenance differences and mismatched canonical hashes or byte counts. It reconciles publication and rejection counts against durable acquisition receipts. Event time is a presentation order; duplicate bodies, response bodies, source delivery order and database log positions are not retained. Rejected hashes cannot reveal exact changed fields. The separately labeled second pass repeats retained identities only in memory. This does not establish database CDC, stale deliveries, source completeness or exactly-once processing. [Design, research and limits](docs/replay-audit.md).
 
 The analyst supports Google Gemini through its fixed OpenAI-compatible endpoint, using `AI_PROVIDER=gemini`, the server-only `GEMINI_API_KEY`, and model `gemini-3.5-flash-lite`. The selected Google project has billing disabled and uses available free quota. Recruiters can use the public analyst without an account or operator token. Its allowance is 3 attempts per client per 10 minutes, with shared capacity of 2 per minute and 30 per UTC day. The separate operator endpoint and all private operations still require the bearer token. Only the operator's public-sample question and selected public GitHub evidence are sent to Gemini; private CDC rows, uploads and credentials are excluded. Do not enter private records or secrets in the question.
 

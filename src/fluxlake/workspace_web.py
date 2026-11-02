@@ -5,6 +5,7 @@ from __future__ import annotations
 import os
 from pathlib import Path
 from typing import Literal
+from uuid import UUID
 
 from fastapi import Depends, HTTPException, Query, Request
 from fastapi.responses import HTMLResponse, Response
@@ -75,6 +76,11 @@ PAGES = {
         "Keep invalid data out of the signal.",
         "Rejected records carry a reason, run and evidence hash. Silver stays within contract.",
     ),
+    "replay": (
+        "Replay audit",
+        "Replay the evidence. Inspect the difference.",
+        "Reconstruct retained public event publication, with exact differences and a downloadable audit.",
+    ),
     "runs": (
         "Run history",
         "Every acquisition leaves a receipt.",
@@ -121,7 +127,7 @@ def page_html(key):
     groups = [
         ("Workspace", ["overview", "sources", "ingestion"]),
         ("Data layers", ["bronze", "silver", "gold"]),
-        ("Observability", ["schema", "drift", "quarantine", "runs", "lineage"]),
+        ("Observability", ["schema", "drift", "replay", "quarantine", "runs", "lineage"]),
         ("Intelligence", ["agent"]),
     ]
     names = {
@@ -133,6 +139,7 @@ def page_html(key):
         "gold": "overview",
         "schema": "file",
         "drift": "activity",
+        "replay": "refresh",
         "quarantine": "warning",
         "runs": "clock",
         "lineage": "lineage",
@@ -233,6 +240,24 @@ def install_workspace(app, authorize):
     @app.get("/api/workspace/runs")
     def runs():
         return query(store.runs)
+
+    @app.get("/api/workspace/replay")
+    def replay(
+        response: Response,
+        run: list[UUID] | None = Query(None, min_length=1, max_length=2),
+        download: bool = False,
+    ):
+        selected = [str(identity) for identity in run] if run is not None else None
+        if selected and len(set(selected)) != len(selected):
+            raise HTTPException(422, "Choose one or two distinct acquisitions")
+        report = query(lambda: store.replay(selected))
+        if report is None:
+            raise HTTPException(404, "Selected acquisition is not retained")
+        if download:
+            response.headers["Content-Disposition"] = (
+                'attachment; filename="fluxlake-replay-evidence.json"'
+            )
+        return report
 
     @app.get("/api/workspace/drift")
     def drift(

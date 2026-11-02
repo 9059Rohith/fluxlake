@@ -87,6 +87,47 @@ def test_source_failure_persists_failure_without_publishing_events(store):
     assert store.overview()["counts"]["events"] == 0
 
 
+def test_replay_real_postgres_is_stable_read_only_and_detects_exact_damage(store):
+    first = store.ingest(fetcher([event("10"), event("2")]))
+    before = store.overview()["counts"]
+    report = store.replay([str(first["id"])])
+    assert report["status"] == "consistent"
+    assert report["counts"]["retained_events"] == 2
+    assert [row["event_id"] for row in report["events"]] == ["2", "10"]
+    assert report["evidence_sha256"] == store.replay([str(first["id"])])["evidence_sha256"]
+    assert store.overview()["counts"] == before
+    # Damage is introduced only into the isolated disposable test database.
+    with psycopg.connect(store.database_url) as conn:
+        conn.execute("UPDATE flux_public_silver SET repository='damaged/repo' WHERE event_id='2'")
+        conn.execute("DELETE FROM flux_public_silver WHERE event_id='10'")
+    damaged = store.replay([str(first["id"])])
+    assert damaged["status"] == "differences"
+    assert damaged["counts"]["affected_events"] == 2
+    assert damaged["evidence_sha256"] != report["evidence_sha256"]
+    differences = {row["event_id"]: row["differences"] for row in damaged["events"]}
+    assert differences["2"] == [
+        {"field": "repository", "expected": "isolated-test/repository", "actual": "damaged/repo"}
+    ]
+    assert differences["10"] == [{"field": "silver_presence", "expected": True, "actual": False}]
+    assert store.event("2")["repository"] == "damaged/repo"  # Audit never repairs or writes.
+
+
+def test_replay_actual_duplicate_and_conflict_receipts_keep_provenance(store):
+    first = store.ingest(fetcher([event()]))
+    allow_next_run(store)
+    duplicate = store.ingest(fetcher([event()]))
+    allow_next_run(store)
+    changed = event()
+    changed["payload"] = {"action": "changed"}
+    conflict = store.ingest(fetcher([changed]))
+    report = store.replay([str(duplicate["id"]), str(conflict["id"])])
+    assert report["status"] == "consistent"
+    assert report["events"] == []
+    assert report["counts"]["observed_duplicate_count"] == 1
+    assert report["counts"]["conflicting_identity_receipts"] == 1
+    assert str(first["id"]) not in {row["id"] for row in report["runs"]}
+
+
 def test_drift_filtered_api_export_and_original_hash_use_real_store(store, tmp_path, monkeypatch):
     first = store.ingest(fetcher([event(str(i), "PushEvent") for i in range(1, 31)]))
     allow_next_run(store)

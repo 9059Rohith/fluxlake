@@ -411,6 +411,78 @@ class PublicWorkspace:
             ).fetchall()
         return {"rows": rows}
 
+    def replay(self, run_ids=None):
+        """One read-only snapshot; never refresh, acquire, publish or acknowledge."""
+        from fluxlake.replay import MAX_BYTES, MAX_EVENTS, audit_publication
+
+        if run_ids is not None and (
+            not 1 <= len(run_ids) <= 2 or len(set(run_ids)) != len(run_ids)
+        ):
+            raise ValueError("Select one or two distinct acquisitions")
+        with self.connection() as conn:
+            if run_ids:
+                runs = conn.execute(
+                    "SELECT * FROM public.flux_public_runs WHERE id=ANY(%s::uuid[]) ORDER BY started_at,id",
+                    (run_ids,),
+                ).fetchall()
+                if len(runs) != len(run_ids):
+                    return None
+            else:
+                runs = conn.execute(
+                    "SELECT * FROM public.flux_public_runs ORDER BY started_at DESC,id DESC LIMIT 1"
+                ).fetchall()
+            if not runs:
+                return {
+                    "status": "no_acquisitions",
+                    "runs": [],
+                    "events": [],
+                    "reason": "No retained acquisition exists. No evidence is fabricated.",
+                }
+            ids = [row["id"] for row in runs]
+            snapshot = conn.execute(
+                "SELECT pg_current_snapshot()::text AS id, statement_timestamp() AS captured_at"
+            ).fetchone()
+            # Include either layer's provenance to expose missing/misattributed rows.
+            selection = """(b.run_id=ANY(%s::uuid[]) OR b.event_id IN
+                (SELECT event_id FROM public.flux_public_silver WHERE run_id=ANY(%s::uuid[])))"""
+            budget = conn.execute(
+                """SELECT count(*) events,coalesce(sum(octet_length(b.raw::text)),0) total_bytes,
+                coalesce(max(octet_length(b.raw::text)),0) largest
+                FROM public.flux_public_bronze b WHERE """
+                + selection,
+                (ids, ids),
+            ).fetchone()
+            if (
+                budget["events"] > MAX_EVENTS
+                or budget["total_bytes"] > MAX_BYTES
+                or budget["largest"] > 131072
+            ):
+                raise WorkspaceUnavailable("Replay evidence exceeds bounded capacity")
+            bronze = conn.execute(
+                "SELECT b.* FROM public.flux_public_bronze b WHERE "
+                + selection
+                + " ORDER BY b.event_id LIMIT 201",
+                (ids, ids),
+            ).fetchall()
+            silver = conn.execute(
+                """SELECT * FROM public.flux_public_silver WHERE run_id=ANY(%s::uuid[])
+                OR event_id=ANY(%s::text[]) ORDER BY event_id LIMIT 201""",
+                (ids, [row["event_id"] for row in bronze]),
+            ).fetchall()
+            quarantine = conn.execute(
+                """SELECT * FROM public.flux_public_quarantine WHERE run_id=ANY(%s::uuid[])
+                ORDER BY id LIMIT 201""",
+                (ids,),
+            ).fetchall()
+            try:
+                report = audit_publication(runs, bronze, silver, quarantine)
+            except (ValueError, TypeError, RecursionError):
+                raise WorkspaceUnavailable(
+                    "Replay evidence exceeds bounded capacity or contract"
+                ) from None
+        # Snapshot identity changes per observation; exclude it from deterministic evidence hash.
+        return {**report, "source_snapshot": snapshot}
+
     def quarantine(self):
         with self.connection() as conn:
             rows = conn.execute(
