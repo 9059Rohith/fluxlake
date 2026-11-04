@@ -269,6 +269,15 @@ def install_workspace(app, authorize):
         except ValueError:
             raise HTTPException(422, "Choose two different successful nonempty runs") from None
 
+    @app.get("/api/workspace/archive-benchmark")
+    def archive_benchmark():
+        evidence = Path(__file__).parent / "web" / "archive-replay-benchmark.json"
+        try:
+            content = evidence.read_bytes()
+        except FileNotFoundError:
+            raise HTTPException(503, "Offline benchmark evidence is unavailable") from None
+        return Response(content, media_type="application/json")
+
     @app.get("/api/workspace/export.csv")
     def export(q: str = Query("", max_length=100), event_type: str = Query("", max_length=80)):
         return Response(

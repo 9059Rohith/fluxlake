@@ -29,6 +29,9 @@ The dark observatory interface includes native count/share and distribution char
 
 [Replay release verification and benchmark](docs/replay-release.md) records the deployed
 publication checks, complete PostgreSQL suite and actual retained-source evidence.
+The Replay audit also shows a separate offline crash recovery benchmark over 20,000 real
+GH Archive events with a reproducible harness and downloadable report.
+[Archive recovery benchmark](docs/archive-replay-benchmark.md)
 
 ## Data and AI boundaries
 

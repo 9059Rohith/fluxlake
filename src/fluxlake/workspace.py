@@ -178,6 +178,9 @@ class PublicWorkspace:
             ) from None
 
     def ingest(self, fetcher=fetch_public_events):
+        return self._publish(fetcher, source_url=SOURCE_URL, enforce_poll_interval=True)
+
+    def _publish(self, fetcher, *, source_url, enforce_poll_interval):
         """Serialize ingestion in PostgreSQL; atomically publish bronze + silver + run.
 
         A failed request gets a durable failed run but does not publish a partial batch.
@@ -194,13 +197,16 @@ class PublicWorkspace:
             last = conn.execute(
                 "SELECT started_at,poll_seconds FROM public.flux_public_runs ORDER BY started_at DESC LIMIT 1"
             ).fetchone()
-            if last and (datetime.now(timezone.utc) - last["started_at"]).total_seconds() < max(
-                60, last["poll_seconds"] or 60
+            if (
+                enforce_poll_interval
+                and last
+                and (datetime.now(timezone.utc) - last["started_at"]).total_seconds()
+                < max(60, last["poll_seconds"] or 60)
             ):
                 raise IngestionBusy("Respecting GitHub poll interval; wait at least 60 seconds")
             conn.execute(
                 "INSERT INTO public.flux_public_runs(id,status,source_url) VALUES(%s,'running',%s)",
-                (run_id, SOURCE_URL),
+                (run_id, source_url),
             )
             try:
                 events, metadata = fetcher()

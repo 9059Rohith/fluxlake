@@ -64,8 +64,39 @@ function paintReplayEvents(){
  document.getElementById("replay-events").innerHTML=events.length?table(["Event / timestamp (UTC)","Repository / type","Acquisition","Canonical fingerprint","Audit"],events.map(r=>row([`<button class="row-button mono" data-replay-event="${esc(r.event_id)}">${esc(r.event_id)}</button><div class="small muted">${date(r.occurred_at)}</div>`,`<strong>${esc(r.repository)}</strong><div class="small muted">${esc(r.event_type)}</div>`,`<span class="mono">${short(r.run_id)}</span>`,`<span class="mono" title="${esc(r.canonical_sha256)}">${esc(r.canonical_sha256?.slice(0,16)||"Missing bronze")}…</span>`,`<button class="row-button" data-replay-event="${esc(r.event_id)}">${badge(r.status,r.differences.length?"warning":"")} ${icon("chevron")}</button>`]))):empty(only?"No event differences found":"No first-publication records in this selection",only?"Every retained event passed the selected checks. Acquisition receipt differences are reported separately.":"Duplicate-only and failed acquisitions can have a receipt without new bronze rows.");
  document.querySelectorAll("[data-replay-event]").forEach(button=>button.onclick=()=>{const r=replayReport.events.find(r=>r.event_id===button.dataset.replayEvent);openDialog("Replay · event "+r.event_id,`<div class="evidence-identity">${badge(r.status,r.differences.length?"warning":"")}<h3>${esc(r.repository)}</h3><p class="small muted">Exact reconstruction differences for retained identity ${esc(r.event_id)}</p></div>${replayDiffs(r.differences)}<dl class="details evidence-meta"><dt>Reconstructed SHA-256</dt><dd class="hash mono">${esc(r.canonical_sha256)}</dd><dt>Retained SHA-256</dt><dd class="hash mono">${esc(r.stored_sha256)}</dd><dt>Acquisition</dt><dd class="hash mono">${esc(r.run_id)}</dd></dl><button class="button secondary" id="replay-open-original">${icon("file")}Inspect retained source JSON</button>`);document.getElementById("replay-open-original").onclick=()=>inspectEvent(r.event_id);});
 }
+function archiveBenchmark(evidence) {
+ if (!evidence) return "";
+ const recovery = evidence.crash_and_restart;
+ const redelivery = evidence.redelivery;
+ const audit = evidence.read_only_audit;
+ const metrics = [
+  ["Unique archive events", evidence.unique_events, "Real GH Archive records"],
+  ["Matching redeliveries", redelivery.matching_duplicates, "Zero additional events"],
+  ["Reconstructed records", audit.events_reconstructed, `${num(audit.requests)} audits · ${num(audit.differences)} differences`],
+  ["Retried after restart", recovery.retry_published_events, "Exact interrupted batch"]
+ ];
+ return panel("Historical archive recovery", "Offline benchmark on isolated PostgreSQL", `
+  <div class="panel-body">
+   <p>FluxLake published an archived GitHub cohort, recovered after abrupt PostgreSQL process termination during publication, and verified every stored identity and canonical JSON hash.</p>
+   <div class="stats">${metrics.map(([label, value, detail]) => stat(label, num(value), detail)).join("")}</div>
+   <dl class="details">
+    <dt>PostgreSQL ready after kill</dt><dd>${num(recovery.kill_to_sql_ready_ms)} ms · WAL recovery observed</dd>
+    <dt>Steady publication</dt><dd>${num(evidence.publication.events_per_second)} events/s · sequential local batches</dd>
+    <dt>Matching redelivery</dt><dd>${num(redelivery.events_per_second)} events/s · PostgreSQL transactions</dd>
+    <dt>Archive</dt><dd><a href="${esc(evidence.source.url)}" target="_blank" rel="noopener">GH Archive · 1 Jan 2025, 15:00 UTC ${icon("external")}</a></dd>
+   </dl>
+   <div class="actions">
+    <a class="button secondary" href="/api/workspace/archive-benchmark" download="fluxlake-archive-replay-benchmark.json">${icon("download")}Download benchmark evidence</a>
+    <a class="button secondary" href="https://github.com/9059Rohith/fluxlake/blob/main/docs/archive-replay-benchmark.md" target="_blank" rel="noopener">Reproduce the run ${icon("external")}</a>
+   </div>
+   <p class="small muted">These measurements are from a separate local database. The live replay above uses retained GitHub API acquisitions.</p>
+  </div>`);
+}
 async function replay(){
- const history=await api("/api/workspace/runs");if(!history.rows.length){content.innerHTML=panel("Reconstruct a publication","Real retained acquisitions only",empty("No acquisition evidence yet","An operator must acquire a public GitHub sample before a replay audit is possible.","/workspace/ingestion","Open ingestion"));return;}
+ const [history, benchmark] = await Promise.all([
+  api("/api/workspace/runs"),
+  api("/api/workspace/archive-benchmark").catch(() => null)
+ ]);if(!history.rows.length){content.innerHTML=panel("Reconstruct a publication","Real retained acquisitions only",empty("No acquisition evidence yet","An operator must acquire a public GitHub sample before a replay audit is possible.","/workspace/ingestion","Open ingestion"));return;}
  if(!replaySelection)replaySelection=[String(history.rows[0].id)];
  const params=new URLSearchParams();replaySelection.forEach(id=>params.append("run",id));
  const d=await api("/api/workspace/replay?"+params);replayReport=d;
@@ -73,6 +104,7 @@ async function replay(){
  content.innerHTML=`<section class="panel replay-selection"><div class="panel-head"><div><h2>Choose the evidence to replay</h2><p>One or two acquisitions · at most 200 retained events · read-only snapshot</p></div>${badge("No model calls","neutral")}</div><form id="replay-form" class="panel-body"><div class="form-grid"><div><label for="replay-primary">Acquisition</label><select id="replay-primary">${options(replaySelection[0])}</select></div><div><label for="replay-secondary">Include a second acquisition</label><select id="replay-secondary"><option value="">This acquisition only</option>${options(replaySelection[1]||"")}</select></div></div><div class="actions"><button class="button" type="submit">${icon("refresh")}Reconstruct publication</button><a class="button secondary" id="replay-download" href="/api/workspace/replay?${esc(params.toString())}&amp;download=true">${icon("download")}Download evidence</a><span class="small muted">No source acquisition or stored changes.</span></div></form></section>
  <div class="replay-verdict"><span class="replay-verdict-symbol">${icon(d.status==="consistent"?"shield":"warning")}</span><div><h2>${d.status==="consistent"?"Retained publication checks agree.":"Publication differences need inspection."}</h2><p>Canonical JSON → source contract → typed silver → acquisition receipt</p></div>${badge(d.status,d.status==="consistent"?"":"warning")}</div>
  <div class="stats">${stat("Events reconstructed",num(d.counts.retained_events),"Actual first accepted JSON")}${stat("Event differences",num(d.counts.affected_events),"Hash, bytes, fields or presence")}${stat("Recorded duplicates",num(d.counts.observed_duplicate_count),"Receipt count; bodies not retained")}${stat("Identity conflicts",num(d.counts.conflicting_identity_receipts),"Retained quarantine evidence")}</div>
+ ${archiveBenchmark(benchmark)}
  <div class="replay-receipts">${d.runs.map(r=>panel(`Acquisition ${short(r.id)}`,date(r.started_at),`<div class="panel-body"><div class="actions">${badge(r.status)}${badge(r.differences.length?`${r.differences.length} receipt differences`:"Receipt reconciled",r.differences.length?"warning":"neutral")}</div><dl class="details"><dt>Source returned</dt><dd>${num(r.fetched)} events</dd><dt>New / duplicate / rejected</dt><dd>${num(r.inserted)} / ${num(r.duplicates)} / ${num(r.quarantined)}</dd><dt>Retained bronze / silver</dt><dd>${num(r.observed.inserted_bronze)} / ${num(r.observed.inserted_silver)}</dd><dt>Response SHA-256</dt><dd class="hash mono">${esc(r.response_sha256)}</dd></dl>${r.differences.length?replayDiffs(r.differences):""}</div>`)).join("")}</div>
  <section class="panel"><div class="panel-head"><div><h2>Reconstructed event timeline</h2><p>Event time is a presentation order; acquisition and database commit order are unknown.</p></div><span class="small muted" id="replay-event-count"></span></div><div class="toolbar"><label for="replay-filter">Show</label><select id="replay-filter"><option value="all">All retained events</option><option value="differences">Event differences only</option></select><label for="replay-order">Order</label><select id="replay-order"><option value="oldest">Event time · oldest first</option><option value="newest">Event time · newest first</option></select></div><div id="replay-events"></div></section>
  ${panel("Controlled redelivery check","An in-memory experiment over these retained identities; not observed source deliveries",`<div class="panel-body"><div class="replay-passes"><div>${icon("database")}<strong>${num(d.controlled_redelivery.accepted_first_pass)}</strong><span>identities in first pass</span></div>${icon("arrow")}<div>${icon("refresh")}<strong>${num(d.controlled_redelivery.duplicates_second_pass)}</strong><span>matching identities in second pass</span></div>${icon("arrow")}<div>${icon("shield")}<strong>${d.controlled_redelivery.state_unchanged?"Unchanged":"Changed"}</strong><span>in-memory identity fingerprint</span></div></div><p class="small muted">Repeating the same identity and canonical content leaves this reducer's state unchanged. This does not prove source delivery guarantees or exactly-once publication.</p></div>`)}

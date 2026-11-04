@@ -1,0 +1,108 @@
+{
+  "benchmark": "GH Archive isolated PostgreSQL publication and crash recovery",
+  "measured_at": "2026-11-04T13:22:17.434788+00:00",
+  "source": {
+    "url": "https://data.gharchive.org/2025-01-01-15.json.gz",
+    "compressed_bytes": 72578615,
+    "object_md5": "432312db553b5e96f65022444dd82e8b",
+    "sha256": "717eaa4e74034a93ef6b423db7f61776f81899f978dba60d8b42b141e6d16429",
+    "selection": "First unique admitted public events in archive order; payloads unmodified",
+    "archive_lines_scanned": 20012,
+    "skipped": {
+      "record_exceeds_64_kib": 12
+    }
+  },
+  "environment": {
+    "platform": "Windows",
+    "architecture": "AMD64",
+    "python": "3.12.0",
+    "postgres_runtime": "disposable native PostgreSQL cluster"
+  },
+  "postgres_version": "PostgreSQL 18.2 on x86_64-windows, compiled by msvc-19.44.35222, 64-bit",
+  "fsync": "on",
+  "synchronous_commit": "on",
+  "batch_count": 200,
+  "unique_events": 20000,
+  "publication": {
+    "events": 19800,
+    "seconds": 54.855417,
+    "events_per_second": 360.95
+  },
+  "crash_and_restart": {
+    "termination": "TerminateProcess",
+    "exit_code": 1,
+    "observed_statement": "silver INSERT paused after the trigger confirmed pending bronze rows",
+    "writer_result": "WorkspaceUnavailable",
+    "automatic_wal_recovery_observed": true,
+    "original_postmaster_started_at": "2026-11-04T18:50:15.384983+05:30",
+    "restarted_postmaster_started_at": "2026-11-04T18:50:16.871554+05:30",
+    "kill_to_sql_ready_ms": 1652.985,
+    "before_crash": {
+      "bronze": 100,
+      "silver": 100,
+      "runs": 1,
+      "quarantine": 0,
+      "schema_observations": 5753
+    },
+    "after_restart": {
+      "bronze": 100,
+      "silver": 100,
+      "runs": 1,
+      "quarantine": 0,
+      "schema_observations": 5753
+    },
+    "retry_source_lines_sha256": "e7b33847ef1569530ab8bfc4ac5b35d883178e7553c429661e54931c26e4f6f1",
+    "retry_published_events": 100,
+    "retry_commit_ms": 219.495
+  },
+  "redelivery": {
+    "seconds": 23.535987,
+    "events_per_second": 849.76,
+    "matching_duplicates": 20000,
+    "new_events": 0,
+    "before": {
+      "bronze": 20000,
+      "silver": 20000,
+      "runs": 200,
+      "quarantine": 0,
+      "schema_observations": 1134499
+    },
+    "after": {
+      "bronze": 20000,
+      "silver": 20000,
+      "runs": 400,
+      "quarantine": 0,
+      "schema_observations": 1134499
+    }
+  },
+  "read_only_audit": {
+    "seconds": 24.152329,
+    "events_per_second": 828.08,
+    "events_reconstructed": 20000,
+    "requests": 100,
+    "differences": 0,
+    "report_fingerprints_sha256": "37469719a0c4979d3a7fd1cb2e5f32faf0d2935a438a5c8281d548e702456004"
+  },
+  "identity_verification": {
+    "identity_sha256": "6dc04a265f930ffec610a9011eedaa3592797ec73f14cf9323600c1a65167eb4",
+    "canonical_bytes": 57968885,
+    "event_types": {
+      "CommitCommentEvent": 28,
+      "CreateEvent": 2566,
+      "DeleteEvent": 688,
+      "ForkEvent": 195,
+      "GollumEvent": 17,
+      "IssueCommentEvent": 577,
+      "IssuesEvent": 237,
+      "MemberEvent": 34,
+      "PublicEvent": 82,
+      "PullRequestEvent": 1305,
+      "PullRequestReviewCommentEvent": 73,
+      "PullRequestReviewEvent": 208,
+      "PushEvent": 12658,
+      "ReleaseEvent": 225,
+      "WatchEvent": 1107
+    }
+  },
+  "timing_scope": "Single local run. Sequential batches with connection/transaction costs; excludes download, cohort selection and independent manifest scans. Hosted replay is separately bounded."
+}
