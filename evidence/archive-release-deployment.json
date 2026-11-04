@@ -1,0 +1,19 @@
+{
+  "checked_at": "2026-11-04T13:27:52.379736+00:00",
+  "base_url": "https://rohith-fluxlake.vercel.app",
+  "deployment_id": "dpl_5SqGRyPEMuoJMj1enBtwkBhryDoa",
+  "runtime_commit": "0234f2f",
+  "container_sha256": "3a44581d326ff8e423c3233d42bf5f02095e82e4128f35ba963f554af307a297",
+  "report_path": "/api/workspace/archive-benchmark",
+  "checks": {
+    "report_http_status": 200,
+    "report_json_matches_measured_artifact": true,
+    "report_json_sha256": "0e7bb4be0006e678db912a64cba4d51024e999d35dbbb7908a5e232b8f8970ab",
+    "report_no_store": true,
+    "offline_unique_events": 20000,
+    "retained_live_events": 200,
+    "replay_page_http_status": 200,
+    "browser_asset_contains_offline_card": true,
+    "anonymous_mutation_http_status": 401
+  }
+}

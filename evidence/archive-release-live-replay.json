@@ -1,0 +1,25 @@
+{
+  "verified_at": "2026-11-04T13:29:44.880789+00:00",
+  "base_url": "https://rohith-fluxlake.vercel.app",
+  "actual_public_api": {
+    "label": "Real retained GitHub acquisition evidence; HTTP latency includes network and database",
+    "selected_runs": [
+      "145d3c65-6c00-42c5-9016-8cb5486decb3",
+      "59208a2d-4af2-4ad0-a056-7b7c7fbe598b"
+    ],
+    "counts": {
+      "retained_events": 200,
+      "silver_rows": 200,
+      "affected_events": 0,
+      "observed_duplicate_count": 0,
+      "conflicting_identity_receipts": 0
+    },
+    "repeats": 3,
+    "median_ms": 3133.287000000564,
+    "max_ms": 7177.860899999359,
+    "stable_evidence_sha256": "e00c837536cb024c38b6685a619c9d275e68d6835b01e91e010b588b14324db2",
+    "stored_counts_unchanged": true
+  },
+  "download_and_bounds_verified": true,
+  "private_mutations_anonymously_denied": true
+}

@@ -1,4 +1,4 @@
-"""Bounded replay benchmark: controlled CPU workload and real public API observations."""
+"""Verify bounded hosted replay against actual retained public acquisitions."""
 
 import argparse
 import hashlib
@@ -10,8 +10,7 @@ from pathlib import Path
 
 import httpx
 
-from fluxlake.replay import audit_publication
-from fluxlake.workspace import canonical, normalize
+from fluxlake.workspace import canonical
 
 
 def main():
@@ -19,65 +18,6 @@ def main():
     parser.add_argument("--url", default="https://rohith-fluxlake.vercel.app")
     parser.add_argument("--output", default="evidence/replay-verification.json")
     args = parser.parse_args()
-    identity = "08d6d9b9-e6da-4bb9-82a0-a7a29ef689e8"
-    bronze, silver = [], []
-    for i in range(200):
-        raw = {
-            "id": str(i),
-            "public": True,
-            "type": "PushEvent",
-            "created_at": "2026-11-01T00:00:00Z",
-            "repo": {"name": "controlled/test"},
-            "actor": {"login": "test"},
-            "payload": {"bounded": "x" * 18000},
-        }
-        body = canonical(raw)
-        bronze.append(
-            {
-                "event_id": str(i),
-                "raw": raw,
-                "run_id": identity,
-                "sha256": hashlib.sha256(body).hexdigest(),
-                "bytes": len(body),
-            }
-        )
-        silver.append(
-            {
-                **dict(
-                    zip(
-                        (
-                            "event_id",
-                            "event_type",
-                            "repository",
-                            "actor",
-                            "occurred_at",
-                            "action",
-                            "organization",
-                        ),
-                        normalize(raw),
-                        strict=True,
-                    )
-                ),
-                "run_id": identity,
-            }
-        )
-    runs = [
-        {
-            "id": identity,
-            "started_at": "2026-11-01T00:00:00+00:00",
-            "status": "succeeded",
-            "fetched": 200,
-            "inserted": 200,
-            "duplicates": 0,
-            "quarantined": 0,
-        }
-    ]
-    cpu_ms = []
-    for _ in range(10):
-        began = time.perf_counter()
-        controlled = audit_publication(runs, bronze, silver, [])
-        cpu_ms.append((time.perf_counter() - began) * 1000)
-        assert controlled["status"] == "consistent"
     with httpx.Client(base_url=args.url, timeout=60) as client:
         before = client.get("/api/workspace/overview").raise_for_status().json()["counts"]
         retained = client.get("/api/workspace/runs").raise_for_status().json()["rows"][:2]
@@ -114,14 +54,6 @@ def main():
     result = {
         "verified_at": datetime.now(timezone.utc).isoformat(),
         "base_url": args.url,
-        "controlled_cpu": {
-            "label": "Test-only generated records, never persisted or deployed",
-            "events": 200,
-            "canonical_bytes": sum(row["bytes"] for row in bronze),
-            "repeats": 10,
-            "median_ms": statistics.median(cpu_ms),
-            "max_ms": max(cpu_ms),
-        },
         "actual_public_api": {
             "label": "Real retained GitHub acquisition evidence; HTTP latency includes network and database",
             "selected_runs": [row["id"] for row in retained],

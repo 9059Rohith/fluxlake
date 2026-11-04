@@ -45,3 +45,13 @@ Set `--postgres-bin` to the directory that contains `initdb`, `postgres` and `pg
 The identity manifest hashes ASCII lines in lexical event-ID order. Each line contains the ID, a tab, the lowercase SHA-256 of the canonical JSON, a tab, its canonical byte count and a final newline. Each digest is recomputed from the archive object and independently compared against the decoded database JSON and stored checksum.
 
 The timings describe one sequential local run with PostgreSQL connection and transaction costs. The steady publication phase excludes the first committed batch and the crash/retry batch. Download, cohort selection and independent manifest scans are outside the timed phases. Kill-to-SQL-ready includes process interruption, restart and readiness polling. Hosted latency and recovery under concurrent or distributed workloads require separate measurements.
+
+## Production verification
+
+Runtime `0234f2f` is Ready in Vercel deployment `dpl_5SqGRyPEMuoJMj1enBtwkBhryDoa`. The hosted JSON response matched the measured artifact, used `Cache-Control: no-store` and displayed separately from the 200 events in the live overview. Anonymous ingestion returned HTTP 401. [Hosted report](https://rohith-fluxlake.vercel.app/api/workspace/archive-benchmark) · [Deployment evidence](../evidence/archive-release-deployment.json)
+
+All 191 Python tests passed against a second disposable native PostgreSQL cluster. The five client tests and Ruff checks passed. The production workspace smoke passed 39 HTTP checks across 14 pages. [JUnit report](../evidence/archive-replay-postgres-junit.xml) · [Workspace HTTP evidence](../evidence/archive-release-workspace-http.json)
+
+The hosted verifier reconstructed both retained acquisitions across three requests, with 200 events and zero differences each time. It independently recomputed the stable report fingerprint, verified the download and selection bounds, and compared stored counts before and after. This verifier uses actual retained acquisitions. [Live HTTP replay evidence](../evidence/archive-release-live-replay.json)
+
+The browser verification exercised the live Reconstruct publication control and observed 100 retained events with zero differences. It separately inspected the offline card, its observed measurements, source and download links. [Live reconstruction capture](../evidence/archive-live-replay.jpg) · [Offline benchmark card capture](../evidence/archive-live-benchmark.jpg)
