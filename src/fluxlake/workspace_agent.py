@@ -3,27 +3,74 @@
 from __future__ import annotations
 
 import json
+import logging
 import math
 import os
 import time
+from contextvars import ContextVar
+from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from email.utils import parsedate_to_datetime
-from urllib.error import HTTPError
+from http.client import HTTPException
+from urllib.error import HTTPError, URLError
 from urllib.request import Request, build_opener
 
 from fluxlake.workspace import NoRedirect, WorkspaceUnavailable
 
 
 class AgentUnavailable(RuntimeError):
-    pass
+    def __init__(self, message, retry_after=None):
+        self.retry_after = retry_after
+        super().__init__(message)
 
 
 class AgentQuotaExceeded(AgentUnavailable):
     def __init__(self, retry_after):
-        self.retry_after = retry_after
         super().__init__(
-            "AI provider free quota is temporarily exhausted. Retry after the indicated interval; no answer was fabricated."
+            "AI provider free quota is temporarily exhausted. Retry after the indicated interval; no answer was fabricated.",
+            retry_after,
         )
+
+
+logger = logging.getLogger(__name__)
+
+
+@dataclass
+class ProviderBudget:
+    # Shared across all model turns, including attempts that fail upstream.
+    deadline: float = field(default_factory=lambda: time.monotonic() + 50)
+    requests_left: int = 6
+    retries_left: int = 2
+
+    def remaining(self):
+        seconds = self.deadline - time.monotonic()
+        if seconds <= 0:
+            raise AgentUnavailable(
+                "Investigation reached its time budget; no unsupported conclusion is shown"
+            )
+        return seconds
+
+    def request_timeout(self):
+        remaining = self.remaining()
+        if self.requests_left <= 0:
+            raise AgentUnavailable("AI investigation reached its provider request budget")
+        self.requests_left -= 1
+        return min(18, remaining)
+
+    def retry(self, delay):
+        if (
+            delay > 2
+            or self.retries_left <= 0
+            or self.requests_left <= 0
+            or delay >= self.remaining()
+        ):
+            return False
+        self.retries_left -= 1
+        time.sleep(delay)
+        return True
+
+
+_provider_budget = ContextVar("fluxlake_provider_budget", default=None)
 
 
 def provider_configuration():
@@ -134,10 +181,11 @@ def retry_interval(value):
             seconds = 1
     if not math.isfinite(seconds):
         seconds = 60
-    return max(1, min(3600, math.ceil(seconds)))
+    return max(1, math.ceil(seconds))
 
 
 def call_provider(messages, tools, tool_choice="auto"):
+    budget = _provider_budget.get() or ProviderBudget()
     provider, endpoint, key, model = provider_configuration()
     if not key or not model or not endpoint:
         raise AgentUnavailable("AI provider is not configured. No model answer has been generated.")
@@ -159,25 +207,46 @@ def call_provider(messages, tools, tool_choice="auto"):
         },
         method="POST",
     )
-    for attempt in range(2):
+    for attempt in range(3):
+        timeout = budget.request_timeout()
         try:
-            with build_opener(NoRedirect).open(request, timeout=18) as response:
+            with build_opener(NoRedirect).open(request, timeout=timeout) as response:
                 raw = response.read(256_001)
                 if len(raw) > 256_000:
                     raise ValueError()
-                return json.loads(raw)["choices"][0]["message"]
+                message = json.loads(raw)["choices"][0]["message"]
+                budget.remaining()
+                return message
         except HTTPError as exc:
-            if exc.code == 429:
-                delay = retry_interval(exc.headers.get("Retry-After"))
-                exc.close()
-                if attempt == 0 and delay <= 2:
-                    time.sleep(delay)
+            logger.warning("AI provider failure status=%s type=HTTPError", exc.code)
+            header = exc.headers.get("Retry-After") if exc.headers else None
+            delay = retry_interval(header) if header is not None else min(2, attempt + 1)
+            status = exc.code
+            exc.close()
+            if status == 429:
+                if attempt == 0 and budget.retry(delay):
                     continue
                 raise AgentQuotaExceeded(delay) from None
-            exc.close()
+            if status in {500, 502, 503, 504}:
+                if attempt < 2 and budget.retry(delay):
+                    continue
+                raise AgentUnavailable(
+                    "AI provider is temporarily unavailable; retry after the indicated interval. No answer was fabricated.",
+                    delay,
+                ) from None
             raise AgentUnavailable(
                 "AI provider rejected the request or is unavailable; no generated answer is available"
             ) from None
+        except (URLError, OSError, HTTPException) as exc:
+            logger.warning("AI provider failure status=network type=%s", type(exc).__name__)
+            delay = min(2, attempt + 1)
+            if attempt < 2 and budget.retry(delay):
+                continue
+            raise AgentUnavailable(
+                "AI provider request failed; no generated answer is available", delay
+            ) from None
+        except AgentUnavailable:
+            raise
         except Exception:
             raise AgentUnavailable(
                 "AI provider request failed; no generated answer is available"
@@ -208,6 +277,16 @@ def execute_tool(store, name, arguments):
 
 
 def run_agent(store, question, provider=None):
+    # Context isolation prevents one concurrent investigation consuming another's
+    # deadline or retries; reset even when the provider or a tool fails.
+    token = _provider_budget.set(ProviderBudget())
+    try:
+        return _run_agent(store, question, provider)
+    finally:
+        _provider_budget.reset(token)
+
+
+def _run_agent(store, question, provider=None):
     provider = provider or call_provider
     if not provider_status()["configured"]:
         raise AgentUnavailable("AI provider is not configured. No model answer has been generated.")
@@ -225,13 +304,11 @@ def run_agent(store, question, provider=None):
     ]
     trace, calls, began = [], 0, time.monotonic()
     for step in range(4):
-        if time.monotonic() - began > 50:
-            raise AgentUnavailable(
-                "Investigation reached its time budget; no unsupported conclusion is shown"
-            )
+        _provider_budget.get().remaining()
         message = provider(
             messages, TOOLS, "required" if step == 0 else "none" if step == 3 else "auto"
         )
+        _provider_budget.get().remaining()
         if not isinstance(message, dict):
             raise AgentUnavailable("AI provider returned an invalid response")
         requested = message.get("tool_calls") or []
@@ -254,6 +331,7 @@ def run_agent(store, question, provider=None):
         # objects. Replay them unchanged to the provider; never return them in trace.
         messages.append(message)
         for tool in requested:
+            _provider_budget.get().remaining()
             try:
                 name = tool["function"]["name"]
                 encoded = tool["function"]["arguments"]

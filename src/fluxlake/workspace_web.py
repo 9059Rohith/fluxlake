@@ -329,7 +329,8 @@ def install_workspace(app, authorize):
                 429, str(exc), headers={"Retry-After": str(exc.retry_after)}
             ) from None
         except AgentUnavailable as exc:
-            raise HTTPException(503, str(exc)) from None
+            headers = {"Retry-After": str(exc.retry_after)} if exc.retry_after else None
+            raise HTTPException(503, str(exc), headers=headers) from None
 
     @app.post("/api/workspace/agent/demo")
     def public_agent(question: PublicAgentQuestion, request: Request):
@@ -356,7 +357,8 @@ def install_workspace(app, authorize):
                 429, str(exc), headers={"Retry-After": str(exc.retry_after)}
             ) from None
         except AgentUnavailable as exc:
-            raise HTTPException(503, str(exc)) from None
+            headers = {"Retry-After": str(exc.retry_after)} if exc.retry_after else None
+            raise HTTPException(503, str(exc), headers=headers) from None
 
     app.router.routes.append(layer_route)
 
