@@ -124,9 +124,10 @@ def test_success_receipt_is_fingerprinted_and_tests_receive_no_provider_credenti
 ):
     receipt = fixture_project(
         tmp_path,
-        "import os\n\ndef test_environment():\n"
+        "import os\nimport pytest\n\ndef test_environment():\n"
         '    assert "OPENAI_API_KEY" not in os.environ\n'
-        '    assert "TEST_DATABASE_URL" not in os.environ\n',
+        '    assert "TEST_DATABASE_URL" not in os.environ\n'
+        '\ndef test_optional():\n    pytest.skip("integration opt-in disabled")\n',
     )
     monkeypatch.setenv("OPENAI_API_KEY", "must-never-reach-tests")
     monkeypatch.setenv("TEST_DATABASE_URL", "must-never-reach-tests")
@@ -135,7 +136,8 @@ def test_success_receipt_is_fingerprinted_and_tests_receive_no_provider_credenti
     result = json.loads(receipt.read_text())
     assert result["status"] == "passed"
     assert result["pytest"]["passed"] == 1
-    assert result["pytest"]["skipped"] == 0
+    assert result["pytest"]["skipped"] == 1
+    assert result["pytest"]["skips"] == [{"reason": "integration opt-in disabled", "count": 1}]
     assert "must-never-reach-tests" not in receipt.read_text()
     original = result["fingerprints"]
     (tmp_path / "src" / "sample.py").write_text("VALUE = 2\n")

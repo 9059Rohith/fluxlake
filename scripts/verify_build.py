@@ -9,6 +9,7 @@ import subprocess
 import sys
 import tempfile
 import xml.etree.ElementTree as ET
+from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -89,6 +90,12 @@ def run_gate(root, output):
         tests = [sys.executable, "-m", "pytest", "-q", "--tb=short", "-rs", f"--junitxml={report}"]
         subprocess.run(tests, cwd=root, env=environment, check=True)
         counts = read_junit(report)
+    # Hosted log events have a finite size; group identical skip reasons rather
+    # than repeating every test identifier in the small runtime receipt.
+    counts["skips"] = [
+        {"reason": reason, "count": count}
+        for reason, count in sorted(Counter(item["reason"] for item in counts["skips"]).items())
+    ]
     receipt = {
         "schema_version": 1,
         "project": "fluxlake",
