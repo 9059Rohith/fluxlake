@@ -1,0 +1,28 @@
+{
+  "verified_at": "2026-11-05T04:49:04.221502+00:00",
+  "archive_sha256": "717eaa4e74034a93ef6b423db7f61776f81899f978dba60d8b42b141e6d16429",
+  "actual_archive_events": 200,
+  "invalid_batch_limits_rejected": [
+    0,
+    129,
+    null
+  ],
+  "receipt_mismatch_rolled_back": true,
+  "source_count_after_rollback": 200,
+  "model_runs_after_rollback": 0,
+  "bounded_run_and_event_deltas": [
+    [
+      1,
+      100
+    ],
+    [
+      1,
+      100
+    ],
+    [
+      0,
+      0
+    ]
+  ],
+  "full_sql_parity": true
+}

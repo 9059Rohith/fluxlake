@@ -35,6 +35,8 @@ The Replay audit also shows a separate offline crash recovery benchmark over 20,
 GH Archive events with a reproducible harness and downloadable report.
 [Archive recovery benchmark](docs/archive-replay-benchmark.md)
 
+An opt-in downstream SQL model materializes hourly event-type aggregates from immutable Silver. Its Python harness checks incremental refresh, rollback, concurrent retry and like-for-like read latency on the verified 20,000-event archive cohort. [Incremental modeling evidence](docs/incremental-hourly-model.md)
+
 ## Data and AI boundaries
 
 The GitHub API is a **sample**, not a complete stream. GitHub documents upstream latency from 30 seconds to six hours. Ingestion is operator-triggered. There is no always-on or realtime completeness claim. Duplicate IDs are replay-safe; conflicting content goes to quarantine without overwriting original bronze. Event fingerprints use canonical JSON; run receipts additionally hash exact upstream response bytes.
