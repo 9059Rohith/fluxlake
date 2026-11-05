@@ -1,0 +1,20 @@
+{
+  "deployment_id": "dpl_Aph3C6NVhCwxLmrKUNnS7PW5FVSX",
+  "source_commit": "10e4f84f57e48ac414a01e8a489837c62baf099f",
+  "build_log": "hosted-build.log",
+  "receipt_marker": "BUILD_VERIFICATION_RECEIPT=",
+  "public_url": "https://rohith-fluxlake.vercel.app/",
+  "status": "READY",
+  "promoted": true,
+  "alias": {
+    "alias": "rohith-fluxlake.vercel.app",
+    "deployment_id": "dpl_Aph3C6NVhCwxLmrKUNnS7PW5FVSX",
+    "project_id": "prj_uvaQpkLZLttxtyhOeefJGBt8xxRt"
+  },
+  "hosted_passed": 226,
+  "hosted_skipped": 34,
+  "build_log_sha256": "c388d245ef9eced17b4827001e0a7f0491685a05d5908e08da3fa047096adb83",
+  "github_actions": "Account billing lock: jobs never started",
+  "aws": "No credentials or apply; existing free Vercel/Neon deployment used",
+  "retest": "14 public API checks; latest 4/4 real AI calls passed; earlier PipeFoundry503s retained; no new browser run"
+}
