@@ -40,7 +40,7 @@ class ProviderBudget:
     # Shared across all model turns, including attempts that fail upstream.
     deadline: float = field(default_factory=lambda: time.monotonic() + 50)
     requests_left: int = 6
-    retries_left: int = 2
+    retries_used: int = 0
 
     def remaining(self):
         seconds = self.deadline - time.monotonic()
@@ -60,12 +60,12 @@ class ProviderBudget:
     def retry(self, delay):
         if (
             delay > 2
-            or self.retries_left <= 0
+            or self.retries_used >= 2
             or self.requests_left <= 0
             or delay >= self.remaining()
         ):
             return False
-        self.retries_left -= 1
+        self.retries_used += 1
         time.sleep(delay)
         return True
 
@@ -220,7 +220,7 @@ def call_provider(messages, tools, tool_choice="auto"):
         except HTTPError as exc:
             logger.warning("AI provider failure status=%s type=HTTPError", exc.code)
             header = exc.headers.get("Retry-After") if exc.headers else None
-            delay = retry_interval(header) if header is not None else min(2, attempt + 1)
+            delay = retry_interval(header) if header is not None else min(2, budget.retries_used + 1)
             status = exc.code
             exc.close()
             if status == 429:
@@ -239,7 +239,7 @@ def call_provider(messages, tools, tool_choice="auto"):
             ) from None
         except (URLError, OSError, HTTPException) as exc:
             logger.warning("AI provider failure status=network type=%s", type(exc).__name__)
-            delay = min(2, attempt + 1)
+            delay = min(2, budget.retries_used + 1)
             if attempt < 2 and budget.retry(delay):
                 continue
             raise AgentUnavailable(

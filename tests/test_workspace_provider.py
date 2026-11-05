@@ -276,6 +276,18 @@ def test_retry_budget_is_shared_across_model_turns(gemini, transport):
     assert len(requests) == 5 and len(sleeps) == 2
 
 
+@pytest.mark.parametrize("second_failure", [503, "network"])
+def test_default_backoff_increases_across_model_turns(gemini, transport, second_failure):
+    outcomes, requests, sleeps, _ = transport
+    failure = (URLError("private-network-detail") if second_failure == "network"
+               else provider_error(second_failure))
+    outcomes.extend([provider_error(), TOOL_MESSAGE, failure,
+                     {"role": "assistant", "content": "17 retained events."}])
+    result = run_agent(RecoveryStore(), "Count retained events")
+    assert result["answer"] == "17 retained events."
+    assert len(requests) == 4 and sleeps == [1, 2]
+
+
 def test_deadline_caps_next_request_and_rejects_late_answer(gemini, transport):
     outcomes, requests, _, now = transport
     outcomes.extend([TOOL_MESSAGE, {"role": "assistant", "content": "too late"}])
