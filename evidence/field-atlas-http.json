@@ -1,0 +1,85 @@
+{
+  "verified_at": "2026-11-05T03:36:42.401384+00:00",
+  "base_url": "https://rohith-fluxlake.vercel.app",
+  "pages": [
+    {
+      "route": "/workspace/gold",
+      "status": 200,
+      "images": 1
+    },
+    {
+      "route": "/workspace/schema",
+      "status": 200,
+      "images": 1
+    },
+    {
+      "route": "/workspace/drift",
+      "status": 200,
+      "images": 1
+    },
+    {
+      "route": "/",
+      "status": 200,
+      "images": 8
+    },
+    {
+      "route": "/workspace/lineage",
+      "status": 200,
+      "images": 1
+    },
+    {
+      "route": "/workspace/access",
+      "status": 200,
+      "images": 1
+    },
+    {
+      "route": "/workspace/quarantine",
+      "status": 200,
+      "images": 1
+    },
+    {
+      "route": "/workspace/silver",
+      "status": 200,
+      "images": 1
+    },
+    {
+      "route": "/workspace/ingestion",
+      "status": 200,
+      "images": 1
+    },
+    {
+      "route": "/workspace/runs",
+      "status": 200,
+      "images": 1
+    },
+    {
+      "route": "/workspace/replay",
+      "status": 200,
+      "images": 1
+    },
+    {
+      "route": "/workspace/agent",
+      "status": 200,
+      "images": 1
+    },
+    {
+      "route": "/workspace/sources",
+      "status": 200,
+      "images": 1
+    },
+    {
+      "route": "/workspace/bronze",
+      "status": 200,
+      "images": 1
+    }
+  ],
+  "distinct_compositions": 20,
+  "image_files": 21,
+  "image_bytes": 362486,
+  "font_bytes": 71228,
+  "live_events": 200,
+  "reconstructed_events": 100,
+  "replay_differences": 0,
+  "offline_benchmark_events": 20000,
+  "anonymous_ingest_status": 401
+}

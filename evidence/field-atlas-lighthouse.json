@@ -1,0 +1,76 @@
+{
+  "runtime_commit": "96bd1de",
+  "deployment_id": "dpl_EE5XcZTnuzxxmdCXSjNBkY3dSBpD",
+  "before_refinement": {
+    "recorded_at": "2026-11-05T03:32:23.791Z",
+    "requested_url": "https://rohith-fluxlake.vercel.app/workspace/overview",
+    "lighthouse_version": "13.6.0",
+    "form_factor": "mobile",
+    "scores": {
+      "performance": 89,
+      "accessibility": 91,
+      "best-practices": 100,
+      "seo": 92
+    },
+    "metrics": {
+      "first-contentful-paint": 1404.3890000000001,
+      "largest-contentful-paint": 1974.3890000000001,
+      "total-blocking-time": 84,
+      "cumulative-layout-shift": 0.18647919918168082
+    },
+    "diagnostics": {
+      "button-name": {
+        "score": 0,
+        "affected_elements": 1
+      },
+      "link-name": {
+        "score": 0,
+        "affected_elements": 1
+      },
+      "label-content-name-mismatch": {
+        "score": 0,
+        "affected_elements": 4
+      },
+      "canonical": {
+        "score": 0,
+        "affected_elements": 0
+      }
+    }
+  },
+  "final": {
+    "recorded_at": "2026-11-05T03:36:46.646Z",
+    "requested_url": "https://rohith-fluxlake.vercel.app/workspace/overview",
+    "lighthouse_version": "13.6.0",
+    "form_factor": "mobile",
+    "scores": {
+      "performance": 99,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 100
+    },
+    "metrics": {
+      "first-contentful-paint": 1207.088,
+      "largest-contentful-paint": 1807.088,
+      "total-blocking-time": 54,
+      "cumulative-layout-shift": 0
+    },
+    "diagnostics": {
+      "button-name": {
+        "score": 1,
+        "affected_elements": 0
+      },
+      "link-name": {
+        "score": 1,
+        "affected_elements": 0
+      },
+      "label-content-name-mismatch": {
+        "score": 0,
+        "affected_elements": 4
+      },
+      "canonical": {
+        "score": 1,
+        "affected_elements": 0
+      }
+    }
+  }
+}
