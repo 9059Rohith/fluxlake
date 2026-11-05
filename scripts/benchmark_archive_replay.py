@@ -4,8 +4,10 @@ import argparse
 import gzip
 import hashlib
 import json
+import logging
 import os
 import platform
+import re
 import secrets
 import socket
 import subprocess
@@ -30,6 +32,45 @@ ARCHIVE_BYTES = 72_578_615
 ARCHIVE_MD5 = "432312db553b5e96f65022444dd82e8b"
 BATCH_ROWS = 100
 BATCH_BYTES = 1_500_000
+
+
+@contextmanager
+def workspace_diagnostics():
+    """Retain the publisher's fixed diagnostic fields, including deliberate faults."""
+    records = []
+
+    class Capture(logging.Handler):
+        def emit(self, record):
+            diagnostic = getattr(record, "workspace_diagnostic", None)
+            if diagnostic is not None:
+                records.append(dict(diagnostic))
+
+    logger = logging.getLogger("fluxlake.workspace")
+    handler = Capture()
+    logger.addHandler(handler)
+    try:
+        yield records
+    finally:
+        logger.removeHandler(handler)
+
+
+def write_benchmark_failure(output, error, source_sha256, diagnostics):
+    state = getattr(error, "sqlstate", None)
+    if not isinstance(state, str) or not re.fullmatch(r"[A-Z0-9]{5}", state):
+        state = None
+    failure = {
+        "recorded_at": datetime.now(timezone.utc).isoformat(),
+        "status": "failed",
+        "exception_type": type(error).__name__,
+        "archive_sha256": source_sha256,
+        "database_diagnostics": diagnostics,
+        "terminal_diagnostic": getattr(error, "diagnostic", None)
+        or {"phase": "benchmark", "exception_type": type(error).__name__, "sqlstate": state},
+    }
+    path = output.with_suffix(".failure.json")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(failure, indent=2) + "\n", encoding="utf-8", newline="\n")
+    print(f"Safe failure evidence saved to {path}", flush=True)
 
 
 @dataclass
@@ -494,12 +535,17 @@ def main():
         f"Verified pinned gzip; selected {args.limit:,} actual events in {len(batches)} batches",
         flush=True,
     )
-    result = benchmark(
-        batches,
-        args.limit,
-        Path(__file__).resolve().parents[1] / "sql/workspace.sql",
-        args.postgres_bin,
-    )
+    with workspace_diagnostics() as diagnostics:
+        try:
+            result = benchmark(
+                batches,
+                args.limit,
+                Path(__file__).resolve().parents[1] / "sql/workspace.sql",
+                args.postgres_bin,
+            )
+        except Exception as error:
+            write_benchmark_failure(args.output, error, archive_sha256, diagnostics)
+            raise SystemExit(1) from None
     report = {
         "benchmark": "GH Archive isolated PostgreSQL publication and crash recovery",
         "measured_at": datetime.now(timezone.utc).isoformat(),
@@ -518,6 +564,8 @@ def main():
             "postgres_runtime": "disposable native PostgreSQL cluster",
         },
         **result,
+        "status": "passed",
+        "database_diagnostics": diagnostics,
         "timing_scope": "Single local run. Sequential batches with connection/transaction costs; excludes download, cohort selection and independent manifest scans. Hosted replay is separately bounded.",
     }
     args.output.parent.mkdir(parents=True, exist_ok=True)

@@ -65,6 +65,8 @@ For cloud environments without direct database access, authenticated `POST /api/
 
 The constant-time bearer boundary, exact-host middleware, CSP without inline scripts/styles, security headers and private CDC authorization remain. Private operations authenticate before bounded body parsing. Public inference uses a separate origin, input and persistent-capacity boundary. Source acquisition is fixed to `api.github.com`, rejects redirects, and caps responses at 2 MiB and records at 64 KiB. Public SQL reads are bounded, parameterized and read-only. Aggregate columns use a fixed enum. CSV cells resist spreadsheet formula execution. UI strings and raw JSON are HTML-escaped.
 
+Public workspace connections retry transient startup failures within a fixed budget before entering the operation body. Phase, exception type and SQLSTATE support safe diagnosis. [Connection recovery and actual PostgreSQL evidence](docs/workspace-connectivity.md)
+
 ```powershell
 .venv\Scripts\python -m pytest -q --junitxml=evidence/workspace-junit.xml
 .venv\Scripts\ruff check .

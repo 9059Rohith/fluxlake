@@ -10,6 +10,7 @@ import csv
 import hashlib
 import io
 import json
+import logging
 import math
 import os
 import re
@@ -31,10 +32,60 @@ MAX_RESPONSE = 2 * 1024 * 1024
 EVENT_ID = re.compile(r"[0-9]{1,30}\Z")
 REPOSITORY = re.compile(r"[A-Za-z0-9_.-]{1,100}/[A-Za-z0-9_.-]{1,100}\Z")
 ACTOR = re.compile(r"[A-Za-z0-9_\[\].-]{1,100}\Z")
+CONNECTION_RETRY_DELAYS = (0.25, 0.75)
+TRANSIENT_CONNECTION_STATES = frozenset(
+    {"08000", "08001", "08003", "08006", "57P01", "57P02", "57P03", "53300"}
+)
+LOGGER = logging.getLogger(__name__)
 
 
 class WorkspaceUnavailable(RuntimeError):
-    pass
+    def __init__(self, message, *, diagnostic=None):
+        super().__init__(message)
+        self.diagnostic = diagnostic
+
+
+def _database_diagnostic(error, phase, attempt, *, retrying=False):
+    state = getattr(error, "sqlstate", None)
+    if not isinstance(state, str) or not re.fullmatch(r"[A-Z0-9]{5}", state):
+        state = None
+    kind = type(error).__name__
+    if not re.fullmatch(r"[A-Za-z][A-Za-z0-9_]{0,79}", kind):
+        kind = "Exception"
+    diagnostic = {
+        "phase": phase,
+        "exception_type": kind,
+        "sqlstate": state,
+        "attempt": attempt,
+        "retrying": retrying,
+    }
+    LOGGER.warning(
+        "Workspace database failure phase=%s type=%s sqlstate=%s attempt=%s retrying=%s",
+        phase,
+        kind,
+        state or "none",
+        attempt,
+        retrying,
+        extra={"workspace_diagnostic": diagnostic},
+    )
+    return diagnostic
+
+
+def _transient_connection_error(error):
+    if not isinstance(error, psycopg.OperationalError):
+        return False
+    if error.sqlstate is not None:
+        return error.sqlstate in TRANSIENT_CONNECTION_STATES
+    # libpq can omit SQLSTATE during startup. Inspect fixed configuration phrases
+    # internally; the raw message never becomes a diagnostic or emitted log value.
+    permanent = re.search(
+        r"password authentication failed|no pg_hba\.conf entry|invalid connection option|"
+        r"invalid sslmode|certificate verify failed|root certificate file|private key file|"
+        r"(?:database|role) [^\n]* does not exist",
+        str(error),
+        re.IGNORECASE,
+    )
+    return permanent is None
 
 
 class IngestionBusy(RuntimeError):
@@ -160,21 +211,48 @@ class PublicWorkspace:
     def connection(self, write=False):
         if not self.database_url:
             raise WorkspaceUnavailable("Public data store is not configured")
-        try:
-            with psycopg.connect(
-                self.database_url, connect_timeout=5, row_factory=dict_row
-            ) as conn:
+        # This loop ends before yield. Only session-local setup can be retried.
+        for attempt in range(1, len(CONNECTION_RETRY_DELAYS) + 2):
+            conn = None
+            phase = "connect"
+            try:
+                conn = psycopg.connect(self.database_url, connect_timeout=5, row_factory=dict_row)
+                phase = "session_setup"
                 if not write:
                     conn.read_only = True
                     conn.isolation_level = psycopg.IsolationLevel.REPEATABLE_READ
                 conn.execute("SET LOCAL statement_timeout='8s'")
                 conn.execute("SET LOCAL lock_timeout='2s'")
+                break
+            except Exception as error:
+                if conn is not None:
+                    try:
+                        conn.close()
+                    except Exception as cleanup:
+                        _database_diagnostic(cleanup, "setup_cleanup", attempt)
+                retrying = attempt <= len(CONNECTION_RETRY_DELAYS) and _transient_connection_error(
+                    error
+                )
+                diagnostic = _database_diagnostic(error, phase, attempt, retrying=retrying)
+                if not retrying:
+                    raise WorkspaceUnavailable(
+                        "Public event store is unavailable; no substitute data is shown",
+                        diagnostic=diagnostic,
+                    ) from None
+                time.sleep(CONNECTION_RETRY_DELAYS[attempt - 1])
+
+        phase = "body"
+        try:
+            with conn:
                 yield conn
+                phase = "commit"
         except (WorkspaceUnavailable, IngestionBusy):
             raise
-        except Exception:
+        except Exception as error:
+            diagnostic = _database_diagnostic(error, phase, attempt)
             raise WorkspaceUnavailable(
-                "Public event store is unavailable; no substitute data is shown"
+                "Public event store is unavailable; no substitute data is shown",
+                diagnostic=diagnostic,
             ) from None
 
     def ingest(self, fetcher=fetch_public_events):

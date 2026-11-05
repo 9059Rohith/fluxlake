@@ -1,0 +1,53 @@
+{
+  "verified_at": "2026-11-05T06:29:56.726320+00:00",
+  "archive_sha256": "717eaa4e74034a93ef6b423db7f61776f81899f978dba60d8b42b141e6d16429",
+  "unavailable_to_available": {
+    "diagnostics": [
+      {
+        "phase": "connect",
+        "exception_type": "ConnectionTimeout",
+        "sqlstate": null,
+        "attempt": 1,
+        "retrying": true
+      },
+      {
+        "phase": "connect",
+        "exception_type": "OperationalError",
+        "sqlstate": null,
+        "attempt": 2,
+        "retrying": true
+      }
+    ],
+    "persisted_events": 100,
+    "publication_receipts": 1,
+    "body_calls": 1
+  },
+  "controlled_lost_acknowledgement": {
+    "fault": "Real PostgreSQL commit succeeds, then client wrapper raises acknowledgement loss",
+    "diagnostics": [
+      {
+        "phase": "commit",
+        "exception_type": "OperationalError",
+        "sqlstate": null,
+        "attempt": 1,
+        "retrying": false
+      }
+    ],
+    "body_calls": 1,
+    "connection_calls": 1,
+    "total_persisted_events": 200,
+    "total_publication_receipts": 2
+  },
+  "real_authentication_failure": {
+    "diagnostics": [
+      {
+        "phase": "connect",
+        "exception_type": "OperationalError",
+        "sqlstate": null,
+        "attempt": 1,
+        "retrying": false
+      }
+    ],
+    "attempts": 1
+  }
+}

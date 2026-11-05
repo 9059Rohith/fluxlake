@@ -19,6 +19,8 @@ from benchmark_archive_replay import (
     isolated_postgres,
     publish,
     select_cohort,
+    workspace_diagnostics,
+    write_benchmark_failure,
 )
 from fluxlake.workspace import PublicWorkspace
 
@@ -220,13 +222,20 @@ def main():
     args = parser.parse_args()
     source_sha = archive_digest(args.archive)
     batches, selection = select_cohort(args.archive, 20_000)
-    with isolated_postgres(args.postgres_bin) as (cluster, _):
-        measured = run(cluster.dsn, batches)
+    with workspace_diagnostics() as diagnostics:
+        try:
+            with isolated_postgres(args.postgres_bin) as (cluster, _):
+                measured = run(cluster.dsn, batches)
+        except Exception as error:
+            write_benchmark_failure(args.output, error, source_sha, diagnostics)
+            raise SystemExit(1) from None
     evidence = {
         "recorded_at": datetime.now(timezone.utc).isoformat(),
         "source": {"archive_url": ARCHIVE_URL, "archive_sha256": source_sha, **selection},
         "scope": "Sequential local PostgreSQL microbatches replayed from archived public events. Query timings use one warm connection and alternate identical output queries.",
         **measured,
+        "status": "passed",
+        "database_diagnostics": diagnostics,
     }
     encoded = json.dumps(evidence, indent=2) + "\n"
     args.output.write_text(encoded, encoding="utf-8", newline="\n")
