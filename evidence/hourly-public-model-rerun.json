@@ -1,0 +1,90 @@
+{
+  "observed_at": "2026-11-05T05:05:13.206531+00:00",
+  "source": {
+    "archive_url": "https://data.gharchive.org/2025-01-01-15.json.gz",
+    "archive_sha256": "717eaa4e74034a93ef6b423db7f61776f81899f978dba60d8b42b141e6d16429",
+    "archive_lines_scanned": 20012,
+    "skipped": {
+      "record_exceeds_64_kib": 12
+    }
+  },
+  "limits": {
+    "publisher_connect_seconds": 5,
+    "publisher_statement_seconds": 8,
+    "publisher_lock_seconds": 2,
+    "model_connection_seconds": 1,
+    "model_lock_seconds": 5,
+    "model_statement_seconds": 15
+  },
+  "purpose": "Fresh bounded rerun following a separately reported WorkspaceUnavailable failure. Original code and limits preserved.",
+  "result": {
+    "postgresql_version": "18.2",
+    "unique_events": 20000,
+    "result_buckets": 15,
+    "modeled_runs": 200,
+    "backfill": {
+      "events": 18000,
+      "refreshes": 6,
+      "wall_ms": 149.476
+    },
+    "steady": {
+      "events": 1900,
+      "publisher_commit_to_model_commit": {
+        "samples": 19,
+        "median_ms": 4.986,
+        "p95_ms": 7.901,
+        "max_ms": 7.901
+      },
+      "publish_start_to_model_commit": {
+        "samples": 19,
+        "median_ms": 238.571,
+        "p95_ms": 329.144,
+        "max_ms": 329.144
+      },
+      "older_than_previous_event_time_max": 2,
+      "in_prior_utc_hour": 0
+    },
+    "rollback_and_retry": {
+      "events": 100,
+      "rolled_back_delta": true,
+      "concurrent_retry_runs": [
+        0,
+        1
+      ]
+    },
+    "duplicate_redelivery_events": 100,
+    "read_benchmark": {
+      "materialized": {
+        "samples": 40,
+        "median_ms": 1.004,
+        "p95_ms": 1.366,
+        "max_ms": 1.468,
+        "server_execution_ms": 0.285,
+        "shared_hit_blocks": 1,
+        "shared_read_blocks": 0
+      },
+      "full_silver_recompute": {
+        "samples": 40,
+        "median_ms": 27.106,
+        "p95_ms": 32.988,
+        "max_ms": 33.872,
+        "server_execution_ms": 29.451,
+        "shared_hit_blocks": 306,
+        "shared_read_blocks": 0
+      }
+    },
+    "python_source_parity": true,
+    "sql_full_recompute_parity": true,
+    "result_sha256": "18c551aca4ae1953bba3cb37980fc64496eed5bb27b49ef00614a425e14f8e12"
+  },
+  "status": "passed",
+  "initial_result_fingerprint_matches": true,
+  "prior_independent_attempt": {
+    "reported_stage": "after 18000-event warm stage",
+    "outer_error": "WorkspaceUnavailable",
+    "inner_error": null,
+    "sqlstate": null,
+    "server_log_retained": false,
+    "cause": "Unconfirmed"
+  }
+}
