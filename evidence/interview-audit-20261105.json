@@ -1,0 +1,304 @@
+{
+  "project": "fluxlake",
+  "verified_at": "2026-11-05T09:54:29.319235+00:00",
+  "evidence_base": "https://github.com/9059Rohith/fluxlake/blob/main/evidence/",
+  "test_profiles": {
+    "tests": {
+      "cases": 230,
+      "passed": 196,
+      "skipped": 34,
+      "failed": 0,
+      "errors": 0
+    },
+    "postgres": {
+      "cases": 38,
+      "passed": 38,
+      "skipped": 0,
+      "failed": 0,
+      "errors": 0
+    }
+  },
+  "profiles_overlap": true,
+  "unique_test_cases": 230,
+  "unique_cases_passed": 230,
+  "remaining_skips": {},
+  "runtime_dependency_audit": {
+    "dependencies_checked": 21,
+    "known_vulnerabilities": 0,
+    "scope": "Pinned runtime graph only; not a new remote-container scan"
+  },
+  "live_api": {
+    "project": "fluxlake",
+    "checks": [
+      {
+        "url": "https://rohith-fluxlake.vercel.app/ready",
+        "method": "GET",
+        "expected_status": 200,
+        "status": 200,
+        "elapsed_ms": 2875.0,
+        "passed": true,
+        "body_sha256": "31bf75f4c0a97cc1f7b60df824fa390b3be9ba014f29b63c87c698ba63d9a9fd"
+      },
+      {
+        "url": "https://rohith-fluxlake.vercel.app/api/workspace/overview",
+        "method": "GET",
+        "expected_status": 200,
+        "status": 200,
+        "elapsed_ms": 750.0,
+        "passed": true,
+        "body_sha256": "91babd27be3c93b96bd529c0824f1240304434a7baff3ad8c42f1d8c460826c5"
+      },
+      {
+        "url": "https://rohith-fluxlake.vercel.app/api/workspace/replay",
+        "method": "GET",
+        "expected_status": 200,
+        "status": 200,
+        "elapsed_ms": 672.0,
+        "passed": true,
+        "body_sha256": "b1aa9d5cf6b3afc9584cdf437cad4dcb8e85ba0253734d2664d33b9f023914ac"
+      },
+      {
+        "url": "https://rohith-fluxlake.vercel.app/events",
+        "method": "POST",
+        "expected_status": 401,
+        "status": 401,
+        "elapsed_ms": 500.0,
+        "passed": true,
+        "body_sha256": "d2ba41b2fe9844fc50bd6b01ebabc42a63efd015a7e094da1118683f90c5017d"
+      }
+    ],
+    "passed": true
+  },
+  "live_browser": {
+    "file_written_at": "2026-11-05T09:51:08.156110+00:00",
+    "checks": [
+      {
+        "width": 390,
+        "verified": "Retained publication audit agreed and historical evidence remained visible",
+        "errors": [],
+        "consoleErrors": [],
+        "expectedProviderErrors": [],
+        "providerFailures": [],
+        "title": "Replay audit \u00b7 FluxLake",
+        "url": "https://rohith-fluxlake.vercel.app/workspace/replay",
+        "screenshot": "interview-audit-390-20261105.png",
+        "browser": "Chromium 1248",
+        "browserPlugin": "Browser plugin not available"
+      },
+      {
+        "width": 1440,
+        "verified": "Retained publication audit agreed and historical evidence remained visible",
+        "errors": [],
+        "consoleErrors": [],
+        "expectedProviderErrors": [],
+        "providerFailures": [],
+        "title": "Replay audit \u00b7 FluxLake",
+        "url": "https://rohith-fluxlake.vercel.app/workspace/replay",
+        "screenshot": "interview-audit-1440-20261105.png",
+        "browser": "Chromium 1248",
+        "browserPlugin": "Browser plugin not available"
+      }
+    ]
+  },
+  "live_ai": {
+    "checked_at": "2026-11-05T09:51:03.371637+00:00",
+    "check": {
+      "name": "fluxlake",
+      "url": "https://rohith-fluxlake.vercel.app/api/workspace/agent/demo",
+      "status": 200,
+      "elapsed_ms": 3110.0,
+      "question": "Inspect the retained public dataset and explain its source, row count and one limitation.",
+      "response_sha256": "7f4150956af9b6ed2e95b4c5f9862b617177fbb93e334a89a70f0ee1ac534677",
+      "response": {
+        "answer": "- Source: Ingested from the public GitHub events endpoint (https://api.github.com/events?per_page=100), cited via source_api: /api/workspace/overview.\n- Row count: 200 events retained in the bronze sample, cited via source_api: /api/workspace/overview.\n- Limitation: The dataset represents only a sampled subset of public GitHub events rather than a complete stream or realtime feed, cited via source_api: /api/workspace/overview.",
+        "trace": [
+          {
+            "tool": "lake_overview",
+            "arguments": {},
+            "source": "/api/workspace/overview",
+            "result": {
+              "counts": {
+                "events": 200,
+                "repositories": 198,
+                "actors": 164,
+                "event_types": 4,
+                "earliest_event": "2026-10-30T05:53:51+00:00",
+                "latest_event": "2026-11-01T18:08:20+00:00",
+                "bronze_events": 200,
+                "bronze_bytes": 133426,
+                "quarantined": 0,
+                "run_count": 2
+              },
+              "latest_run": {
+                "id": "145d3c65-6c00-42c5-9016-8cb5486decb3",
+                "started_at": "2026-11-01T18:13:21.757873+00:00",
+                "finished_at": "2026-11-01T18:13:21.757873+00:00",
+                "status": "succeeded",
+                "source_url": "https://api.github.com/events?per_page=100",
+                "fetched": 100,
+                "inserted": 100,
+                "duplicates": 0,
+                "quarantined": 0,
+                "response_sha256": "3982c186f011af5f26e91d2bcf5171ccfd4da5e628bce87475e8d1aabbc89ae9",
+                "http_status": 200,
+                "rate_remaining": 53,
+                "poll_seconds": 60,
+                "error": null,
+                "duration_ms": 752
+              },
+              "event_types": [
+                {
+                  "event_type": "PushEvent",
+                  "events": 157
+                },
+                {
+                  "event_type": "CreateEvent",
+                  "events": 22
+                },
+                {
+                  "event_type": "DeleteEvent",
+                  "events": 15
+                },
+                {
+                  "event_type": "PullRequestEvent",
+                  "events": 6
+                }
+              ],
+              "recent": [
+                {
+                  "event_id": "18822217915",
+                  "event_type": "PullRequestEvent",
+                  "repository": "agadek/smart-diff",
+                  "actor": "agadek",
+                  "occurred_at": "2026-11-01T18:08:20+00:00",
+                  "action": "opened",
+                  "organization": null,
+                  "run_id": "145d3c65-6c00-42c5-9016-8cb5486decb3"
+                },
+                {
+                  "event_id": "18822217919",
+                  "event_type": "PullRequestEvent",
+                  "repository": "cocoonstack/gateway",
+                  "actor": "dependabot[bot]",
+                  "occurred_at": "2026-11-01T18:08:19+00:00",
+                  "action": "opened",
+                  "organization": "cocoonstack",
+                  "run_id": "145d3c65-6c00-42c5-9016-8cb5486decb3"
+                },
+                {
+                  "event_id": "18822063881",
+                  "event_type": "PullRequestEvent",
+                  "repository": "k2b-dev/cloud",
+                  "actor": "k2b-cloud-agents[bot]",
+                  "occurred_at": "2026-11-01T18:05:09+00:00",
+                  "action": "merged",
+                  "organization": "k2b-dev",
+                  "run_id": "59208a2d-4af2-4ad0-a056-7b7c7fbe598b"
+                },
+                {
+                  "event_id": "18822063872",
+                  "event_type": "PullRequestEvent",
+                  "repository": "driessamyn/kapper",
+                  "actor": "dependabot[bot]",
+                  "occurred_at": "2026-11-01T18:05:09+00:00",
+                  "action": "merged",
+                  "organization": null,
+                  "run_id": "59208a2d-4af2-4ad0-a056-7b7c7fbe598b"
+                },
+                {
+                  "event_id": "18822063878",
+                  "event_type": "PullRequestEvent",
+                  "repository": "Starktastic-Homelab/apps",
+                  "actor": "renovate[bot]",
+                  "occurred_at": "2026-11-01T18:05:08+00:00",
+                  "action": "merged",
+                  "organization": "Starktastic-Homelab",
+                  "run_id": "59208a2d-4af2-4ad0-a056-7b7c7fbe598b"
+                },
+                {
+                  "event_id": "18822063864",
+                  "event_type": "PullRequestEvent",
+                  "repository": "tutur3u/platform",
+                  "actor": "vhpx",
+                  "occurred_at": "2026-11-01T18:04:46+00:00",
+                  "action": "labeled",
+                  "organization": "tutur3u",
+                  "run_id": "59208a2d-4af2-4ad0-a056-7b7c7fbe598b"
+                },
+                {
+                  "event_id": "25855852067",
+                  "event_type": "PushEvent",
+                  "repository": "LCahst/quiet-space",
+                  "actor": "LCahst",
+                  "occurred_at": "2026-10-31T08:27:35+00:00",
+                  "action": null,
+                  "organization": null,
+                  "run_id": "145d3c65-6c00-42c5-9016-8cb5486decb3"
+                },
+                {
+                  "event_id": "25855851970",
+                  "event_type": "PushEvent",
+                  "repository": "trendvidia/protowire-csharp",
+                  "actor": "trendvidia",
+                  "occurred_at": "2026-10-31T08:27:35+00:00",
+                  "action": null,
+                  "organization": null,
+                  "run_id": "145d3c65-6c00-42c5-9016-8cb5486decb3"
+                }
+              ],
+              "source_url": "https://api.github.com/events?per_page=100",
+              "source_docs": "https://docs.github.com/en/rest/activity/events#list-public-events",
+              "scope": "Sampled public GitHub events; not a complete stream or a realtime feed",
+              "observed_at": "2026-11-05T09:50:53.329971+00:00"
+            }
+          }
+        ],
+        "model": "gemini-3.5-flash-lite",
+        "provider": "Google Gemini",
+        "tool_calls": 1,
+        "read_only": true,
+        "duration_ms": 2037,
+        "demo": true,
+        "demo_budget": {
+          "policy": {
+            "per_client": {
+              "requests": 3,
+              "seconds": 600
+            },
+            "shared_minute": {
+              "requests": 2,
+              "seconds": 60
+            },
+            "shared_day": {
+              "requests": 30,
+              "seconds": 86400
+            }
+          },
+          "remaining": {
+            "per_client": 2,
+            "shared_minute": 1,
+            "shared_day": 27
+          },
+          "shared_minute_reset_seconds": 8
+        }
+      },
+      "passed": true
+    }
+  },
+  "deployment": {
+    "id": "dpl_9JJgQUJrQcGkeP1oQ7WFCbhmHtJM",
+    "runtime_commit": "e013094917bf",
+    "changed": false
+  },
+  "limits": [
+    "No percentile rank is established",
+    "No AWS apply or successful hosted CI run is established",
+    "PostgreSQL-focused data paths were tested before the later AI-only transport changes; those data implementations did not change"
+  ],
+  "workflow_hardening": {
+    "status": "prepared_not_applied",
+    "reason": "GitHub rejected workflow file updates because the connected OAuth app lacks workflow scope",
+    "patch": "docs/workflow-hardening.patch",
+    "local_backup_branch": "codex/openfx-workflow-hardening-20261105"
+  }
+}

@@ -1,5 +1,7 @@
 # FluxLake
 
+[OpenFX readiness audit](https://github.com/9059Rohith/settlement-recon/blob/main/docs/openfx-interview-readiness.md) · [Interview demonstration](docs/interview.md)
+
 **Real public events → immutable evidence → typed exploration → inspectable analytics.**
 
 [Open workspace](https://rohith-fluxlake.vercel.app) · [Real source API](https://rohith-fluxlake.vercel.app/api/workspace/overview) · [Source documentation](https://docs.github.com/en/rest/activity/events#list-public-events)

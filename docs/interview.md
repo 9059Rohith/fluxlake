@@ -1,6 +1,33 @@
 # Interview guide
 
-**Is this WAL CDC?** The local implementation is an application-level transactional outbox captured by a PostgreSQL trigger and polled by a relay. The AWS profile uses DMS WAL capture of that outbox. Being precise about this distinction matters more than using a bigger stack name.
+## Current interview demonstration
+
+The repository contains two distinct execution profiles. The private transaction
+engine uses a PostgreSQL outbox, a local receipt/state store and Parquet/DuckDB.
+The public event workspace stores canonicalized GitHub event objects, typed records
+and publication receipts transactionally in hosted PostgreSQL. Do not describe
+the public deployment as the SQLite/Parquet engine or as a running AWS lakehouse.
+
+Open [replay](https://rohith-fluxlake.vercel.app/workspace/replay), reconstruct the
+retained publication and inspect its source/digest. Explain why a successful
+readiness response does not establish source freshness or completeness. The
+public collection is a retained sample, not a complete real-time GitHub stream.
+
+For Data Engineering, walk through duplicates, per-key revisions, tombstones,
+exact-row acknowledgment and the SQL hourly model. For DevOps, explain a crash
+between data commit and source acknowledgment, safe recovery, bounded connection
+setup retries and sanitized diagnostics. Recovery never retries an uncertain
+transaction body or commit automatically.
+
+The [20,000-event model](incremental-hourly-model.md) and
+[archive recovery benchmark](archive-replay-benchmark.md) are local experiments
+on verified historical source records. Quote their exact measurement boundary,
+sample count and failure disclosures. They are separate from hosted endpoint
+latency and do not establish production throughput or an AWS SLA.
+
+## Engineering questions
+
+**Is this WAL CDC?** The local implementation is an application-level transactional outbox captured by a PostgreSQL trigger and polled by a relay. The unprovisioned AWS profile describes DMS WAL capture of that outbox; it is configuration rather than executed cloud CDC evidence.
 
 **Why not checkpoint the largest outbox ID?** Identity values are allocated before commit. A lower-ID transaction may commit after a higher-ID transaction has been processed. We acknowledge exact rows; no high-watermark can skip late commits. Per-key revisions order entity state independently of delivery order.
 
