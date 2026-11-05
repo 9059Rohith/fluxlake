@@ -1,0 +1,24 @@
+{
+  "date": "2026-11-05",
+  "project": "fluxlake",
+  "source_commit": "a116aa087390816f038c35e8874d99b02e273242",
+  "deployment_id": "dpl_HXhczUimVsnh33FZapzGAbgAP1Fp",
+  "deployment_status": "READY",
+  "promoted": true,
+  "public_url": "https://rohith-fluxlake.vercel.app/",
+  "alias_verification": {
+    "alias": "rohith-fluxlake.vercel.app",
+    "deployment_id": "dpl_HXhczUimVsnh33FZapzGAbgAP1Fp",
+    "project_id": "prj_uvaQpkLZLttxtyhOeefJGBt8xxRt"
+  },
+  "provider": "Vercel Hobby Linux container build",
+  "hosted_tests_passed": 206,
+  "hosted_tests_skipped": 34,
+  "build_log_sha256": "9623b8a4768f104084be0545e70b5419a4ecbdedd8dd6cfea3fb27539f32c2e0",
+  "public_api_checks_passed": 14,
+  "latest_public_ai_checks_passed": 4,
+  "known_initial_provider_failures": "Settlement Recon and FluxLake AI503; next bounded requests after cooldown passed",
+  "github_actions": "Blocked before execution by account billing lock; workflow writes unauthorized",
+  "aws": "No credentials or profile; no AWS apply or deployment",
+  "browser_retest": "Not executed this task: browser automation unavailable"
+}

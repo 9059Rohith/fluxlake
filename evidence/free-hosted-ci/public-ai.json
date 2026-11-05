@@ -1,0 +1,783 @@
+{
+  "scope": "Latest observed real anonymous AI/tool response per app; prior failed attempts retained",
+  "checks": [
+    {
+      "name": "settlement-recon",
+      "url": "https://rohith-settlement-recon.vercel.app/workspace/api/agent/demo",
+      "status": 200,
+      "elapsed_ms": 32172.0,
+      "question": "Inspect the retained reference-rate evidence and explain its source and observation date.",
+      "response_sha256": "674ab569ccbd5152b7fe7cb28c9f98f1ab70f1278e96dbb7f07fad7080b3b3de",
+      "response": {
+        "answer": "Based on the retained reference-rate evidence:\n\n* **Source:** The data originates from the Frankfurter API (`https://api.frankfurter.dev/v1/latest`), which attributes its information to the European Central Bank (ECB) euro reference exchange rates.\n* **Observation Date:** The observation date recorded in the dataset is **October 30, 2026** (captured on November 1, 2026). \n\n*Note: These are reference rates only and do not represent executable transaction prices.*",
+        "tools": [
+          {
+            "name": "reference_rates",
+            "evidence": {
+              "status": "captured",
+              "source": "https://api.frankfurter.dev/v1/latest",
+              "attribution": "https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html",
+              "digest": "51833155c7b02838062e7d00eb6a6877ee5900e039a1e51aac56e1f624a79a69",
+              "captured_at": "2026-11-01T18:13:31.266028+00:00",
+              "observation": {
+                "amount": 1.0,
+                "base": "EUR",
+                "date": "2026-10-30",
+                "rates": {
+                  "AUD": 1.5904,
+                  "BRL": 6.0692,
+                  "CAD": 1.5606,
+                  "CHF": 0.9194,
+                  "CNY": 7.4326,
+                  "CZK": 24.353,
+                  "DKK": 7.4735,
+                  "GBP": 0.8338,
+                  "HKD": 8.7652,
+                  "HUF": 366.33,
+                  "IDR": 20275.17,
+                  "ILS": 3.495,
+                  "INR": 106.084,
+                  "ISK": 136.0,
+                  "JPY": 175.68,
+                  "KRW": 1491.76,
+                  "MXN": 21.1237,
+                  "MYR": 4.5325,
+                  "NOK": 10.312,
+                  "NZD": 1.9823,
+                  "PHP": 71.143,
+                  "PLN": 4.4038,
+                  "RON": 5.3447,
+                  "SEK": 10.978,
+                  "SGD": 1.4282,
+                  "THB": 37.683,
+                  "TRY": 55.8015,
+                  "USD": 1.1172,
+                  "ZAR": 18.6455
+                }
+              },
+              "purpose": "Reference rates are not executable transaction prices."
+            }
+          }
+        ],
+        "model": "gemini-3.5-flash-lite",
+        "provider": "Google Gemini free tier"
+      },
+      "passed": true
+    },
+    {
+      "name": "dataguard",
+      "url": "https://rohith-dataguard.vercel.app/api/quality/public-investigate",
+      "status": 200,
+      "elapsed_ms": 11468.0,
+      "question": "Inspect the retained repository quality evidence and explain one failed check with its source.",
+      "response_sha256": "e1eebb7b19e7e57836b877f1f02ee2b75c588abcea5874230308fc5a5e6af466",
+      "response": {
+        "answer": "Based on the retained repository quality evidence in DataGuard:\n\nThere are currently **no failed checks** across any of the recorded captures. Both available captures (`71623033-6147-4fa0-a5b6-2d0019ca5f7a` and `github-6aff80ef4224c08b68054c4f`), titled *\"GitHub \u00b7 Python dependency ecosystem\"* (source: `https://api.github.com/repos/{owner}/{repo}`), have a status of `published` with 100% of their quality checks (`volume`, `schema`, `uniqueness`, `counters`, `timestamps`, and `freshness`) passing successfully (`failed: 0`).",
+        "provider": "Google Gemini",
+        "model": "gemini-3.5-flash-lite",
+        "public_data_only": true,
+        "provider_requests": 3,
+        "created_at": "2026-11-05T11:25:53.638367+00:00",
+        "trace": [
+          {
+            "tool": "list_captures",
+            "arguments": {},
+            "result": [
+              {
+                "id": "71623033-6147-4fa0-a5b6-2d0019ca5f7a",
+                "name": "GitHub \u00b7 Python dependency ecosystem",
+                "source": "https://api.github.com/repos/{owner}/{repo}",
+                "visibility": "public",
+                "captured_at": "2026-11-01T18:16:18.944038+00:00",
+                "digest": "54d89c05d727cef779eaf4148dd570d2fb21a3f3714cefab86621d44fdf71bd0",
+                "row_count": 8,
+                "status": "published"
+              },
+              {
+                "id": "github-6aff80ef4224c08b68054c4f",
+                "name": "GitHub \u00b7 Python dependency ecosystem",
+                "source": "https://api.github.com/repos/{owner}/{repo}",
+                "visibility": "public",
+                "captured_at": "2026-11-01T18:03:26.631312+00:00",
+                "digest": "4b0ef1068f5dd661382c1614477aedcb4f874fb5a7fc7e9211e17a03d42ad6f8",
+                "row_count": 8,
+                "status": "published"
+              }
+            ]
+          },
+          {
+            "tool": "inspect_capture",
+            "arguments": {
+              "capture_id": "71623033-6147-4fa0-a5b6-2d0019ca5f7a"
+            },
+            "result": {
+              "id": "71623033-6147-4fa0-a5b6-2d0019ca5f7a",
+              "name": "GitHub \u00b7 Python dependency ecosystem",
+              "source": "https://api.github.com/repos/{owner}/{repo}",
+              "visibility": "public",
+              "captured_at": "2026-11-01T18:16:18.944038+00:00",
+              "digest": "54d89c05d727cef779eaf4148dd570d2fb21a3f3714cefab86621d44fdf71bd0",
+              "row_count": 8,
+              "status": "published"
+            }
+          }
+        ],
+        "public_demo": true,
+        "quota": {
+          "remaining": {
+            "global_day": 25,
+            "global_minute": 1,
+            "per_client": 2
+          },
+          "resets_in_seconds": {
+            "global_day": 45258,
+            "global_minute": 18,
+            "per_client": 258
+          },
+          "limits": {
+            "per_client": {
+              "limit": 3,
+              "seconds": 600
+            },
+            "global_minute": {
+              "limit": 2,
+              "seconds": 60
+            },
+            "global_day": {
+              "limit": 30,
+              "seconds": 86400
+            }
+          },
+          "policy": "Fixed UTC windows. A reserved investigation counts even if its provider request fails."
+        },
+        "evidence_notice": "Trace summaries identify the actual public evidence read. Full records remain available in Datasets."
+      },
+      "passed": true
+    },
+    {
+      "name": "pipefoundry",
+      "url": "https://rohith-pipefoundry.vercel.app/workbench/api/demo-agent",
+      "status": 200,
+      "elapsed_ms": 13047.0,
+      "question": "Inspect this repository's workflow runs and explain the observed outcomes and their observation time.",
+      "response_sha256": "dda11492a5935fb2c0916d1df8adffcf0e80568838d2fe4b1948905f36718a9d",
+      "response": {
+        "answer": "**Dated evidence:** A fresh GitHub check was unavailable. The following analysis uses retained observations captured at 2026-11-05T09:50:54.654816+00:00.\n\nBased on the repository's workflow runs inspected at observation time `2026-11-05T09:50:54.654816+00:00` (using stale-cooldown cached evidence due to GitHub rate limiting):\n\n- **Total Runs:** 29 recorded workflow runs.\n- **Latest Observed Run:** \n  - **ID:** `41992016943` ([Run URL](https://github.com/9059Rohith/pipefoundry/actions/runs/41992016943))\n  - **Workflow Name:** `verify` (`.github/workflows/ci.yml`)\n  - **Display Title:** \"Publish verified public demo and rate-limit recovery evidence\"\n  - **Branch / Commit:** `main` (`3ba8e6d09ccee97d054f58503c04ce1acfd9f214`)\n  - **Event:** `push`\n  - **Status / Conclusion:** Completed with a **failure** outcome.\n  - **Created At:** `2026-11-05T08:06:57Z`",
+        "trace": [
+          {
+            "tool": "inspect_github",
+            "view": "runs",
+            "source": "https://api.github.com/repos/9059Rohith/pipefoundry/actions/runs?per_page=30",
+            "observed_at": "2026-11-05T09:50:54.654816+00:00",
+            "validated_at": "2026-11-05T09:50:54.657636+00:00",
+            "stale": true,
+            "cache_status": "stale-cooldown"
+          }
+        ],
+        "provider": "gemini",
+        "model": "gemini-3.5-flash-lite",
+        "usage": {
+          "completion_tokens": 277,
+          "prompt_tokens": 5735,
+          "total_tokens": 6012
+        },
+        "request_id": "uGfsaoLtErKuytMPrNa86Ak",
+        "public_demo": true,
+        "repository": "9059Rohith/pipefoundry",
+        "limits": {
+          "client": "3 per 10 minutes",
+          "shared": "2 per minute / 30 per day"
+        }
+      },
+      "passed": true
+    },
+    {
+      "name": "fluxlake",
+      "url": "https://rohith-fluxlake.vercel.app/api/workspace/agent/demo",
+      "status": 200,
+      "elapsed_ms": 8468.0,
+      "question": "Inspect the retained public dataset and explain its source, row count and one limitation.",
+      "response_sha256": "e381732947ba899a7ee12e92ced57359274fad2985d74778991151545b819861",
+      "response": {
+        "answer": "- Source: Fetched from the GitHub REST API public events endpoint at https://api.github.com/events?per_page=100 (Source API: /api/workspace/overview)\n- Row Count: 200 total retained events in the sample (Source API: /api/workspace/overview)\n- Limitation: Represents a sampled subset of public GitHub events rather than a complete or realtime stream (Source API: /api/workspace/overview)",
+        "trace": [
+          {
+            "tool": "lake_overview",
+            "arguments": {},
+            "source": "/api/workspace/overview",
+            "result": {
+              "counts": {
+                "events": 200,
+                "repositories": 198,
+                "actors": 164,
+                "event_types": 4,
+                "earliest_event": "2026-10-30T05:53:51+00:00",
+                "latest_event": "2026-11-01T18:08:20+00:00",
+                "bronze_events": 200,
+                "bronze_bytes": 133426,
+                "quarantined": 0,
+                "run_count": 2
+              },
+              "latest_run": {
+                "id": "145d3c65-6c00-42c5-9016-8cb5486decb3",
+                "started_at": "2026-11-01T18:13:21.757873+00:00",
+                "finished_at": "2026-11-01T18:13:21.757873+00:00",
+                "status": "succeeded",
+                "source_url": "https://api.github.com/events?per_page=100",
+                "fetched": 100,
+                "inserted": 100,
+                "duplicates": 0,
+                "quarantined": 0,
+                "response_sha256": "3982c186f011af5f26e91d2bcf5171ccfd4da5e628bce87475e8d1aabbc89ae9",
+                "http_status": 200,
+                "rate_remaining": 53,
+                "poll_seconds": 60,
+                "error": null,
+                "duration_ms": 752
+              },
+              "event_types": [
+                {
+                  "event_type": "PushEvent",
+                  "events": 157
+                },
+                {
+                  "event_type": "CreateEvent",
+                  "events": 22
+                },
+                {
+                  "event_type": "DeleteEvent",
+                  "events": 15
+                },
+                {
+                  "event_type": "PullRequestEvent",
+                  "events": 6
+                }
+              ],
+              "recent": [
+                {
+                  "event_id": "18822217915",
+                  "event_type": "PullRequestEvent",
+                  "repository": "agadek/smart-diff",
+                  "actor": "agadek",
+                  "occurred_at": "2026-11-01T18:08:20+00:00",
+                  "action": "opened",
+                  "organization": null,
+                  "run_id": "145d3c65-6c00-42c5-9016-8cb5486decb3"
+                },
+                {
+                  "event_id": "18822217919",
+                  "event_type": "PullRequestEvent",
+                  "repository": "cocoonstack/gateway",
+                  "actor": "dependabot[bot]",
+                  "occurred_at": "2026-11-01T18:08:19+00:00",
+                  "action": "opened",
+                  "organization": "cocoonstack",
+                  "run_id": "145d3c65-6c00-42c5-9016-8cb5486decb3"
+                },
+                {
+                  "event_id": "18822063881",
+                  "event_type": "PullRequestEvent",
+                  "repository": "k2b-dev/cloud",
+                  "actor": "k2b-cloud-agents[bot]",
+                  "occurred_at": "2026-11-01T18:05:09+00:00",
+                  "action": "merged",
+                  "organization": "k2b-dev",
+                  "run_id": "59208a2d-4af2-4ad0-a056-7b7c7fbe598b"
+                },
+                {
+                  "event_id": "18822063872",
+                  "event_type": "PullRequestEvent",
+                  "repository": "driessamyn/kapper",
+                  "actor": "dependabot[bot]",
+                  "occurred_at": "2026-11-01T18:05:09+00:00",
+                  "action": "merged",
+                  "organization": null,
+                  "run_id": "59208a2d-4af2-4ad0-a056-7b7c7fbe598b"
+                },
+                {
+                  "event_id": "18822063878",
+                  "event_type": "PullRequestEvent",
+                  "repository": "Starktastic-Homelab/apps",
+                  "actor": "renovate[bot]",
+                  "occurred_at": "2026-11-01T18:05:08+00:00",
+                  "action": "merged",
+                  "organization": "Starktastic-Homelab",
+                  "run_id": "59208a2d-4af2-4ad0-a056-7b7c7fbe598b"
+                },
+                {
+                  "event_id": "18822063864",
+                  "event_type": "PullRequestEvent",
+                  "repository": "tutur3u/platform",
+                  "actor": "vhpx",
+                  "occurred_at": "2026-11-01T18:04:46+00:00",
+                  "action": "labeled",
+                  "organization": "tutur3u",
+                  "run_id": "59208a2d-4af2-4ad0-a056-7b7c7fbe598b"
+                },
+                {
+                  "event_id": "25855852067",
+                  "event_type": "PushEvent",
+                  "repository": "LCahst/quiet-space",
+                  "actor": "LCahst",
+                  "occurred_at": "2026-10-31T08:27:35+00:00",
+                  "action": null,
+                  "organization": null,
+                  "run_id": "145d3c65-6c00-42c5-9016-8cb5486decb3"
+                },
+                {
+                  "event_id": "25855851970",
+                  "event_type": "PushEvent",
+                  "repository": "trendvidia/protowire-csharp",
+                  "actor": "trendvidia",
+                  "occurred_at": "2026-10-31T08:27:35+00:00",
+                  "action": null,
+                  "organization": null,
+                  "run_id": "145d3c65-6c00-42c5-9016-8cb5486decb3"
+                }
+              ],
+              "source_url": "https://api.github.com/events?per_page=100",
+              "source_docs": "https://docs.github.com/en/rest/activity/events#list-public-events",
+              "scope": "Sampled public GitHub events; not a complete stream or a realtime feed",
+              "observed_at": "2026-11-05T11:33:38.727135+00:00"
+            }
+          }
+        ],
+        "model": "gemini-3.5-flash-lite",
+        "provider": "Google Gemini",
+        "tool_calls": 1,
+        "read_only": true,
+        "duration_ms": 4405,
+        "demo": true,
+        "demo_budget": {
+          "policy": {
+            "per_client": {
+              "requests": 3,
+              "seconds": 600
+            },
+            "shared_minute": {
+              "requests": 2,
+              "seconds": 60
+            },
+            "shared_day": {
+              "requests": 30,
+              "seconds": 86400
+            }
+          },
+          "remaining": {
+            "per_client": 2,
+            "shared_minute": 1,
+            "shared_day": 25
+          },
+          "shared_minute_reset_seconds": 25
+        }
+      },
+      "passed": true
+    }
+  ],
+  "attempts": [
+    {
+      "name": "settlement-recon",
+      "url": "https://rohith-settlement-recon.vercel.app/workspace/api/agent/demo",
+      "status": 503,
+      "elapsed_ms": 3609.0,
+      "question": "Inspect the retained reference-rate evidence and explain its source and observation date.",
+      "response_sha256": "c2e5597b25699ba2dc047381645889e99294c17b04974a0207f7517d55422c56",
+      "response": {
+        "detail": "AI provider temporarily unavailable; retry later. No data was changed."
+      },
+      "passed": false
+    },
+    {
+      "name": "dataguard",
+      "url": "https://rohith-dataguard.vercel.app/api/quality/public-investigate",
+      "status": 200,
+      "elapsed_ms": 11468.0,
+      "question": "Inspect the retained repository quality evidence and explain one failed check with its source.",
+      "response_sha256": "e1eebb7b19e7e57836b877f1f02ee2b75c588abcea5874230308fc5a5e6af466",
+      "response": {
+        "answer": "Based on the retained repository quality evidence in DataGuard:\n\nThere are currently **no failed checks** across any of the recorded captures. Both available captures (`71623033-6147-4fa0-a5b6-2d0019ca5f7a` and `github-6aff80ef4224c08b68054c4f`), titled *\"GitHub \u00b7 Python dependency ecosystem\"* (source: `https://api.github.com/repos/{owner}/{repo}`), have a status of `published` with 100% of their quality checks (`volume`, `schema`, `uniqueness`, `counters`, `timestamps`, and `freshness`) passing successfully (`failed: 0`).",
+        "provider": "Google Gemini",
+        "model": "gemini-3.5-flash-lite",
+        "public_data_only": true,
+        "provider_requests": 3,
+        "created_at": "2026-11-05T11:25:53.638367+00:00",
+        "trace": [
+          {
+            "tool": "list_captures",
+            "arguments": {},
+            "result": [
+              {
+                "id": "71623033-6147-4fa0-a5b6-2d0019ca5f7a",
+                "name": "GitHub \u00b7 Python dependency ecosystem",
+                "source": "https://api.github.com/repos/{owner}/{repo}",
+                "visibility": "public",
+                "captured_at": "2026-11-01T18:16:18.944038+00:00",
+                "digest": "54d89c05d727cef779eaf4148dd570d2fb21a3f3714cefab86621d44fdf71bd0",
+                "row_count": 8,
+                "status": "published"
+              },
+              {
+                "id": "github-6aff80ef4224c08b68054c4f",
+                "name": "GitHub \u00b7 Python dependency ecosystem",
+                "source": "https://api.github.com/repos/{owner}/{repo}",
+                "visibility": "public",
+                "captured_at": "2026-11-01T18:03:26.631312+00:00",
+                "digest": "4b0ef1068f5dd661382c1614477aedcb4f874fb5a7fc7e9211e17a03d42ad6f8",
+                "row_count": 8,
+                "status": "published"
+              }
+            ]
+          },
+          {
+            "tool": "inspect_capture",
+            "arguments": {
+              "capture_id": "71623033-6147-4fa0-a5b6-2d0019ca5f7a"
+            },
+            "result": {
+              "id": "71623033-6147-4fa0-a5b6-2d0019ca5f7a",
+              "name": "GitHub \u00b7 Python dependency ecosystem",
+              "source": "https://api.github.com/repos/{owner}/{repo}",
+              "visibility": "public",
+              "captured_at": "2026-11-01T18:16:18.944038+00:00",
+              "digest": "54d89c05d727cef779eaf4148dd570d2fb21a3f3714cefab86621d44fdf71bd0",
+              "row_count": 8,
+              "status": "published"
+            }
+          }
+        ],
+        "public_demo": true,
+        "quota": {
+          "remaining": {
+            "global_day": 25,
+            "global_minute": 1,
+            "per_client": 2
+          },
+          "resets_in_seconds": {
+            "global_day": 45258,
+            "global_minute": 18,
+            "per_client": 258
+          },
+          "limits": {
+            "per_client": {
+              "limit": 3,
+              "seconds": 600
+            },
+            "global_minute": {
+              "limit": 2,
+              "seconds": 60
+            },
+            "global_day": {
+              "limit": 30,
+              "seconds": 86400
+            }
+          },
+          "policy": "Fixed UTC windows. A reserved investigation counts even if its provider request fails."
+        },
+        "evidence_notice": "Trace summaries identify the actual public evidence read. Full records remain available in Datasets."
+      },
+      "passed": true
+    },
+    {
+      "name": "pipefoundry",
+      "url": "https://rohith-pipefoundry.vercel.app/workbench/api/demo-agent",
+      "status": 200,
+      "elapsed_ms": 13047.0,
+      "question": "Inspect this repository's workflow runs and explain the observed outcomes and their observation time.",
+      "response_sha256": "dda11492a5935fb2c0916d1df8adffcf0e80568838d2fe4b1948905f36718a9d",
+      "response": {
+        "answer": "**Dated evidence:** A fresh GitHub check was unavailable. The following analysis uses retained observations captured at 2026-11-05T09:50:54.654816+00:00.\n\nBased on the repository's workflow runs inspected at observation time `2026-11-05T09:50:54.654816+00:00` (using stale-cooldown cached evidence due to GitHub rate limiting):\n\n- **Total Runs:** 29 recorded workflow runs.\n- **Latest Observed Run:** \n  - **ID:** `41992016943` ([Run URL](https://github.com/9059Rohith/pipefoundry/actions/runs/41992016943))\n  - **Workflow Name:** `verify` (`.github/workflows/ci.yml`)\n  - **Display Title:** \"Publish verified public demo and rate-limit recovery evidence\"\n  - **Branch / Commit:** `main` (`3ba8e6d09ccee97d054f58503c04ce1acfd9f214`)\n  - **Event:** `push`\n  - **Status / Conclusion:** Completed with a **failure** outcome.\n  - **Created At:** `2026-11-05T08:06:57Z`",
+        "trace": [
+          {
+            "tool": "inspect_github",
+            "view": "runs",
+            "source": "https://api.github.com/repos/9059Rohith/pipefoundry/actions/runs?per_page=30",
+            "observed_at": "2026-11-05T09:50:54.654816+00:00",
+            "validated_at": "2026-11-05T09:50:54.657636+00:00",
+            "stale": true,
+            "cache_status": "stale-cooldown"
+          }
+        ],
+        "provider": "gemini",
+        "model": "gemini-3.5-flash-lite",
+        "usage": {
+          "completion_tokens": 277,
+          "prompt_tokens": 5735,
+          "total_tokens": 6012
+        },
+        "request_id": "uGfsaoLtErKuytMPrNa86Ak",
+        "public_demo": true,
+        "repository": "9059Rohith/pipefoundry",
+        "limits": {
+          "client": "3 per 10 minutes",
+          "shared": "2 per minute / 30 per day"
+        }
+      },
+      "passed": true
+    },
+    {
+      "name": "settlement-recon",
+      "url": "https://rohith-settlement-recon.vercel.app/workspace/api/agent/demo",
+      "status": 200,
+      "elapsed_ms": 32172.0,
+      "question": "Inspect the retained reference-rate evidence and explain its source and observation date.",
+      "response_sha256": "674ab569ccbd5152b7fe7cb28c9f98f1ab70f1278e96dbb7f07fad7080b3b3de",
+      "response": {
+        "answer": "Based on the retained reference-rate evidence:\n\n* **Source:** The data originates from the Frankfurter API (`https://api.frankfurter.dev/v1/latest`), which attributes its information to the European Central Bank (ECB) euro reference exchange rates.\n* **Observation Date:** The observation date recorded in the dataset is **October 30, 2026** (captured on November 1, 2026). \n\n*Note: These are reference rates only and do not represent executable transaction prices.*",
+        "tools": [
+          {
+            "name": "reference_rates",
+            "evidence": {
+              "status": "captured",
+              "source": "https://api.frankfurter.dev/v1/latest",
+              "attribution": "https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html",
+              "digest": "51833155c7b02838062e7d00eb6a6877ee5900e039a1e51aac56e1f624a79a69",
+              "captured_at": "2026-11-01T18:13:31.266028+00:00",
+              "observation": {
+                "amount": 1.0,
+                "base": "EUR",
+                "date": "2026-10-30",
+                "rates": {
+                  "AUD": 1.5904,
+                  "BRL": 6.0692,
+                  "CAD": 1.5606,
+                  "CHF": 0.9194,
+                  "CNY": 7.4326,
+                  "CZK": 24.353,
+                  "DKK": 7.4735,
+                  "GBP": 0.8338,
+                  "HKD": 8.7652,
+                  "HUF": 366.33,
+                  "IDR": 20275.17,
+                  "ILS": 3.495,
+                  "INR": 106.084,
+                  "ISK": 136.0,
+                  "JPY": 175.68,
+                  "KRW": 1491.76,
+                  "MXN": 21.1237,
+                  "MYR": 4.5325,
+                  "NOK": 10.312,
+                  "NZD": 1.9823,
+                  "PHP": 71.143,
+                  "PLN": 4.4038,
+                  "RON": 5.3447,
+                  "SEK": 10.978,
+                  "SGD": 1.4282,
+                  "THB": 37.683,
+                  "TRY": 55.8015,
+                  "USD": 1.1172,
+                  "ZAR": 18.6455
+                }
+              },
+              "purpose": "Reference rates are not executable transaction prices."
+            }
+          }
+        ],
+        "model": "gemini-3.5-flash-lite",
+        "provider": "Google Gemini free tier"
+      },
+      "passed": true
+    },
+    {
+      "name": "fluxlake",
+      "url": "https://rohith-fluxlake.vercel.app/api/workspace/agent/demo",
+      "status": 503,
+      "elapsed_ms": 10515.0,
+      "question": "Inspect the retained public dataset and explain its source, row count and one limitation.",
+      "response_sha256": "10282697e36627ef112862ff63146eaba86d782ab5182ed794a3883e79441244",
+      "response": {
+        "detail": "AI provider rejected the request or is unavailable; no generated answer is available"
+      },
+      "passed": false
+    },
+    {
+      "name": "fluxlake",
+      "url": "https://rohith-fluxlake.vercel.app/api/workspace/agent/demo",
+      "status": 200,
+      "elapsed_ms": 8468.0,
+      "question": "Inspect the retained public dataset and explain its source, row count and one limitation.",
+      "response_sha256": "e381732947ba899a7ee12e92ced57359274fad2985d74778991151545b819861",
+      "response": {
+        "answer": "- Source: Fetched from the GitHub REST API public events endpoint at https://api.github.com/events?per_page=100 (Source API: /api/workspace/overview)\n- Row Count: 200 total retained events in the sample (Source API: /api/workspace/overview)\n- Limitation: Represents a sampled subset of public GitHub events rather than a complete or realtime stream (Source API: /api/workspace/overview)",
+        "trace": [
+          {
+            "tool": "lake_overview",
+            "arguments": {},
+            "source": "/api/workspace/overview",
+            "result": {
+              "counts": {
+                "events": 200,
+                "repositories": 198,
+                "actors": 164,
+                "event_types": 4,
+                "earliest_event": "2026-10-30T05:53:51+00:00",
+                "latest_event": "2026-11-01T18:08:20+00:00",
+                "bronze_events": 200,
+                "bronze_bytes": 133426,
+                "quarantined": 0,
+                "run_count": 2
+              },
+              "latest_run": {
+                "id": "145d3c65-6c00-42c5-9016-8cb5486decb3",
+                "started_at": "2026-11-01T18:13:21.757873+00:00",
+                "finished_at": "2026-11-01T18:13:21.757873+00:00",
+                "status": "succeeded",
+                "source_url": "https://api.github.com/events?per_page=100",
+                "fetched": 100,
+                "inserted": 100,
+                "duplicates": 0,
+                "quarantined": 0,
+                "response_sha256": "3982c186f011af5f26e91d2bcf5171ccfd4da5e628bce87475e8d1aabbc89ae9",
+                "http_status": 200,
+                "rate_remaining": 53,
+                "poll_seconds": 60,
+                "error": null,
+                "duration_ms": 752
+              },
+              "event_types": [
+                {
+                  "event_type": "PushEvent",
+                  "events": 157
+                },
+                {
+                  "event_type": "CreateEvent",
+                  "events": 22
+                },
+                {
+                  "event_type": "DeleteEvent",
+                  "events": 15
+                },
+                {
+                  "event_type": "PullRequestEvent",
+                  "events": 6
+                }
+              ],
+              "recent": [
+                {
+                  "event_id": "18822217915",
+                  "event_type": "PullRequestEvent",
+                  "repository": "agadek/smart-diff",
+                  "actor": "agadek",
+                  "occurred_at": "2026-11-01T18:08:20+00:00",
+                  "action": "opened",
+                  "organization": null,
+                  "run_id": "145d3c65-6c00-42c5-9016-8cb5486decb3"
+                },
+                {
+                  "event_id": "18822217919",
+                  "event_type": "PullRequestEvent",
+                  "repository": "cocoonstack/gateway",
+                  "actor": "dependabot[bot]",
+                  "occurred_at": "2026-11-01T18:08:19+00:00",
+                  "action": "opened",
+                  "organization": "cocoonstack",
+                  "run_id": "145d3c65-6c00-42c5-9016-8cb5486decb3"
+                },
+                {
+                  "event_id": "18822063881",
+                  "event_type": "PullRequestEvent",
+                  "repository": "k2b-dev/cloud",
+                  "actor": "k2b-cloud-agents[bot]",
+                  "occurred_at": "2026-11-01T18:05:09+00:00",
+                  "action": "merged",
+                  "organization": "k2b-dev",
+                  "run_id": "59208a2d-4af2-4ad0-a056-7b7c7fbe598b"
+                },
+                {
+                  "event_id": "18822063872",
+                  "event_type": "PullRequestEvent",
+                  "repository": "driessamyn/kapper",
+                  "actor": "dependabot[bot]",
+                  "occurred_at": "2026-11-01T18:05:09+00:00",
+                  "action": "merged",
+                  "organization": null,
+                  "run_id": "59208a2d-4af2-4ad0-a056-7b7c7fbe598b"
+                },
+                {
+                  "event_id": "18822063878",
+                  "event_type": "PullRequestEvent",
+                  "repository": "Starktastic-Homelab/apps",
+                  "actor": "renovate[bot]",
+                  "occurred_at": "2026-11-01T18:05:08+00:00",
+                  "action": "merged",
+                  "organization": "Starktastic-Homelab",
+                  "run_id": "59208a2d-4af2-4ad0-a056-7b7c7fbe598b"
+                },
+                {
+                  "event_id": "18822063864",
+                  "event_type": "PullRequestEvent",
+                  "repository": "tutur3u/platform",
+                  "actor": "vhpx",
+                  "occurred_at": "2026-11-01T18:04:46+00:00",
+                  "action": "labeled",
+                  "organization": "tutur3u",
+                  "run_id": "59208a2d-4af2-4ad0-a056-7b7c7fbe598b"
+                },
+                {
+                  "event_id": "25855852067",
+                  "event_type": "PushEvent",
+                  "repository": "LCahst/quiet-space",
+                  "actor": "LCahst",
+                  "occurred_at": "2026-10-31T08:27:35+00:00",
+                  "action": null,
+                  "organization": null,
+                  "run_id": "145d3c65-6c00-42c5-9016-8cb5486decb3"
+                },
+                {
+                  "event_id": "25855851970",
+                  "event_type": "PushEvent",
+                  "repository": "trendvidia/protowire-csharp",
+                  "actor": "trendvidia",
+                  "occurred_at": "2026-10-31T08:27:35+00:00",
+                  "action": null,
+                  "organization": null,
+                  "run_id": "145d3c65-6c00-42c5-9016-8cb5486decb3"
+                }
+              ],
+              "source_url": "https://api.github.com/events?per_page=100",
+              "source_docs": "https://docs.github.com/en/rest/activity/events#list-public-events",
+              "scope": "Sampled public GitHub events; not a complete stream or a realtime feed",
+              "observed_at": "2026-11-05T11:33:38.727135+00:00"
+            }
+          }
+        ],
+        "model": "gemini-3.5-flash-lite",
+        "provider": "Google Gemini",
+        "tool_calls": 1,
+        "read_only": true,
+        "duration_ms": 4405,
+        "demo": true,
+        "demo_budget": {
+          "policy": {
+            "per_client": {
+              "requests": 3,
+              "seconds": 600
+            },
+            "shared_minute": {
+              "requests": 2,
+              "seconds": 60
+            },
+            "shared_day": {
+              "requests": 30,
+              "seconds": 86400
+            }
+          },
+          "remaining": {
+            "per_client": 2,
+            "shared_minute": 1,
+            "shared_day": 25
+          },
+          "shared_minute_reset_seconds": 25
+        }
+      },
+      "passed": true
+    }
+  ],
+  "latest_all_passed": true,
+  "initial_failed_attempts": 2,
+  "timestamps": [
+    "2026-11-05T11:25:53.399577+00:00",
+    "2026-11-05T11:27:38.206053+00:00",
+    "2026-11-05T11:32:27.037884+00:00",
+    "2026-11-05T11:33:38.360232+00:00"
+  ]
+}
