@@ -150,6 +150,11 @@ body[data-page=overview] .field-hero .page-heading p {
 }
 body[data-page=overview] .field-hero .heading-actions { margin-block-start: 23px; flex-wrap: wrap; }
 
+/* Hold the asynchronous evidence space below the first viewport until it resolves. */
+body[data-page=overview] #content[aria-busy=true] {
+  min-block-size: max(250px, calc(100svh - 340px));
+}
+
 .button { background: var(--ice); color: #14251f; border-radius: 7px; }
 .button:hover { background: #a9ffe1; color: #14251f; }
 .button:active:not(:disabled), .icon-button:active:not(:disabled) { transform: translateY(1px); }

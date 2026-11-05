@@ -28,6 +28,11 @@ def test_field_atlas_uses_local_decorative_images_and_an_exact_asset_allowlist(t
         assert f'/assets/atlas/{image}" alt=""' in response.text
 
     overview = client.get("/").text
+    assert (
+        'rel="canonical" href="https://rohith-fluxlake.vercel.app/workspace/overview"' in overview
+    )
+    assert 'aria-label="Search the observatory"' in overview
+    assert 'aria-label="GitHub public events documentation"' in overview
     for _, _, _, image in CHAPTERS:
         assert f'/assets/atlas/{image}" alt="" width="900" height="420" loading="lazy"' in overview
 

@@ -22,7 +22,9 @@
     const grid=Array.from({length:6},(_,i)=>{const y=top+i*height/5;return `<g class="chart-grid"><line x1="${left}" y1="${y}" x2="${left+width}" y2="${y}"/><text x="${left-12}" y="${y+4}" text-anchor="end">${number(max-i*max/5)}${mode==="share"?"%":""}</text></g>`;}).join("");
     const bars=rows.map((row,i)=>{const count=valueOf(row.events),share=total?count/total*100:0,value=mode==="share"?share:count;
       const h=value/max*height,x=left+slot*i+(slot-bar)/2,y=bottom-h;
-      return `<a class="chart-link" href="${typeHref(row.event_type)}" aria-label="Explore ${escapeHtml(row.event_type)}: ${count} events"><title>${escapeHtml(row.event_type)}: ${count} events, ${share.toFixed(1)}% of retained sample</title><rect class="plot-bar tone-${tone(row.event_type,i)}" x="${x}" y="${y}" width="${bar}" height="${Math.max(1,h)}" rx="2"/><text class="chart-value" x="${x+bar/2}" y="${Math.max(16,y-10)}" text-anchor="middle">${number(count)} (${Number(share.toFixed(1))}%)</text><text class="chart-label" x="${x+bar/2}" y="${bottom+28}" text-anchor="middle">${escapeHtml(row.event_type)}</text></a>`;
+      const valueId = `composition-value-${i}`;
+      const labelId = `composition-label-${i}`;
+      return `<a class="chart-link" href="${typeHref(row.event_type)}" aria-labelledby="${valueId} ${labelId}"><title>${escapeHtml(row.event_type)}: ${count} events, ${share.toFixed(1)}% of retained sample</title><rect class="plot-bar tone-${tone(row.event_type,i)}" x="${x}" y="${y}" width="${bar}" height="${Math.max(1,h)}" rx="2"/><text id="${valueId}" class="chart-value" x="${x+bar/2}" y="${Math.max(16,y-10)}" text-anchor="middle">${number(count)} (${Number(share.toFixed(1))}%)</text><text id="${labelId}" class="chart-label" x="${x+bar/2}" y="${bottom+28}" text-anchor="middle">${escapeHtml(row.event_type)}</text></a>`;
     }).join("");
     return `<svg class="composition-chart" viewBox="0 0 700 285" role="group" aria-label="Event composition of ${total} actual retained events">${grid}<line class="chart-axis" x1="${left}" y1="${bottom}" x2="${left+width}" y2="${bottom}"/>${bars}</svg>`;
   }

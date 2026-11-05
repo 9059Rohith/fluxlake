@@ -161,7 +161,8 @@ def page_html(key):
         else ""
     )
     chapters = chapters_html() if key == "overview" else ""
-    canonical = "/" if key == "overview" else f"/workspace/{key}"
+    access_current = ' aria-current="page"' if key == "access" else ""
+    canonical = f"/workspace/{key}"
     return f'''<!doctype html><html lang="en"><head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="dark">
     <meta name="description" content="{escape(description)}"><link rel="canonical" href="https://rohith-fluxlake.vercel.app{canonical}">
@@ -171,10 +172,10 @@ def page_html(key):
     <body data-page="{key}"><a class="skip" href="#main">Skip to content</a>
     <aside class="sidebar" id="navigation" aria-label="Workspace navigation"><div class="brand-block"><a class="brand" href="/" aria-label="FluxLake overview"><svg class="brand-mark" viewBox="0 0 32 36" aria-hidden="true"><path d="M10 5h17M6 13h17M3 21h17M7 29h12"/></svg><span>FluxLake</span></a><p>Public observatory</p></div><button class="sidebar-close icon-button" id="close-navigation" aria-label="Close navigation">{icon("close")}</button>
     <nav aria-label="Workspace">{navigation}</nav>
-    <div class="sidebar-foot"><a href="/workspace/access">{icon("user")}<span>Operator access</span>{icon("chevron")}</a><small>Public source. Inspectable evidence.</small></div></aside>
+    <div class="sidebar-foot"><a href="/workspace/access"{access_current}>{icon("user")}<span>Operator access</span>{icon("chevron")}</a><small>Public source. Inspectable evidence.</small></div></aside>
     <div class="nav-backdrop" id="nav-backdrop"></div>
-    <div class="app"><header class="topbar"><button id="menu-toggle" class="menu-toggle icon-button" aria-label="Toggle navigation" aria-controls="navigation" aria-expanded="false">{icon("menu")}</button><div class="breadcrumb"><span>Workspace</span><span class="breadcrumb-separator">/</span><strong>{title}</strong></div><button id="command-trigger" class="command-trigger" aria-haspopup="dialog">{icon("search")}<span>Search the observatory</span><kbd>Ctrl K</kbd></button><a class="top-source" href="https://docs.github.com/en/rest/activity/events#list-public-events" target="_blank" rel="noopener">{icon("github")}<span>GitHub</span>{icon("external")}</a></header>
-    <main id="main"><header class="field-hero">{route_art(key)}<div class="page-heading"><div><h1>{headline}</h1><p>{description}</p></div><div class="heading-actions">{primary}<button id="refresh" class="button secondary" aria-label="Refresh current data">{icon("refresh")}<span>Refresh</span></button></div></div></header>
+    <div class="app"><header class="topbar"><button id="menu-toggle" class="menu-toggle icon-button" aria-label="Toggle navigation" aria-controls="navigation" aria-expanded="false">{icon("menu")}</button><div class="breadcrumb"><span>Workspace</span><span class="breadcrumb-separator">/</span><strong>{title}</strong></div><button id="command-trigger" class="command-trigger" aria-label="Search the observatory" aria-haspopup="dialog">{icon("search")}<span>Search the observatory</span><kbd>Ctrl K</kbd></button><a class="top-source" aria-label="GitHub public events documentation" href="https://docs.github.com/en/rest/activity/events#list-public-events" target="_blank" rel="noopener">{icon("github")}<span>GitHub</span>{icon("external")}</a></header>
+    <main id="main" tabindex="-1"><header class="field-hero">{route_art(key)}<div class="page-heading"><div><h1>{headline}</h1><p>{description}</p></div><div class="heading-actions">{primary}<button id="refresh" class="button secondary" aria-label="Refresh current data">{icon("refresh")}<span>Refresh</span></button></div></div></header>
     <div id="notice" role="status" aria-live="polite"></div><div id="content" aria-busy="true"><div class="loading"><span class="spinner"></span>Reading actual source evidence…</div></div>
     {chapters}<footer><span>FluxLake</span><span class="footer-rule"></span><span>Public GitHub sample · PostgreSQL evidence</span><a href="/api/workspace/overview">Source JSON {icon("external")}</a></footer>
     </main></div>

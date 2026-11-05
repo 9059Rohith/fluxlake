@@ -33,6 +33,8 @@ test('native distributions derive counts and widths from supplied observations',
   assert.ok(chart.includes('3 (75%)')&&chart.includes('1 (25%)'));
   assert.ok(chart.includes('/workspace/silver?event_type=PushEvent'));
   assert.ok(chart.includes('composition of 4 actual retained events'));
+  assert.ok(chart.includes('aria-labelledby="composition-value-0 composition-label-0"'));
+  assert.ok(chart.includes('id="composition-value-0"') && chart.includes('id="composition-label-0"'));
   assert.ok(O.composition([]).includes('No event types'));
 });
 
