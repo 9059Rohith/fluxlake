@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+from html import escape
 from pathlib import Path
 from typing import Literal
 from uuid import UUID
@@ -11,6 +12,7 @@ from fastapi import Depends, HTTPException, Query, Request
 from fastapi.responses import HTMLResponse, Response
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
+from fluxlake.field_atlas import ASSETS, chapters_html, route_art
 from fluxlake.observatory_icons import icon, sprite
 from fluxlake.public_demo import (
     POLICY,
@@ -33,8 +35,8 @@ from fluxlake.workspace_agent import (
 PAGES = {
     "overview": (
         "Overview",
-        "Every event. A clearer signal.",
-        "A public GitHub sample, from original evidence to analytical insight.",
+        "Follow the event.",
+        "Trace, replay, and understand real public GitHub events.",
     ),
     "sources": (
         "Sources",
@@ -153,25 +155,28 @@ def page_html(key):
             navigation += f'<a href="/workspace/{item}"{active}>{icon(names[item])}<span>{PAGES[item][0]}</span></a>'
         navigation += "</div>"
     primary = (
-        f'<a class="button" href="/workspace/agent">{icon("message")}Ask the lake analyst</a>'
+        f'<a class="button" href="/workspace/replay">Replay audit {icon("arrow")}</a>'
+        '<a class="button secondary" href="/workspace/silver">Explore events</a>'
         if key == "overview"
         else ""
     )
+    chapters = chapters_html() if key == "overview" else ""
+    canonical = "/" if key == "overview" else f"/workspace/{key}"
     return f'''<!doctype html><html lang="en"><head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="dark">
-    <meta name="description" content="A public GitHub sample, from original evidence to analytical insight. Explore real events, provenance and a bounded public analyst.">
+    <meta name="description" content="{escape(description)}"><link rel="canonical" href="https://rohith-fluxlake.vercel.app{canonical}">
     <title>{title} · FluxLake</title><link rel="icon" href="/assets/mark.svg" type="image/svg+xml">
-    <link rel="preload" href="/assets/inter.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="stylesheet" href="/assets/workspace.css"><script src="/assets/observatory.js" defer></script><script src="/assets/workspace.js" defer></script></head>
+    <link rel="preload" href="/assets/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="/assets/workspace.css"><link rel="stylesheet" href="/assets/field-atlas.css"><script src="/assets/observatory.js" defer></script><script src="/assets/workspace.js" defer></script><script src="/assets/field-motion.js" defer></script></head>
     <body data-page="{key}"><a class="skip" href="#main">Skip to content</a>
     <aside class="sidebar" id="navigation" aria-label="Workspace navigation"><div class="brand-block"><a class="brand" href="/" aria-label="FluxLake overview"><svg class="brand-mark" viewBox="0 0 32 36" aria-hidden="true"><path d="M10 5h17M6 13h17M3 21h17M7 29h12"/></svg><span>FluxLake</span></a><p>Public observatory</p></div><button class="sidebar-close icon-button" id="close-navigation" aria-label="Close navigation">{icon("close")}</button>
     <nav aria-label="Workspace">{navigation}</nav>
     <div class="sidebar-foot"><a href="/workspace/access">{icon("user")}<span>Operator access</span>{icon("chevron")}</a><small>Public source. Inspectable evidence.</small></div></aside>
     <div class="nav-backdrop" id="nav-backdrop"></div>
     <div class="app"><header class="topbar"><button id="menu-toggle" class="menu-toggle icon-button" aria-label="Toggle navigation" aria-controls="navigation" aria-expanded="false">{icon("menu")}</button><div class="breadcrumb"><span>Workspace</span><span class="breadcrumb-separator">/</span><strong>{title}</strong></div><button id="command-trigger" class="command-trigger" aria-haspopup="dialog">{icon("search")}<span>Search the observatory</span><kbd>Ctrl K</kbd></button><a class="top-source" href="https://docs.github.com/en/rest/activity/events#list-public-events" target="_blank" rel="noopener">{icon("github")}<span>GitHub</span>{icon("external")}</a></header>
-    <main id="main"><div class="page-heading"><div><h1>{headline}</h1><p>{description}</p></div><div class="heading-actions">{primary}<button id="refresh" class="button secondary" aria-label="Refresh current data">{icon("refresh")}<span>Refresh</span></button></div></div>
+    <main id="main"><header class="field-hero">{route_art(key)}<div class="page-heading"><div><h1>{headline}</h1><p>{description}</p></div><div class="heading-actions">{primary}<button id="refresh" class="button secondary" aria-label="Refresh current data">{icon("refresh")}<span>Refresh</span></button></div></div></header>
     <div id="notice" role="status" aria-live="polite"></div><div id="content" aria-busy="true"><div class="loading"><span class="spinner"></span>Reading actual source evidence…</div></div>
-    <footer><span>FluxLake</span><span class="footer-rule"></span><span>Public GitHub sample · PostgreSQL evidence</span><a href="/api/workspace/overview">Source JSON {icon("external")}</a></footer>
+    {chapters}<footer><span>FluxLake</span><span class="footer-rule"></span><span>Public GitHub sample · PostgreSQL evidence</span><a href="/api/workspace/overview">Source JSON {icon("external")}</a></footer>
     </main></div>
     <dialog id="detail" class="evidence-drawer" aria-labelledby="detail-title"><div class="dialog-head"><div><span class="drawer-context">SOURCE EVIDENCE</span><h2 id="detail-title">Event evidence</h2></div><button class="icon-button" id="close-detail" aria-label="Close details">{icon("close")}</button></div><div id="detail-body"></div></dialog>
     <dialog id="command-palette" class="command-dialog" aria-labelledby="command-title"><div class="command-input-row">{icon("search")}<label class="sr-only" id="command-title" for="command-query">Search pages and retained events</label><input id="command-query" autocomplete="off" maxlength="100" placeholder="Search pages, repositories, actors or event IDs…" role="combobox" aria-autocomplete="list" aria-expanded="true" aria-controls="command-results"><kbd>Esc</kbd><button id="close-command" class="icon-button" aria-label="Close search">{icon("close")}</button></div><div id="command-results" role="listbox" aria-label="Search results"></div><div class="command-footer"><span>Arrow keys to choose · Enter to open</span><span>Real retained evidence</span></div></dialog>
@@ -369,6 +374,36 @@ def install_workspace(app, authorize):
     def inter_font():
         return Response(
             (Path(__file__).parent / "web" / "inter.woff2").read_bytes(), media_type="font/woff2"
+        )
+
+    @app.get("/assets/inter-latin.woff2", include_in_schema=False)
+    def inter_latin_font():
+        return Response(
+            (Path(__file__).parent / "web" / "inter-latin.woff2").read_bytes(),
+            media_type="font/woff2",
+        )
+
+    @app.get("/assets/field-atlas.css", include_in_schema=False)
+    def field_atlas_css():
+        return Response(
+            (Path(__file__).parent / "web" / "field-atlas.css").read_text(encoding="utf-8"),
+            media_type="text/css",
+        )
+
+    @app.get("/assets/field-motion.js", include_in_schema=False)
+    def field_motion_js():
+        return Response(
+            (Path(__file__).parent / "web" / "field-motion.js").read_text(encoding="utf-8"),
+            media_type="text/javascript",
+        )
+
+    @app.get("/assets/atlas/{filename}", include_in_schema=False)
+    def field_atlas_image(filename: str):
+        if filename not in ASSETS:
+            raise HTTPException(404, "Artwork is not in the field atlas")
+        return Response(
+            (Path(__file__).parent / "web" / "atlas" / filename).read_bytes(),
+            media_type="image/webp" if filename.endswith(".webp") else "image/svg+xml",
         )
 
     @app.get("/assets/workspace.css", include_in_schema=False)

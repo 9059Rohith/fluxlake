@@ -1,0 +1,365 @@
+{
+  "project": "FluxLake",
+  "distinct_compositions": 20,
+  "responsive_encodings": 1,
+  "total_bytes": 362486,
+  "assets": [
+    {
+      "file": "aggregate-prism.svg",
+      "composition": "aggregate-prism",
+      "encoding_role": "primary",
+      "source": "Original vector artwork from scripts/draw_field_atlas.py",
+      "usage_permission": "Original artwork created for this FluxLake project",
+      "route": "/workspace/gold",
+      "placement": "route hero",
+      "dimensions": [
+        900,
+        420
+      ],
+      "optimization": "Compact script-free SVG with internal paints",
+      "loading": "eager",
+      "bytes": 7434,
+      "sha256": "910c53f940e5c7d5a22bb5da5a93ea68bd1a158637eccd30d4c9192bfca95459"
+    },
+    {
+      "file": "contract-canopy.svg",
+      "composition": "contract-canopy",
+      "encoding_role": "primary",
+      "source": "Original vector artwork from scripts/draw_field_atlas.py",
+      "usage_permission": "Original artwork created for this FluxLake project",
+      "route": "/workspace/schema",
+      "placement": "route hero",
+      "dimensions": [
+        900,
+        420
+      ],
+      "optimization": "Compact script-free SVG with internal paints",
+      "loading": "eager",
+      "bytes": 11609,
+      "sha256": "194e1c24dde7e537716df4390b213bbd17424e22e943887574c6bb96104f7db3"
+    },
+    {
+      "file": "distribution-ridges.svg",
+      "composition": "distribution-ridges",
+      "encoding_role": "primary",
+      "source": "Original vector artwork from scripts/draw_field_atlas.py",
+      "usage_permission": "Original artwork created for this FluxLake project",
+      "route": "/workspace/drift",
+      "placement": "route hero",
+      "dimensions": [
+        900,
+        420
+      ],
+      "optimization": "Compact script-free SVG with internal paints",
+      "loading": "eager",
+      "bytes": 40845,
+      "sha256": "810963e6a52143657d917b82ded60809c2c8e9470c6371a7a939d49414612c32"
+    },
+    {
+      "file": "entry-corridor.svg",
+      "composition": "entry-corridor",
+      "encoding_role": "primary",
+      "source": "Original vector artwork from scripts/draw_field_atlas.py",
+      "usage_permission": "Original artwork created for this FluxLake project",
+      "route": "/",
+      "placement": "evidence chapter: Find the source",
+      "dimensions": [
+        900,
+        420
+      ],
+      "optimization": "Compact script-free SVG with internal paints",
+      "loading": "lazy",
+      "bytes": 7643,
+      "sha256": "73e28f01e33910964a2dc3f8cea28a5bc7f763784a1533fff3de99bfbe4d8f43"
+    },
+    {
+      "file": "evidence-thread.svg",
+      "composition": "evidence-thread",
+      "encoding_role": "primary",
+      "source": "Original vector artwork from scripts/draw_field_atlas.py",
+      "usage_permission": "Original artwork created for this FluxLake project",
+      "route": "/workspace/lineage",
+      "placement": "route hero",
+      "dimensions": [
+        900,
+        420
+      ],
+      "optimization": "Compact script-free SVG with internal paints",
+      "loading": "eager",
+      "bytes": 8065,
+      "sha256": "d4cc4b740ae8d3d1d7222e04dd7b53bd233763d526f4d3d1d84502a31dc9ef4a"
+    },
+    {
+      "file": "gated-threshold.svg",
+      "composition": "gated-threshold",
+      "encoding_role": "primary",
+      "source": "Original vector artwork from scripts/draw_field_atlas.py",
+      "usage_permission": "Original artwork created for this FluxLake project",
+      "route": "/workspace/access",
+      "placement": "route hero",
+      "dimensions": [
+        900,
+        420
+      ],
+      "optimization": "Compact script-free SVG with internal paints",
+      "loading": "eager",
+      "bytes": 7075,
+      "sha256": "a1ad33788a89097864fdce2afc97752943123a691f4f070c21c2ac6e14974a33"
+    },
+    {
+      "file": "immutable-core.svg",
+      "composition": "immutable-core",
+      "encoding_role": "primary",
+      "source": "Original vector artwork from scripts/draw_field_atlas.py",
+      "usage_permission": "Original artwork created for this FluxLake project",
+      "route": "/",
+      "placement": "evidence chapter: Read the original",
+      "dimensions": [
+        900,
+        420
+      ],
+      "optimization": "Compact script-free SVG with internal paints",
+      "loading": "lazy",
+      "bytes": 7238,
+      "sha256": "e6e3c0cdbc91225fb8358f5c40ebd3ac2c46deaa9122eb94323d726f0d71c6f0"
+    },
+    {
+      "file": "inspectable-answer.svg",
+      "composition": "inspectable-answer",
+      "encoding_role": "primary",
+      "source": "Original vector artwork from scripts/draw_field_atlas.py",
+      "usage_permission": "Original artwork created for this FluxLake project",
+      "route": "/",
+      "placement": "evidence chapter: Ask the lake",
+      "dimensions": [
+        900,
+        420
+      ],
+      "optimization": "Compact script-free SVG with internal paints",
+      "loading": "lazy",
+      "bytes": 7071,
+      "sha256": "8a1bbe2118ac5a039854626fb0d690f8c856925a36f932efe3e9577b4987c3ed"
+    },
+    {
+      "file": "isolated-pocket.svg",
+      "composition": "isolated-pocket",
+      "encoding_role": "primary",
+      "source": "Original vector artwork from scripts/draw_field_atlas.py",
+      "usage_permission": "Original artwork created for this FluxLake project",
+      "route": "/workspace/quarantine",
+      "placement": "route hero",
+      "dimensions": [
+        900,
+        420
+      ],
+      "optimization": "Compact script-free SVG with internal paints",
+      "loading": "eager",
+      "bytes": 7569,
+      "sha256": "5ee0fb17f993e00e49145cd31fea9f0fc1c6567030232e09049b0db018922bdf"
+    },
+    {
+      "file": "normalized-grid.svg",
+      "composition": "normalized-grid",
+      "encoding_role": "primary",
+      "source": "Original vector artwork from scripts/draw_field_atlas.py",
+      "usage_permission": "Original artwork created for this FluxLake project",
+      "route": "/workspace/silver",
+      "placement": "route hero",
+      "dimensions": [
+        900,
+        420
+      ],
+      "optimization": "Compact script-free SVG with internal paints",
+      "loading": "eager",
+      "bytes": 21652,
+      "sha256": "cc10ce98f3fe9d037c9104d1884daa1c8fc0bcfe36a6427459434b2c38f3c3be"
+    },
+    {
+      "file": "observatory-terrain-mobile.webp",
+      "composition": "observatory-terrain",
+      "encoding_role": "responsive alternative",
+      "source": "Original ImageGen illustration from the FluxLake concept",
+      "usage_permission": "Original artwork created for this FluxLake project",
+      "route": "/",
+      "placement": "overview hero mobile encoding",
+      "dimensions": [
+        896,
+        373
+      ],
+      "optimization": "WebP resized for viewport",
+      "loading": "eager",
+      "bytes": 28842,
+      "sha256": "880e8b817707c4d90c1a5b50c359667c82d7c880ffafad8d23906793d3531613"
+    },
+    {
+      "file": "observatory-terrain.webp",
+      "composition": "observatory-terrain",
+      "encoding_role": "primary",
+      "source": "Original ImageGen illustration from the FluxLake concept",
+      "usage_permission": "Original artwork created for this FluxLake project",
+      "route": "/",
+      "placement": "overview hero",
+      "dimensions": [
+        1600,
+        667
+      ],
+      "optimization": "WebP resized for viewport",
+      "loading": "eager",
+      "bytes": 94672,
+      "sha256": "f2570687dd307a881231e32c499adf072f5d0cc6d376b3c6b54ff04e1d966e0f"
+    },
+    {
+      "file": "observed-fields.svg",
+      "composition": "observed-fields",
+      "encoding_role": "primary",
+      "source": "Original vector artwork from scripts/draw_field_atlas.py",
+      "usage_permission": "Original artwork created for this FluxLake project",
+      "route": "/",
+      "placement": "evidence chapter: Explore typed events",
+      "dimensions": [
+        900,
+        420
+      ],
+      "optimization": "Compact script-free SVG with internal paints",
+      "loading": "lazy",
+      "bytes": 13859,
+      "sha256": "9604684f8eb09496f6799736635b0ebf32f46eca570abed7eaa66116324cdd20"
+    },
+    {
+      "file": "packet-funnel.svg",
+      "composition": "packet-funnel",
+      "encoding_role": "primary",
+      "source": "Original vector artwork from scripts/draw_field_atlas.py",
+      "usage_permission": "Original artwork created for this FluxLake project",
+      "route": "/workspace/ingestion",
+      "placement": "route hero",
+      "dimensions": [
+        900,
+        420
+      ],
+      "optimization": "Compact script-free SVG with internal paints",
+      "loading": "eager",
+      "bytes": 8691,
+      "sha256": "edd8a0df0d79b2fd3e02b7cd6b4f339434e71f385118ca88ce5664d616c2e7d5"
+    },
+    {
+      "file": "pattern-ridges.svg",
+      "composition": "pattern-ridges",
+      "encoding_role": "primary",
+      "source": "Original vector artwork from scripts/draw_field_atlas.py",
+      "usage_permission": "Original artwork created for this FluxLake project",
+      "route": "/",
+      "placement": "evidence chapter: Compare two runs",
+      "dimensions": [
+        900,
+        420
+      ],
+      "optimization": "Compact script-free SVG with internal paints",
+      "loading": "lazy",
+      "bytes": 31338,
+      "sha256": "14fb13391fef741b7068797ca6b90631fe142c33f4fde51dfe5bbf6889a31278"
+    },
+    {
+      "file": "receipt-cadence.svg",
+      "composition": "receipt-cadence",
+      "encoding_role": "primary",
+      "source": "Original vector artwork from scripts/draw_field_atlas.py",
+      "usage_permission": "Original artwork created for this FluxLake project",
+      "route": "/workspace/runs",
+      "placement": "route hero",
+      "dimensions": [
+        900,
+        420
+      ],
+      "optimization": "Compact script-free SVG with internal paints",
+      "loading": "eager",
+      "bytes": 15133,
+      "sha256": "1a78bc3ddd4a0e2a3ab7b36dd54ad859990ad1a5157171c8947a9dff7f0182a8"
+    },
+    {
+      "file": "recovery-resonance.svg",
+      "composition": "recovery-resonance",
+      "encoding_role": "primary",
+      "source": "Original vector artwork from scripts/draw_field_atlas.py",
+      "usage_permission": "Original artwork created for this FluxLake project",
+      "route": "/",
+      "placement": "evidence chapter: Reconstruct a run",
+      "dimensions": [
+        900,
+        420
+      ],
+      "optimization": "Compact script-free SVG with internal paints",
+      "loading": "lazy",
+      "bytes": 8506,
+      "sha256": "74c9d7addf393c55f88db6920ff409b6575c0f97805bff446fa40031cf09fdc1"
+    },
+    {
+      "file": "replay-echo.svg",
+      "composition": "replay-echo",
+      "encoding_role": "primary",
+      "source": "Original vector artwork from scripts/draw_field_atlas.py",
+      "usage_permission": "Original artwork created for this FluxLake project",
+      "route": "/workspace/replay",
+      "placement": "route hero",
+      "dimensions": [
+        900,
+        420
+      ],
+      "optimization": "Compact script-free SVG with internal paints",
+      "loading": "eager",
+      "bytes": 7663,
+      "sha256": "34cd2c01cc8c4c4c9e655676fc35bf75f47c060d47f9e24df259509b7f6320b6"
+    },
+    {
+      "file": "signal-inquiry.svg",
+      "composition": "signal-inquiry",
+      "encoding_role": "primary",
+      "source": "Original vector artwork from scripts/draw_field_atlas.py",
+      "usage_permission": "Original artwork created for this FluxLake project",
+      "route": "/workspace/agent",
+      "placement": "route hero",
+      "dimensions": [
+        900,
+        420
+      ],
+      "optimization": "Compact script-free SVG with internal paints",
+      "loading": "eager",
+      "bytes": 6758,
+      "sha256": "f70886627b450bfc66c155d500800d744ae76032a78827f41e320b385930b24a"
+    },
+    {
+      "file": "source-apertures.svg",
+      "composition": "source-apertures",
+      "encoding_role": "primary",
+      "source": "Original vector artwork from scripts/draw_field_atlas.py",
+      "usage_permission": "Original artwork created for this FluxLake project",
+      "route": "/workspace/sources",
+      "placement": "route hero",
+      "dimensions": [
+        900,
+        420
+      ],
+      "optimization": "Compact script-free SVG with internal paints",
+      "loading": "eager",
+      "bytes": 9845,
+      "sha256": "9d9cac93805cd504431358c80561e8aa2b198bb99ba957cea082e2e3e6b317b4"
+    },
+    {
+      "file": "strata-vault.svg",
+      "composition": "strata-vault",
+      "encoding_role": "primary",
+      "source": "Original vector artwork from scripts/draw_field_atlas.py",
+      "usage_permission": "Original artwork created for this FluxLake project",
+      "route": "/workspace/bronze",
+      "placement": "route hero",
+      "dimensions": [
+        900,
+        420
+      ],
+      "optimization": "Compact script-free SVG with internal paints",
+      "loading": "eager",
+      "bytes": 10978,
+      "sha256": "447e5f43ed54e6eb448ab4068c7e0b41c2e78795fba207c2ba9e0d8e92b36b9e"
+    }
+  ]
+}

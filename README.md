@@ -8,6 +8,8 @@ FluxLake is a 14-page analytical workspace over real public GitHub events. An op
 
 The dark observatory interface includes native count/share and distribution charts, a keyboard command palette that searches retained records, sortable explorers, CSV export and an original-evidence drawer. The anonymous analyst formats real answers with inspectable tool evidence. [Design concepts and component system](docs/observatory-design.md) document the visual direction and factual corrections made during implementation; [verification evidence and limits](docs/observatory-verification.md) record the deployed checks.
 
+The field atlas introduces an original observatory scene and workflow illustrations throughout the fourteen workspace views. [Route audit and visual system](docs/field-atlas-audit.md) · [Artwork manifest](docs/field-atlas-assets.json)
+
 ## Workflows
 
 | Page | Working capability |
