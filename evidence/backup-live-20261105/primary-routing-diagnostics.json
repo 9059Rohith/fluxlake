@@ -1,0 +1,11 @@
+[
+  {
+    "timestamp": 1793884255943,
+    "deployment_id": "dpl_2M3oTjP6aGyVNvyRXL1m9hmbdHAt",
+    "path": "/workbench/api/demo-agent",
+    "http_status": 200,
+    "provider_diagnostics": [
+      "Gemini provider failure status=503 model=gemini-3.5-flash-lite attempt=1 phase=initial"
+    ]
+  }
+]

@@ -1,0 +1,41 @@
+{
+  "checked_at": "2026-11-05T13:11:00.413363+00:00",
+  "scope": "Real anonymous public HTTPS model inference and source tool call; no injected outage or operator token",
+  "url": "https://rohith-pipefoundry.vercel.app/workbench/api/demo-agent",
+  "expected_model": "gemini-3.5-flash-lite",
+  "selected_model_before_request": "gemini-3.5-flash-lite",
+  "status": 200,
+  "elapsed_ms": 6640.0,
+  "question": "Inspect this repository's default branch and primary language. Include the source and observation time.",
+  "retry_after": null,
+  "response_sha256": "12eec652bce85935fd8d7b35327034555e2b129d0504ade952a92e3c1c75ab97",
+  "response": {
+    "answer": "The repository `9059Rohith/pipefoundry` has the following configuration:\n\n*   **Default Branch:** `main`\n*   **Primary Language:** Python\n\n**Source:** [GitHub API (Repository Metadata)](https://api.github.com/repos/9059Rohith/pipefoundry)\n**Observation Time:** 2026-11-05 13:04:09 UTC",
+    "trace": [
+      {
+        "tool": "inspect_github",
+        "view": "repository",
+        "source": "https://api.github.com/repos/9059Rohith/pipefoundry",
+        "observed_at": "2026-11-05T13:04:09.216389+00:00",
+        "validated_at": "2026-11-05T13:04:09.216605+00:00",
+        "stale": false,
+        "cache_status": "fresh-cache"
+      }
+    ],
+    "provider": "gemini",
+    "model": "gemini-3.1-flash-lite",
+    "usage": {
+      "completion_tokens": 95,
+      "prompt_tokens": 2667,
+      "total_tokens": 2762
+    },
+    "request_id": "ZIDsasHyGJG2uMYPpvaL8Qk",
+    "public_demo": true,
+    "repository": "9059Rohith/pipefoundry",
+    "limits": {
+      "client": "3 per 10 minutes",
+      "shared": "2 per minute / 30 per day"
+    }
+  },
+  "passed": false
+}

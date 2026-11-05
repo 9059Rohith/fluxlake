@@ -1,0 +1,18 @@
+{
+  "date": "2026-11-05",
+  "project": "fluxlake",
+  "deployment_id": "dpl_Aph3C6NVhCwxLmrKUNnS7PW5FVSX",
+  "runtime_source_commit": "10e4f84f57e48ac414a01e8a489837c62baf099f",
+  "alias": {
+    "alias": "rohith-fluxlake.vercel.app",
+    "deployment_id": "dpl_Aph3C6NVhCwxLmrKUNnS7PW5FVSX",
+    "project_id": "prj_uvaQpkLZLttxtyhOeefJGBt8xxRt"
+  },
+  "status": "READY",
+  "promoted": true,
+  "public_url": "https://rohith-fluxlake.vercel.app/",
+  "passed": 226,
+  "skipped": 34,
+  "receipt_scope": "Prior unchanged same-day profile",
+  "preferred_model": "gemini-3.5-flash-lite"
+}

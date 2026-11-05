@@ -1,0 +1,48 @@
+{
+  "checks": [
+    "ruff check src scripts/verify_build.py",
+    "pytest (full default suite)"
+  ],
+  "created_at": "2026-11-05T12:00:38.483609+00:00",
+  "fingerprints": {
+    "gate": {
+      "files": 4,
+      "sha256": "564be442a47498f4f1371f309dc34f0e18e8cf2a68169da2461abd8905dd025c"
+    },
+    "locks": {
+      "files": 3,
+      "sha256": "c8451c8fedc64bcb56b7dcd5fbb8f1ab584a244e4ad3133f8034b20e5079a48e"
+    },
+    "source": {
+      "files": 57,
+      "sha256": "de188fb42f7dd1baed48f82d7453cbb332b759193d3e97e8576f053cafc7ade0"
+    },
+    "tests": {
+      "files": 21,
+      "sha256": "c6d5e65e0475d34c646478c7cc8e4c34f4cb86409fcc9cc7fd31fc85002a4f52"
+    }
+  },
+  "gate": "offline-release-build",
+  "platform": "Linux",
+  "project": "fluxlake",
+  "pytest": {
+    "errors": 0,
+    "failures": 0,
+    "passed": 226,
+    "skipped": 34,
+    "skips": [
+      {
+        "count": 17,
+        "reason": "TEST_DATABASE_URL not set; actual PostgreSQL required"
+      },
+      {
+        "count": 17,
+        "reason": "TEST_DATABASE_URL not set; needs actual PostgreSQL"
+      }
+    ],
+    "total": 260
+  },
+  "python": "3.15.1",
+  "schema_version": 1,
+  "status": "passed"
+}

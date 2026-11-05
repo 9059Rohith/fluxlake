@@ -1,0 +1,12 @@
+{
+  "scope": "Reevaluation of the captured primary-preferred HTTP200 response against permitted automatic fallback; no new inference call",
+  "strict_requested_model_match": false,
+  "configured_preferred_model": "gemini-3.5-flash-lite",
+  "served_model": "gemini-3.1-flash-lite",
+  "provider_503_confirmed_on_primary_deployment": true,
+  "approved_automatic_fallback_verified": true,
+  "response_sha256": "12eec652bce85935fd8d7b35327034555e2b129d0504ade952a92e3c1c75ab97",
+  "request_id": "ZIDsasHyGJG2uMYPpvaL8Qk",
+  "real_source_trace_and_staleness_validation_passed": true,
+  "provider_usage_and_request_id_validated": true
+}

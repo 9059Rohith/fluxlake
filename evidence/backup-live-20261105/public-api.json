@@ -1,0 +1,158 @@
+{
+  "checked_at_utc": "2026-11-05T13:26:00.453135+00:00",
+  "scope": "Public database readiness, source reads/replay, static review, and rejected anonymous operator actions",
+  "model_requests": 0,
+  "cluster_actions": 0,
+  "results": [
+    {
+      "project": "settlement-recon",
+      "checks": [
+        {
+          "url": "https://rohith-settlement-recon.vercel.app/readyz",
+          "method": "GET",
+          "expected_status": 200,
+          "status": 200,
+          "elapsed_ms": 3375.0,
+          "passed": true,
+          "body_sha256": "31bf75f4c0a97cc1f7b60df824fa390b3be9ba014f29b63c87c698ba63d9a9fd"
+        },
+        {
+          "url": "https://rohith-settlement-recon.vercel.app/workspace/api/history?source=USD&target=INR&start=2025-01-01&end=2025-01-07",
+          "method": "GET",
+          "expected_status": 200,
+          "status": 200,
+          "elapsed_ms": 672.0,
+          "passed": true,
+          "body_sha256": "43cbf089889f7a39af2615a56460c8d9e06c9955c05d70425102ed1ac8c232d2"
+        },
+        {
+          "url": "https://rohith-settlement-recon.vercel.app/v1/ingest/payments",
+          "method": "POST",
+          "expected_status": 401,
+          "status": 401,
+          "elapsed_ms": 453.0,
+          "passed": true,
+          "body_sha256": "235692d45f3ef12ab8fbd7a533bda9ddd10cdd5ff680e99c35c973e77ec64bfa"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "project": "fluxlake",
+      "checks": [
+        {
+          "url": "https://rohith-fluxlake.vercel.app/ready",
+          "method": "GET",
+          "expected_status": 200,
+          "status": 200,
+          "elapsed_ms": 2406.0,
+          "passed": true,
+          "body_sha256": "31bf75f4c0a97cc1f7b60df824fa390b3be9ba014f29b63c87c698ba63d9a9fd"
+        },
+        {
+          "url": "https://rohith-fluxlake.vercel.app/api/workspace/overview",
+          "method": "GET",
+          "expected_status": 200,
+          "status": 200,
+          "elapsed_ms": 719.0,
+          "passed": true,
+          "body_sha256": "32799c73b30ce8093434db7c121dd78085bd0771e0452770b8b368f95f1df867"
+        },
+        {
+          "url": "https://rohith-fluxlake.vercel.app/api/workspace/replay",
+          "method": "GET",
+          "expected_status": 200,
+          "status": 200,
+          "elapsed_ms": 922.0,
+          "passed": true,
+          "body_sha256": "7dbdf58dc4cbb2627bd38110e975c8c4ee43e861a73bac5e51e1608fc6b3b32a"
+        },
+        {
+          "url": "https://rohith-fluxlake.vercel.app/events",
+          "method": "POST",
+          "expected_status": 401,
+          "status": 401,
+          "elapsed_ms": 406.0,
+          "passed": true,
+          "body_sha256": "d2ba41b2fe9844fc50bd6b01ebabc42a63efd015a7e094da1118683f90c5017d"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "project": "dataguard",
+      "checks": [
+        {
+          "url": "https://rohith-dataguard.vercel.app/ready",
+          "method": "GET",
+          "expected_status": 200,
+          "status": 200,
+          "elapsed_ms": 922.0,
+          "passed": true,
+          "body_sha256": "31bf75f4c0a97cc1f7b60df824fa390b3be9ba014f29b63c87c698ba63d9a9fd"
+        },
+        {
+          "url": "https://rohith-dataguard.vercel.app/api/quality/workspace",
+          "method": "GET",
+          "expected_status": 200,
+          "status": 200,
+          "elapsed_ms": 1547.0,
+          "passed": true,
+          "body_sha256": "3600d1a8f560b5223e5028feec4e2ed8a6531cb64b146149c0de724718cf2a39"
+        },
+        {
+          "url": "https://rohith-dataguard.vercel.app/api/quality/benchmark?policy=strict",
+          "method": "GET",
+          "expected_status": 200,
+          "status": 200,
+          "elapsed_ms": 781.0,
+          "passed": true,
+          "body_sha256": "df80bc3d554c1c0ba28b4b751799d567118e79ec81215eb227059b609b6a89d5"
+        },
+        {
+          "url": "https://rohith-dataguard.vercel.app/recover",
+          "method": "POST",
+          "expected_status": 401,
+          "status": 401,
+          "elapsed_ms": 516.0,
+          "passed": true,
+          "body_sha256": "d2ba41b2fe9844fc50bd6b01ebabc42a63efd015a7e094da1118683f90c5017d"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "project": "pipefoundry",
+      "checks": [
+        {
+          "url": "https://rohith-pipefoundry.vercel.app/health/ready",
+          "method": "GET",
+          "expected_status": 200,
+          "status": 200,
+          "elapsed_ms": 2656.0,
+          "passed": true,
+          "body_sha256": "31bf75f4c0a97cc1f7b60df824fa390b3be9ba014f29b63c87c698ba63d9a9fd"
+        },
+        {
+          "url": "https://rohith-pipefoundry.vercel.app/workbench/api/review",
+          "method": "POST",
+          "expected_status": 200,
+          "status": 200,
+          "elapsed_ms": 485.0,
+          "passed": true,
+          "body_sha256": "10c1af7a7cd8b9fccdfc9dad1094b5136f3c2f77bf15180d2904521542be2ebf"
+        },
+        {
+          "url": "https://rohith-pipefoundry.vercel.app/releases/apply",
+          "method": "POST",
+          "expected_status": 401,
+          "status": 401,
+          "elapsed_ms": 406.0,
+          "passed": true,
+          "body_sha256": "ab8fc6cf92b3c2ec0e49303b46c9c71d50f00f2139868b728f95363d1d5f054c"
+        }
+      ],
+      "passed": true
+    }
+  ]
+}

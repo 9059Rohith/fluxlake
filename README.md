@@ -1,6 +1,8 @@
 # FluxLake
 
-**Latest AI recovery release (5 Nov 2026):** Shared transient retries, deadline checks and correct provider cooldowns are deployed. [Hosted test receipts, live retests, free-model fallback scope and GitHub account blocker](docs/ai-recovery-release.md).
+**Latest portfolio verification (5 Nov 2026):** PipeFoundry's real Gemini 3.1 inference and automatic 3.5-to-3.1 recovery were verified on public HTTPS; DataGuard uses the healthy free 3.1 pool. [Live proof, restored configuration, all-app retests and account blocker](docs/backup-live-verification.md).
+
+**Earlier AI recovery release (5 Nov 2026):** Shared transient retries, deadline checks and correct provider cooldowns are deployed. [Hosted test receipts, live retests, free-model fallback scope and GitHub account blocker](docs/ai-recovery-release.md).
 
 **Earlier hosted build-gate release (5 Nov 2026):** 206 tests passed, 34 explicit optional skips on the actual Linux builder. Every release image depends on a successful verification receipt. [Build logs, public retests and exact GitHub/AWS blockers](docs/free-hosted-ci.md).
 

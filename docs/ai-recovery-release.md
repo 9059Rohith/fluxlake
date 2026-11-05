@@ -1,5 +1,7 @@
 # AI recovery release — 5 November 2026
 
+Earlier release snapshot: [subsequent live backup and four-app verification](backup-live-verification.md) supersedes the live-secondary observation limit below.
+
 All four existing free-hosted apps were rebuilt, checked on staged production
 deployments, and promoted as the same tested builds. GitHub Actions remains
 blocked by the account lock; no passing GitHub Actions run is claimed.

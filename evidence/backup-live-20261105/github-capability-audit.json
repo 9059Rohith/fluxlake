@@ -1,0 +1,12 @@
+{
+  "scope": "Derived read-only account/capability audit, not an account-unlock result",
+  "connected_identity_matches_repo_owner": false,
+  "billing_management_available": false,
+  "runner_registration_available": false,
+  "workflow_write_authorized": false,
+  "current_lock_confirmed_by_run": "https://github.com/9059Rohith/dataguard/actions/runs/42035036519",
+  "current_annotation": "The job was not started because your account is locked due to a billing issue.",
+  "free_resolution": "Owner-authorized plan review where applicable; GitHub Support billing-lock review when already Free/no issue is visible",
+  "changes_made_to_billing": false,
+  "messages_sent": false
+}
