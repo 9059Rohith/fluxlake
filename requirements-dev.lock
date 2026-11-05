@@ -39,7 +39,7 @@ pydantic==2.14.2
 pydantic-core==2.50.2
 pygments==2.21.0
 pyparsing==3.3.3
-pytest==8.4.2
+pytest==9.2.0
 requests==2.34.2
 rich==15.0.0
 ruff==0.14.3

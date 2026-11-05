@@ -84,7 +84,7 @@ def fixture_project(tmp_path, body):
     (tmp_path / "src" / "sample.py").write_text("VALUE = 1\n")
     (tmp_path / "tests" / "test_sample.py").write_text(body)
     (tmp_path / "requirements.lock").write_text("example==1.0\n")
-    (tmp_path / "requirements-test.lock").write_text("pytest==8.4.2\n")
+    (tmp_path / "requirements-test.lock").write_text("pytest==9.2.0\n")
     (tmp_path / "pyproject.toml").write_text('[tool.pytest.ini_options]\ntestpaths=["tests"]\n')
     assert SCRIPT.is_file(), "the build verification gate has not been implemented"
     (tmp_path / "scripts").mkdir()
