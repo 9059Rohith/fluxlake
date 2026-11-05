@@ -25,3 +25,14 @@ The older independent `WorkspaceUnavailable` failure remains unconfirmed because
 The script uses a disposable PostgreSQL cluster and the first 200 admitted records from the checksum-verified archive. It stops its own server, observes failed connection attempts, starts the server, and verifies that one source-body call produces 100 persisted events and one receipt. It then commits the second real batch and deliberately raises a client acknowledgement error after that real commit. Independent SQL verifies 200 total events and two receipts, with one connection and one source-body call for the uncertain commit. This acknowledgement loss is controlled in the client wrapper. The wrong-password check uses actual PostgreSQL authentication and fails after one attempt. [Native fault evidence](../evidence/workspace-connection-recovery.json)
 
 The full PostgreSQL-enabled regression suite passed 208 cases. The 16 new cases began with failing regressions and verify retry limits, failed-session cleanup, fail-fast permanent errors, emitted metadata and public redaction, body execution once and uncertain commit behavior. [JUnit evidence](../evidence/workspace-connectivity-junit.xml)
+
+## Archive and model reruns
+
+Both full 20,000-event workloads passed with diagnostics retained in distinct artifacts. The incremental model reproduced result fingerprint `18c551aca4ae1953bba3cb37980fc64496eed5bb27b49ef00614a425e14f8e12`, with full SQL/Python parity and an empty database-error list. Its 19 steady refreshes measured 4.655 ms median publisher-commit-to-model-commit latency in this local run. [Model rerun](../evidence/hourly-public-model-connectivity.json)
+
+The archive drill recovered after deliberate process termination, independently verified all 20,000 identities and 57,968,885 canonical bytes, then matched 20,000 redeliveries and reconstructed 20,000 events across 100 bounded audits with zero differences. Its identity fingerprint still matched `6dc04a265f930ffec610a9011eedaa3592797ec73f14cf9323600c1a65167eb4`. The expected interrupted publication is recorded as a body-phase `OperationalError` with `attempt=1` and `retrying=false`. [Archive rerun](../evidence/archive-replay-connectivity.json)
+
+```powershell
+.venv/Scripts/python.exe scripts/benchmark_hourly_model.py .downloads/2025-01-01-15.json.gz --postgres-bin 'C:/Program Files/PostgreSQL/18/bin' --output evidence/hourly-public-model-connectivity.json
+.venv/Scripts/python.exe scripts/benchmark_archive_replay.py .downloads/2025-01-01-15.json.gz --postgres-bin 'C:/Program Files/PostgreSQL/18/bin' --limit 20000 --output evidence/archive-replay-connectivity.json
+```
