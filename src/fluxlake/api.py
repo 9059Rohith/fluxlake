@@ -58,6 +58,13 @@ def create_app(root: Path | str | None = None) -> FastAPI:
     ):
         raise RuntimeError("Public demo requires explicit exact allowed hostnames")
     allowed_hosts = ["localhost", "127.0.0.1", *configured_hosts]
+    # Vercel supplies a scheme-less deployment domain. Trust only that exact
+    # bounded DNS hostname, never a request header or a wildcard suffix.
+    deployment_host = os.getenv("VERCEL_URL", "")
+    if os.getenv("VERCEL") == "1" and re.fullmatch(
+        r"[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.vercel\.app", deployment_host
+    ):
+        allowed_hosts.append(deployment_host)
     if not public_demo:
         allowed_hosts.append("testserver")
     app.add_middleware(TrustedHostMiddleware, allowed_hosts=allowed_hosts)
