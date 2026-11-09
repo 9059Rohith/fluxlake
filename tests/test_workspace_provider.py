@@ -193,7 +193,10 @@ def transport(monkeypatch):
 def provider_error(status=503, retry_after=None):
     headers = {} if retry_after is None else {"Retry-After": retry_after}
     return HTTPError(
-        "https://provider.invalid/private-url", status, "private-message", headers,
+        "https://provider.invalid/private-url",
+        status,
+        "private-message",
+        headers,
         io.BytesIO(b"private-provider-body"),
     )
 
@@ -201,14 +204,20 @@ def provider_error(status=503, retry_after=None):
 @pytest.mark.parametrize("failure", [500, 502, 503, 504, "network", "timeout"])
 def test_transient_provider_failure_recovers_without_fabricating(gemini, transport, failure):
     outcomes, requests, sleeps, _ = transport
-    failure = (URLError("private-network-detail") if failure == "network" else
-               TimeoutError("private-timeout-detail") if failure == "timeout" else
-               provider_error(failure))
+    failure = (
+        URLError("private-network-detail")
+        if failure == "network"
+        else TimeoutError("private-timeout-detail")
+        if failure == "timeout"
+        else provider_error(failure)
+    )
     outcomes.extend([failure, {"role": "assistant", "content": "provider-generated"}])
     assert call_provider([], [])["content"] == "provider-generated"
     assert len(requests) == 2 and sleeps == [1]
-    assert all(request.full_url.startswith("https://generativelanguage.googleapis.com/")
-               for request, _ in requests)
+    assert all(
+        request.full_url.startswith("https://generativelanguage.googleapis.com/")
+        for request, _ in requests
+    )
 
 
 def test_persistent_transient_failure_has_bounded_redacted_logs(gemini, transport, caplog):
@@ -218,8 +227,13 @@ def test_persistent_transient_failure_has_bounded_redacted_logs(gemini, transpor
         call_provider([{"role": "user", "content": "private-question"}], [])
     assert len(requests) == 3 and sleeps == [1, 2]
     assert "status=503" in caplog.text and "HTTPError" in caplog.text
-    for private in ("private-question", "private-provider-body", "private-message",
-                    "private-url", "test-only-private-key"):
+    for private in (
+        "private-question",
+        "private-provider-body",
+        "private-message",
+        "private-url",
+        "test-only-private-key",
+    ):
         assert private not in caplog.text + str(error.value)
 
 
@@ -244,10 +258,14 @@ def test_transient_retry_after_is_never_shortened(gemini, transport, delay):
 
 
 TOOL_MESSAGE = {
-    "role": "assistant", "tool_calls": [{
-        "id": "call-overview", "type": "function",
-        "function": {"name": "lake_overview", "arguments": "{}"},
-    }],
+    "role": "assistant",
+    "tool_calls": [
+        {
+            "id": "call-overview",
+            "type": "function",
+            "function": {"name": "lake_overview", "arguments": "{}"},
+        }
+    ],
 }
 
 
@@ -258,8 +276,14 @@ class RecoveryStore:
 
 def test_recovery_resumes_real_tool_loop_without_replaying_tools(gemini, transport):
     outcomes, requests, _, _ = transport
-    outcomes.extend([provider_error(), TOOL_MESSAGE, provider_error(502),
-                     {"role": "assistant", "content": "17 retained events."}])
+    outcomes.extend(
+        [
+            provider_error(),
+            TOOL_MESSAGE,
+            provider_error(502),
+            {"role": "assistant", "content": "17 retained events."},
+        ]
+    )
     result = run_agent(RecoveryStore(), "Count retained events")
     assert result["answer"] == "17 retained events."
     assert result["tool_calls"] == 1 and len(result["trace"]) == 1
@@ -269,8 +293,16 @@ def test_recovery_resumes_real_tool_loop_without_replaying_tools(gemini, transpo
 
 def test_retry_budget_is_shared_across_model_turns(gemini, transport):
     outcomes, requests, sleeps, _ = transport
-    outcomes.extend([provider_error(), TOOL_MESSAGE, provider_error(), TOOL_MESSAGE,
-                     provider_error(), {"role": "assistant", "content": "must not arrive"}])
+    outcomes.extend(
+        [
+            provider_error(),
+            TOOL_MESSAGE,
+            provider_error(),
+            TOOL_MESSAGE,
+            provider_error(),
+            {"role": "assistant", "content": "must not arrive"},
+        ]
+    )
     with pytest.raises(AgentUnavailable):
         run_agent(RecoveryStore(), "Count retained events")
     assert len(requests) == 5 and len(sleeps) == 2
@@ -279,10 +311,19 @@ def test_retry_budget_is_shared_across_model_turns(gemini, transport):
 @pytest.mark.parametrize("second_failure", [503, "network"])
 def test_default_backoff_increases_across_model_turns(gemini, transport, second_failure):
     outcomes, requests, sleeps, _ = transport
-    failure = (URLError("private-network-detail") if second_failure == "network"
-               else provider_error(second_failure))
-    outcomes.extend([provider_error(), TOOL_MESSAGE, failure,
-                     {"role": "assistant", "content": "17 retained events."}])
+    failure = (
+        URLError("private-network-detail")
+        if second_failure == "network"
+        else provider_error(second_failure)
+    )
+    outcomes.extend(
+        [
+            provider_error(),
+            TOOL_MESSAGE,
+            failure,
+            {"role": "assistant", "content": "17 retained events."},
+        ]
+    )
     result = run_agent(RecoveryStore(), "Count retained events")
     assert result["answer"] == "17 retained events."
     assert len(requests) == 4 and sleeps == [1, 2]

@@ -86,7 +86,16 @@ def test_inspection_finds_drift_tombstones_absence_and_never_repairs(tmp_path, m
         pq.write_table(pa.Table.from_pylist(rows, schema=table.schema), snapshot)
         result = inspect(lake, url, [live])
         assert result["results"][0]["differences"] == ["silver_payload"]
-        assert "999" not in str(result)
+        # Exact diagnostic fields establish payload omission. Random snapshot UUIDs
+        # can legitimately contain the digits of a private test amount.
+        assert result["results"][0] == {
+            "key": live,
+            "status": "mismatch",
+            "source_version": 2,
+            "projection_version": 2,
+            "source_deleted": False,
+            "differences": ["silver_payload"],
+        }
 
 
 def test_inspection_bounds_before_database_work(tmp_path):

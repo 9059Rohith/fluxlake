@@ -220,7 +220,9 @@ def call_provider(messages, tools, tool_choice="auto"):
         except HTTPError as exc:
             logger.warning("AI provider failure status=%s type=HTTPError", exc.code)
             header = exc.headers.get("Retry-After") if exc.headers else None
-            delay = retry_interval(header) if header is not None else min(2, budget.retries_used + 1)
+            delay = (
+                retry_interval(header) if header is not None else min(2, budget.retries_used + 1)
+            )
             status = exc.code
             exc.close()
             if status == 429:
