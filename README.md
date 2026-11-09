@@ -1,5 +1,11 @@
 # FluxLake
 
+> **9 November 2026 status:** the new upgrade is implemented and verified locally.
+> Vercel has blocked the hosting team for fair-use limits; all four existing demo
+> URLs currently return `402 DEPLOYMENT_DISABLED`. No new public release is claimed.
+> [Current feature, tests and precise hosting blocker](docs/upgrade-20261109.md).
+
+
 **Latest portfolio verification (5 Nov 2026):** PipeFoundry's real Gemini 3.1 inference and automatic 3.5-to-3.1 recovery were verified on public HTTPS; DataGuard uses the healthy free 3.1 pool. [Live proof, restored configuration, all-app retests and account blocker](docs/backup-live-verification.md).
 
 **Earlier AI recovery release (5 Nov 2026):** Shared transient retries, deadline checks and correct provider cooldowns are deployed. [Hosted test receipts, live retests, free-model fallback scope and GitHub account blocker](docs/ai-recovery-release.md).

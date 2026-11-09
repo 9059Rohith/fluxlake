@@ -1,0 +1,48 @@
+{
+  "date": "2026-11-09",
+  "timezone": "Asia/Calcutta",
+  "project": "fluxlake",
+  "feature": "Portable retained-source replay",
+  "tested_source_commit": "367a0c0cc4a38bd2230d7c893f8145e5693931ae",
+  "tests": {
+    "passed": 280,
+    "skipped": 0,
+    "scope": "Full disposable PostgreSQL profile"
+  },
+  "browser": "Real Chromium local workflow at desktop and mobile sizes; source/dates retained; no new hosted browser pass claimed",
+  "production_release": {
+    "status": "blocked",
+    "new_feature_deployed": false,
+    "reason": "Vercel: Your Team exceeded our fair use limits and has been blocked.",
+    "attempted_project": "settlement-recon; account-wide team restriction; no build or promotion created",
+    "existing_public_apps": "All four returned HTTP402 DEPLOYMENT_DISABLED on 2026-11-09",
+    "billing_or_access_changed": false
+  },
+  "live_availability": [
+    {
+      "project": "settlement-recon",
+      "url": "https://rohith-settlement-recon.vercel.app/",
+      "status": 402,
+      "error": "DEPLOYMENT_DISABLED"
+    },
+    {
+      "project": "fluxlake",
+      "url": "https://rohith-fluxlake.vercel.app/",
+      "status": 402,
+      "error": "DEPLOYMENT_DISABLED"
+    },
+    {
+      "project": "dataguard",
+      "url": "https://rohith-dataguard.vercel.app/",
+      "status": 402,
+      "error": "DEPLOYMENT_DISABLED"
+    },
+    {
+      "project": "pipefoundry",
+      "url": "https://rohith-pipefoundry.vercel.app/",
+      "status": 402,
+      "error": "DEPLOYMENT_DISABLED"
+    }
+  ],
+  "ranking": "No global percentile, hiring outcome, institutional scale or availability guarantee claimed."
+}
