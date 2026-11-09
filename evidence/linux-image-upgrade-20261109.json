@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "project": "fluxlake",
+  "gate": "offline-release-build",
+  "status": "passed",
+  "created_at": "2026-11-09T03:26:11.399995+00:00",
+  "python": "3.15.1",
+  "platform": "Linux",
+  "checks": [
+    "ruff check src scripts/verify_build.py",
+    "pytest (full default suite)"
+  ],
+  "pytest": {
+    "total": 280,
+    "passed": 245,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 35,
+    "skips": [
+      {
+        "reason": "TEST_DATABASE_URL not set; actual PostgreSQL required",
+        "count": 18
+      },
+      {
+        "reason": "TEST_DATABASE_URL not set; needs actual PostgreSQL",
+        "count": 17
+      }
+    ]
+  },
+  "fingerprints": {
+    "source": {
+      "sha256": "1137a7e8982cc8be2fa8ca6b4b5510104b54e825699a9bbd1172868f5654a7e1",
+      "files": 58
+    },
+    "tests": {
+      "sha256": "56ff0aca9e779d7895f6f774232323028c462e5cc39511e4a87fc451c65ddb08",
+      "files": 22
+    },
+    "locks": {
+      "sha256": "c8451c8fedc64bcb56b7dcd5fbb8f1ab584a244e4ad3133f8034b20e5079a48e",
+      "files": 3
+    },
+    "gate": {
+      "sha256": "564be442a47498f4f1371f309dc34f0e18e8cf2a68169da2461abd8905dd025c",
+      "files": 4
+    }
+  }
+}

@@ -44,5 +44,41 @@
       "error": "DEPLOYMENT_DISABLED"
     }
   ],
-  "ranking": "No global percentile, hiring outcome, institutional scale or availability guarantee claimed."
+  "ranking": "No global percentile, hiring outcome, institutional scale or availability guarantee claimed.",
+  "linux_image": {
+    "image_id": "sha256:da407bb39aabea4dfba3335e3b0b90529034308dbaf1008e92eb48ca72104b90",
+    "configured_user": "10001:10001",
+    "tests": {
+      "total": 280,
+      "passed": 245,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 35,
+      "skips": [
+        {
+          "reason": "TEST_DATABASE_URL not set; actual PostgreSQL required",
+          "count": 18
+        },
+        {
+          "reason": "TEST_DATABASE_URL not set; needs actual PostgreSQL",
+          "count": 17
+        }
+      ]
+    },
+    "runtime_smoke": {
+      "verification": "reproduced",
+      "publication_status": "consistent",
+      "counts": {
+        "retained_events": 200,
+        "silver_rows": 200,
+        "affected_events": 0,
+        "observed_duplicate_count": 0,
+        "conflicting_identity_receipts": 0
+      },
+      "bundle_sha256": "eabee81da9796cc943f341503d7fab4a5921ae98b28ce553d8c28782d0ae5e82",
+      "evidence_sha256": "919be6ec446b5d9e54ec028ad1b96e29d9b06f5a3c72dca810e6db91f4eab529",
+      "boundary": "Reproduces the exported retained evidence using FluxLake's versioned normalization contract. Fingerprints detect changes against a trusted pin; they do not authenticate GitHub or prove source completeness. Original HTTP bodies and duplicate/rejected bodies are not retained."
+    },
+    "scope": "Local Linux image; read-only root filesystem and no network; DataGuard uses an in-memory initialization of its actual store"
+  }
 }

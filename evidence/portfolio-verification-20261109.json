@@ -1,0 +1,150 @@
+{
+  "scope": "Local Linux final images, non-root, read-only root filesystem, no network; no hosted deployment",
+  "images": [
+    {
+      "project": "settlement",
+      "image_id": "sha256:4539dc2abf4e93741cba47613b08e97cf72c1c939f251a35521684400fe85ff7",
+      "user": "10001:10001",
+      "receipt": {
+        "passed": 246,
+        "skipped": 6,
+        "failures": 0,
+        "errors": 0,
+        "cases": 252
+      }
+    },
+    {
+      "project": "fluxlake",
+      "image_id": "sha256:da407bb39aabea4dfba3335e3b0b90529034308dbaf1008e92eb48ca72104b90",
+      "user": "10001:10001",
+      "receipt": {
+        "total": 280,
+        "passed": 245,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 35,
+        "skips": [
+          {
+            "reason": "TEST_DATABASE_URL not set; actual PostgreSQL required",
+            "count": 18
+          },
+          {
+            "reason": "TEST_DATABASE_URL not set; needs actual PostgreSQL",
+            "count": 17
+          }
+        ]
+      }
+    },
+    {
+      "project": "dataguard",
+      "image_id": "sha256:512b9a5ee1c3917758e08c1ab86f1c7c0cf5fd19a7265e9bf152ec9442ce6e70",
+      "user": "10001:10001",
+      "receipt": {
+        "total": 257,
+        "passed": 256,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 1,
+        "skip_reasons": [
+          "PostgreSQL EXPLAIN ANALYZE work-budget regression"
+        ]
+      }
+    },
+    {
+      "project": "pipefoundry",
+      "image_id": "sha256:d1fd265772d56bcbb98a88b013059801df6c7589370474a0b7923729b6316923",
+      "user": "10001:10001",
+      "receipt": {
+        "tests": 222,
+        "passed": 199,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 23
+      }
+    }
+  ],
+  "packaged_workflows": {
+    "settlement": {
+      "quote_date": "2025-01-03",
+      "report_sha256": "2530be021f905a147709c8e7b388ddac8f10c03563e24d7d193e4223a414740f"
+    },
+    "fluxlake": {
+      "verification": "reproduced",
+      "publication_status": "consistent",
+      "counts": {
+        "retained_events": 200,
+        "silver_rows": 200,
+        "affected_events": 0,
+        "observed_duplicate_count": 0,
+        "conflicting_identity_receipts": 0
+      },
+      "bundle_sha256": "eabee81da9796cc943f341503d7fab4a5921ae98b28ce553d8c28782d0ae5e82",
+      "evidence_sha256": "919be6ec446b5d9e54ec028ad1b96e29d9b06f5a3c72dca810e6db91f4eab529",
+      "boundary": "Reproduces the exported retained evidence using FluxLake's versioned normalization contract. Fingerprints detect changes against a trusted pin; they do not authenticate GitHub or prove source completeness. Original HTTP bodies and duplicate/rejected bodies are not retained."
+    },
+    "dataguard": {
+      "sha256": "b74495c7e606c5036513e3c6fb41001ebba71333dc0bf060dc690973a0956781",
+      "counts": {
+        "source_only": 0,
+        "policy_only": 7,
+        "interaction": 1,
+        "no_acceptance_change": 0
+      }
+    },
+    "pipefoundry": {
+      "rows": 100,
+      "total_cents": 232603,
+      "source_sha256": "942e7b07bf180803a934da9c05b5953a91ebf006696ffc72b8fdc783fb0385e2",
+      "report_sha256": "f807816d7d36a8590f3a007f2b9157e1ad4820e476de75e1f008468dbddaa9ec",
+      "source_captured_at": "2026-11-05T04:53:11.824138+00:00"
+    }
+  },
+  "selected_local_profile": {
+    "passed": 981,
+    "skipped": 30,
+    "note": "One profile per project. FluxLake is its full disposable PostgreSQL run. Container repeats are NOT added to this total."
+  },
+  "container_profile": {
+    "passed": 946,
+    "skipped": 65,
+    "note": "Separate network-isolated Linux build profiles. FluxLake skips35 PostgreSQL cases here; they passed in the local real-PostgreSQL profile."
+  },
+  "observed_github_runs": [
+    {
+      "project": "settlement-recon",
+      "id": 42556203044,
+      "status": "completed",
+      "conclusion": "failure",
+      "head_sha": "5153132406426f21e074451d199f85fa86929ce8",
+      "url": "https://github.com/9059Rohith/settlement-recon/actions/runs/42556203044",
+      "account_annotations": [
+        "The job was not started because your account is locked due to a billing issue.",
+        "The job was not started because your account is locked due to a billing issue."
+      ]
+    },
+    {
+      "project": "fluxlake",
+      "id": 42556210566,
+      "status": "completed",
+      "conclusion": "failure",
+      "head_sha": "1d99017679af9c4c25c42064de9a255c13ca5189",
+      "url": "https://github.com/9059Rohith/fluxlake/actions/runs/42556210566",
+      "account_annotations": [
+        "The job was not started because your account is locked due to a billing issue."
+      ]
+    },
+    {
+      "project": "dataguard",
+      "id": 42556218771,
+      "status": "completed",
+      "conclusion": "failure",
+      "head_sha": "1118dd36e3c873295e6d72465bb3f743ef886006",
+      "url": "https://github.com/9059Rohith/dataguard/actions/runs/42556218771",
+      "account_annotations": [
+        "The job was not started because your account is locked due to a billing issue.",
+        "The job was not started because your account is locked due to a billing issue.",
+        "The job was not started because your account is locked due to a billing issue."
+      ]
+    }
+  ]
+}
