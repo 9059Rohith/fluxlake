@@ -1,0 +1,42 @@
+$ .venv/Scripts/ruff check .
+All checks passed!
+Exit: 0
+$ .venv/Scripts/ruff format --check .
+62 files already formatted
+Exit: 0
+$ node --check src/fluxlake/web/workspace.js
+Exit: 0
+$ node --test tests/frontend-observatory.cjs
+✔ model text cannot introduce executable markup or off-origin links (2.1859ms)
+✔ only fixed public evidence paths become markdown links (0.262ms)
+✔ record sorting preserves precise long identities and stable equal values (12.6141ms)
+✔ native distributions derive counts and widths from supplied observations (9.2091ms)
+✔ untrusted dimension labels are escaped inside native SVG (0.4439ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 141.9701
+Exit: 0
+$ C:\Users\BhaviChasvi\Downloads\cyber_projects\fluxlake\.venv\Scripts\python.exe -m pip check
+No broken requirements found.
+Exit: 0
+$ C:\Users\BhaviChasvi\Downloads\cyber_projects\fluxlake\.venv\Scripts\python.exe -m fluxlake.replay_bundle evidence/replay-bundle-archive.json --expected-sha256 eabee81da9796cc943f341503d7fab4a5921ae98b28ce553d8c28782d0ae5e82
+{
+  "verification": "reproduced",
+  "publication_status": "consistent",
+  "counts": {
+    "retained_events": 200,
+    "silver_rows": 200,
+    "affected_events": 0,
+    "observed_duplicate_count": 0,
+    "conflicting_identity_receipts": 0
+  },
+  "bundle_sha256": "eabee81da9796cc943f341503d7fab4a5921ae98b28ce553d8c28782d0ae5e82",
+  "evidence_sha256": "919be6ec446b5d9e54ec028ad1b96e29d9b06f5a3c72dca810e6db91f4eab529",
+  "boundary": "Reproduces the exported retained evidence using FluxLake's versioned normalization contract. Fingerprints detect changes against a trusted pin; they do not authenticate GitHub or prove source completeness. Original HTTP bodies and duplicate/rejected bodies are not retained."
+}
+Exit: 0

@@ -112,6 +112,30 @@ def test_replay_real_postgres_is_stable_read_only_and_detects_exact_damage(store
     assert store.event("2")["repository"] == "damaged/repo"  # Audit never repairs or writes.
 
 
+def test_portable_bundle_roundtrips_real_snapshot_and_reproduces_publication_damage(store):
+    import json
+
+    from fluxlake.replay_bundle import verify_bundle
+
+    first = store.ingest(fetcher([event("10"), event("2")]))
+    before = store.overview()["counts"]
+    exported = store.replay([str(first["id"])], bundle=True)
+    roundtrip = json.loads(json.dumps(exported))
+    result = verify_bundle(roundtrip)
+    assert result["publication_status"] == "consistent"
+    assert result["counts"]["retained_events"] == 2
+    assert exported["source_snapshot"]["id"]
+    assert {row["event_id"] for row in exported["evidence"]["bronze"]} == {"2", "10"}
+    assert store.overview()["counts"] == before
+    with psycopg.connect(store.database_url) as conn:
+        conn.execute("UPDATE flux_public_silver SET actor='damaged-actor' WHERE event_id='2'")
+    damaged_counts = store.overview()["counts"]
+    damaged = store.replay([str(first["id"])], bundle=True)
+    assert verify_bundle(damaged)["publication_status"] == "differences"
+    assert verify_bundle(damaged)["counts"]["affected_events"] == 1
+    assert store.overview()["counts"] == damaged_counts
+
+
 def test_replay_actual_duplicate_and_conflict_receipts_keep_provenance(store):
     first = store.ingest(fetcher([event()]))
     allow_next_run(store)

@@ -1,0 +1,38 @@
+C:\Users\BhaviChasvi\Downloads\cyber_projects\fluxlake\.venv\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+  from starlette.testclient import TestClient as TestClient  # noqa
+........................................................................ [ 25%]
+........................................................................ [ 51%]
+........................................................................ [ 77%]
+...................................F............................         [100%]
+================================== FAILURES ===================================
+_ test_portable_bundle_roundtrips_real_snapshot_and_reproduces_publication_damage _
+tests\test_workspace_postgres.py:133: in test_portable_bundle_roundtrips_real_snapshot_and_reproduces_publication_damage
+    assert verify_bundle(damaged)["publication_status"] == "differences"
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   AssertionError: assert {'events': 2,...ypes': 1, ...} == {'events': 2,...ypes': 1, ...}
+E
+E     Omitting 9 identical items, use -vv to show
+E     Differing items:
+E     {'actors': 2} != {'actors': 1}
+E     Use -v to get more diff
+============================== warnings summary ===============================
+.venv\Lib\site-packages\fastapi\testclient.py:1
+  C:\Users\BhaviChasvi\Downloads\cyber_projects\fluxlake\.venv\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+.venv\Lib\site-packages\starlette\testclient.py:53
+  C:\Users\BhaviChasvi\Downloads\cyber_projects\fluxlake\.venv\Lib\site-packages\starlette\testclient.py:53: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_workspace_postgres.py::test_portable_bundle_roundtrips_real_snapshot_and_reproduces_publication_damage
+1 failed, 279 passed, 2 warnings in 82.52s (0:01:22)
+Traceback (most recent call last):
+  File "C:\Users\BhaviChasvi\Downloads\cyber_projects\fluxlake\scripts\verify_replay_bundle.py", line 135, in <module>
+    main()
+  File "C:\Users\BhaviChasvi\Downloads\cyber_projects\fluxlake\scripts\verify_replay_bundle.py", line 106, in main
+    subprocess.run(
+  File "C:\Users\BhaviChasvi\AppData\Local\Programs\Python\Python312\Lib\subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['C:\\Users\\BhaviChasvi\\Downloads\\cyber_projects\\fluxlake\\.venv\\Scripts\\python.exe', '-m', 'pytest', '-q', '--tb=short', '--junitxml=C:\\Users\\BhaviChasvi\\Downloads\\cyber_projects\\fluxlake\\evidence\\replay-bundle-junit.xml']' returned non-zero exit status 1.

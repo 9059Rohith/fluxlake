@@ -495,7 +495,7 @@ class PublicWorkspace:
             ).fetchall()
         return {"rows": rows}
 
-    def replay(self, run_ids=None):
+    def replay(self, run_ids=None, *, bundle=False):
         """One read-only snapshot; never refresh, acquire, publish or acknowledge."""
         from fluxlake.replay import MAX_BYTES, MAX_EVENTS, audit_publication
 
@@ -559,6 +559,10 @@ class PublicWorkspace:
                 (ids,),
             ).fetchall()
             try:
+                if bundle:
+                    from fluxlake.replay_bundle import create_bundle
+
+                    return create_bundle(runs, bronze, silver, quarantine, snapshot)
                 report = audit_publication(runs, bronze, silver, quarantine)
             except (ValueError, TypeError, RecursionError):
                 raise WorkspaceUnavailable(

@@ -43,6 +43,8 @@ The Replay audit also shows a separate offline crash recovery benchmark over 20,
 GH Archive events with a reproducible harness and downloadable report.
 [Archive recovery benchmark](docs/archive-replay-benchmark.md)
 
+Replay audit also offers a portable bundle of actual retained source JSON, Silver rows and receipts. Recruiters can reproduce its normalization and publication checks offline, inspect genuine differences and verify a separately trusted fingerprint without database credentials or model calls. [Portable replay and real-source verification](docs/portable-replay.md)
+
 An opt-in downstream SQL model materializes hourly event-type aggregates from immutable Silver. Its Python harness checks incremental refresh, rollback, concurrent retry and like-for-like read latency on the verified 20,000-event archive cohort. [Incremental modeling evidence](docs/incremental-hourly-model.md)
 
 ## Data and AI boundaries

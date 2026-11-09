@@ -1,0 +1,36 @@
+C:\Users\BhaviChasvi\Downloads\cyber_projects\fluxlake\.venv\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+  from starlette.testclient import TestClient as TestClient  # noqa
+........................................................................ [ 25%]
+............................................F........................... [ 51%]
+........................................................................ [ 77%]
+................................................................         [100%]
+================================== FAILURES ===================================
+______ test_inspection_finds_drift_tombstones_absence_and_never_repairs _______
+tests\test_inspection.py:89: in test_inspection_finds_drift_tombstones_absence_and_never_repairs
+    assert "999" not in str(result)
+E   assert '999' not in "{'scope': '...payload']}]}"
+E
+E     '999' is contained here:
+E       6caaebf841999d46ab.parquet', 'rows': 1, 'captured_at': '2026-11-09T03:12:58.677218+00:00'}, 'requested_keys': 1, 'counts': {'match': 0, 'mismatch': 1, 'absent': 0}, 'results': [{'key': 'inspect-a9a8bf3588954adeb444cf7627c056e6-live', 'status': 'mismatch', 'source_version': 2, 'projection_version': 2, 'source_deleted': False, 'differences': ['silver_payload']}]}
+E     ?           +++
+============================== warnings summary ===============================
+.venv\Lib\site-packages\fastapi\testclient.py:1
+  C:\Users\BhaviChasvi\Downloads\cyber_projects\fluxlake\.venv\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+.venv\Lib\site-packages\starlette\testclient.py:53
+  C:\Users\BhaviChasvi\Downloads\cyber_projects\fluxlake\.venv\Lib\site-packages\starlette\testclient.py:53: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_inspection.py::test_inspection_finds_drift_tombstones_absence_and_never_repairs
+1 failed, 279 passed, 2 warnings in 74.57s (0:01:14)
+Traceback (most recent call last):
+  File "C:\Users\BhaviChasvi\Downloads\cyber_projects\fluxlake\scripts\verify_replay_bundle.py", line 135, in <module>
+    main()
+  File "C:\Users\BhaviChasvi\Downloads\cyber_projects\fluxlake\scripts\verify_replay_bundle.py", line 106, in main
+    subprocess.run(
+  File "C:\Users\BhaviChasvi\AppData\Local\Programs\Python\Python312\Lib\subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['C:\\Users\\BhaviChasvi\\Downloads\\cyber_projects\\fluxlake\\.venv\\Scripts\\python.exe', '-m', 'pytest', '-q', '--tb=short', '--junitxml=C:\\Users\\BhaviChasvi\\Downloads\\cyber_projects\\fluxlake\\evidence\\replay-bundle-junit.xml']' returned non-zero exit status 1.

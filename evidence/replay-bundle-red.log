@@ -1,0 +1,115 @@
+FFFFFFFFFFFFFFFFFFF                                                      [100%]
+================================== FAILURES ===================================
+__ test_bundle_reproduces_normalization_receipts_and_survives_json_roundtrip __
+tests\test_replay_bundle.py:33: in test_bundle_reproduces_normalization_receipts_and_survives_json_roundtrip
+    from fluxlake.replay_bundle import verify_bundle
+E   ModuleNotFoundError: No module named 'fluxlake.replay_bundle'
+____________ test_changed_export_fails_manifest_integrity[bronze] _____________
+tests\test_replay_bundle.py:47: in test_changed_export_fails_manifest_integrity
+    from fluxlake.replay_bundle import verify_bundle
+E   ModuleNotFoundError: No module named 'fluxlake.replay_bundle'
+____________ test_changed_export_fails_manifest_integrity[silver] _____________
+tests\test_replay_bundle.py:47: in test_changed_export_fails_manifest_integrity
+    from fluxlake.replay_bundle import verify_bundle
+E   ModuleNotFoundError: No module named 'fluxlake.replay_bundle'
+_____________ test_changed_export_fails_manifest_integrity[runs] ______________
+tests\test_replay_bundle.py:47: in test_changed_export_fails_manifest_integrity
+    from fluxlake.replay_bundle import verify_bundle
+E   ModuleNotFoundError: No module named 'fluxlake.replay_bundle'
+________ test_changed_export_fails_manifest_integrity[source_snapshot] ________
+tests\test_replay_bundle.py:47: in test_changed_export_fails_manifest_integrity
+    from fluxlake.replay_bundle import verify_bundle
+E   ModuleNotFoundError: No module named 'fluxlake.replay_bundle'
+____________ test_changed_export_fails_manifest_integrity[report] _____________
+tests\test_replay_bundle.py:47: in test_changed_export_fails_manifest_integrity
+    from fluxlake.replay_bundle import verify_bundle
+E   ModuleNotFoundError: No module named 'fluxlake.replay_bundle'
+_ test_rehashed_changes_still_fail_independent_report_reconstruction[source] __
+tests\test_replay_bundle.py:60: in test_rehashed_changes_still_fail_independent_report_reconstruction
+    from fluxlake.replay_bundle import verify_bundle
+E   ModuleNotFoundError: No module named 'fluxlake.replay_bundle'
+_ test_rehashed_changes_still_fail_independent_report_reconstruction[silver] __
+tests\test_replay_bundle.py:60: in test_rehashed_changes_still_fail_independent_report_reconstruction
+    from fluxlake.replay_bundle import verify_bundle
+E   ModuleNotFoundError: No module named 'fluxlake.replay_bundle'
+_ test_rehashed_changes_still_fail_independent_report_reconstruction[receipt] _
+tests\test_replay_bundle.py:60: in test_rehashed_changes_still_fail_independent_report_reconstruction
+    from fluxlake.replay_bundle import verify_bundle
+E   ModuleNotFoundError: No module named 'fluxlake.replay_bundle'
+_ test_rehashed_changes_still_fail_independent_report_reconstruction[report] __
+tests\test_replay_bundle.py:60: in test_rehashed_changes_still_fail_independent_report_reconstruction
+    from fluxlake.replay_bundle import verify_bundle
+E   ModuleNotFoundError: No module named 'fluxlake.replay_bundle'
+_ test_genuine_publication_difference_is_reproduced_instead_of_claiming_consistency _
+tests\test_replay_bundle.py:77: in test_genuine_publication_difference_is_reproduced_instead_of_claiming_consistency
+    from fluxlake.replay_bundle import create_bundle, verify_bundle
+E   ModuleNotFoundError: No module named 'fluxlake.replay_bundle'
+__________ test_pin_rejects_fully_recomputed_but_different_evidence ___________
+tests\test_replay_bundle.py:92: in test_pin_rejects_fully_recomputed_but_different_evidence
+    from fluxlake.replay_bundle import create_bundle, verify_bundle
+E   ModuleNotFoundError: No module named 'fluxlake.replay_bundle'
+___ test_malformed_or_overbudget_exports_are_bounded_and_rejected[version] ____
+tests\test_replay_bundle.py:104: in test_malformed_or_overbudget_exports_are_bounded_and_rejected
+    from fluxlake.replay_bundle import verify_bundle
+E   ModuleNotFoundError: No module named 'fluxlake.replay_bundle'
+____ test_malformed_or_overbudget_exports_are_bounded_and_rejected[shape] _____
+tests\test_replay_bundle.py:104: in test_malformed_or_overbudget_exports_are_bounded_and_rejected
+    from fluxlake.replay_bundle import verify_bundle
+E   ModuleNotFoundError: No module named 'fluxlake.replay_bundle'
+___ test_malformed_or_overbudget_exports_are_bounded_and_rejected[capacity] ___
+tests\test_replay_bundle.py:104: in test_malformed_or_overbudget_exports_are_bounded_and_rejected
+    from fluxlake.replay_bundle import verify_bundle
+E   ModuleNotFoundError: No module named 'fluxlake.replay_bundle'
+___ test_malformed_or_overbudget_exports_are_bounded_and_rejected[identity] ___
+tests\test_replay_bundle.py:104: in test_malformed_or_overbudget_exports_are_bounded_and_rejected
+    from fluxlake.replay_bundle import verify_bundle
+E   ModuleNotFoundError: No module named 'fluxlake.replay_bundle'
+___ test_malformed_or_overbudget_exports_are_bounded_and_rejected[private] ____
+tests\test_replay_bundle.py:104: in test_malformed_or_overbudget_exports_are_bounded_and_rejected
+    from fluxlake.replay_bundle import verify_bundle
+E   ModuleNotFoundError: No module named 'fluxlake.replay_bundle'
+_______ test_offline_cli_checks_bytes_duplicate_keys_exit_codes_and_pin _______
+tests\test_replay_bundle.py:123: in test_offline_cli_checks_bytes_duplicate_keys_exit_codes_and_pin
+    exported = bundle()
+               ^^^^^^^^
+tests\test_replay_bundle.py:18: in bundle
+    from fluxlake.replay_bundle import create_bundle
+E   ModuleNotFoundError: No module named 'fluxlake.replay_bundle'
+_ test_bundle_download_selects_bounded_public_snapshot_and_keeps_mutations_private _
+tests\test_replay_bundle.py:163: in test_bundle_download_selects_bounded_public_snapshot_and_keeps_mutations_private
+    exported = bundle()
+               ^^^^^^^^
+tests\test_replay_bundle.py:18: in bundle
+    from fluxlake.replay_bundle import create_bundle
+E   ModuleNotFoundError: No module named 'fluxlake.replay_bundle'
+============================== warnings summary ===============================
+.venv\Lib\site-packages\fastapi\testclient.py:1
+  C:\Users\BhaviChasvi\Downloads\cyber_projects\fluxlake\.venv\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+.venv\Lib\site-packages\starlette\testclient.py:53
+  C:\Users\BhaviChasvi\Downloads\cyber_projects\fluxlake\.venv\Lib\site-packages\starlette\testclient.py:53: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_replay_bundle.py::test_bundle_reproduces_normalization_receipts_and_survives_json_roundtrip
+FAILED tests/test_replay_bundle.py::test_changed_export_fails_manifest_integrity[bronze]
+FAILED tests/test_replay_bundle.py::test_changed_export_fails_manifest_integrity[silver]
+FAILED tests/test_replay_bundle.py::test_changed_export_fails_manifest_integrity[runs]
+FAILED tests/test_replay_bundle.py::test_changed_export_fails_manifest_integrity[source_snapshot]
+FAILED tests/test_replay_bundle.py::test_changed_export_fails_manifest_integrity[report]
+FAILED tests/test_replay_bundle.py::test_rehashed_changes_still_fail_independent_report_reconstruction[source]
+FAILED tests/test_replay_bundle.py::test_rehashed_changes_still_fail_independent_report_reconstruction[silver]
+FAILED tests/test_replay_bundle.py::test_rehashed_changes_still_fail_independent_report_reconstruction[receipt]
+FAILED tests/test_replay_bundle.py::test_rehashed_changes_still_fail_independent_report_reconstruction[report]
+FAILED tests/test_replay_bundle.py::test_genuine_publication_difference_is_reproduced_instead_of_claiming_consistency
+FAILED tests/test_replay_bundle.py::test_pin_rejects_fully_recomputed_but_different_evidence
+FAILED tests/test_replay_bundle.py::test_malformed_or_overbudget_exports_are_bounded_and_rejected[version]
+FAILED tests/test_replay_bundle.py::test_malformed_or_overbudget_exports_are_bounded_and_rejected[shape]
+FAILED tests/test_replay_bundle.py::test_malformed_or_overbudget_exports_are_bounded_and_rejected[capacity]
+FAILED tests/test_replay_bundle.py::test_malformed_or_overbudget_exports_are_bounded_and_rejected[identity]
+FAILED tests/test_replay_bundle.py::test_malformed_or_overbudget_exports_are_bounded_and_rejected[private]
+FAILED tests/test_replay_bundle.py::test_offline_cli_checks_bytes_duplicate_keys_exit_codes_and_pin
+FAILED tests/test_replay_bundle.py::test_bundle_download_selects_bounded_public_snapshot_and_keeps_mutations_private
+19 failed, 2 warnings in 1.76s

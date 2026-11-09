@@ -1,0 +1,65 @@
+C:\Users\BhaviChasvi\Downloads\cyber_projects\fluxlake\.venv\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+  from starlette.testclient import TestClient as TestClient  # noqa
+........................................................................ [ 25%]
+........................................................................ [ 51%]
+........................................................................ [ 77%]
+................................................................         [100%]
+============================== warnings summary ===============================
+.venv\Lib\site-packages\fastapi\testclient.py:1
+  C:\Users\BhaviChasvi\Downloads\cyber_projects\fluxlake\.venv\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+.venv\Lib\site-packages\starlette\testclient.py:53
+  C:\Users\BhaviChasvi\Downloads\cyber_projects\fluxlake\.venv\Lib\site-packages\starlette\testclient.py:53: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+    _PortalFactoryType = Callable[[], AbstractContextManager[anyio.abc.BlockingPortal]]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+280 passed, 2 warnings in 81.20s (0:01:21)
+{
+  "verified_at": "2026-11-09T03:16:08.200268+00:00",
+  "scope": "Local disposable PostgreSQL; real historical archive inputs, not hosted release",
+  "source_url": "https://data.gharchive.org/2025-01-01-15.json.gz",
+  "archive_sha256": "717eaa4e74034a93ef6b423db7f61776f81899f978dba60d8b42b141e6d16429",
+  "source_selection": {
+    "archive_lines_scanned": 200,
+    "skipped": {}
+  },
+  "acquisitions": [
+    "3bbca34b-1c53-4d39-8144-87770bb0867a",
+    "bb947c04-ca30-4d15-a9ec-e2a73d557688"
+  ],
+  "verification": {
+    "verification": "reproduced",
+    "publication_status": "consistent",
+    "counts": {
+      "retained_events": 200,
+      "silver_rows": 200,
+      "affected_events": 0,
+      "observed_duplicate_count": 0,
+      "conflicting_identity_receipts": 0
+    },
+    "bundle_sha256": "eabee81da9796cc943f341503d7fab4a5921ae98b28ce553d8c28782d0ae5e82",
+    "evidence_sha256": "919be6ec446b5d9e54ec028ad1b96e29d9b06f5a3c72dca810e6db91f4eab529",
+    "boundary": "Reproduces the exported retained evidence using FluxLake's versioned normalization contract. Fingerprints detect changes against a trusted pin; they do not authenticate GitHub or prove source completeness. Original HTTP bodies and duplicate/rejected bodies are not retained."
+  },
+  "public_download": {
+    "status": 200,
+    "bytes": 691350
+  },
+  "publisher_inventory_unchanged_after_export": {
+    "bronze": 200,
+    "silver": 200,
+    "runs": 2,
+    "quarantine": 0,
+    "schema_observations": 10179
+  },
+  "offline_cli_exit": 0,
+  "edited_export_rejected": true,
+  "controlled_database_damage_reproduced": {
+    "affected_events": 1,
+    "field": "actor"
+  },
+  "bundle_file": "evidence/replay-bundle-archive.json",
+  "suite_junit": "evidence/replay-bundle-junit.xml",
+  "disposable_cluster_removed": true
+}

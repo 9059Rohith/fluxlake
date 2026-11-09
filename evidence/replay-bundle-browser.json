@@ -1,0 +1,44 @@
+{
+  "browser_route": "Browser plugin not available; regular Playwright with installed Chromium",
+  "local_only": true,
+  "flow": "Replay audit -> select two retained acquisitions -> reconstruct -> download portable replay bundle",
+  "checks": [
+    {
+      "viewport": [
+        1440,
+        1050
+      ],
+      "page_identity": {
+        "url": "http://127.0.0.1:50416/workspace/replay",
+        "title": "Replay audit \u00b7 FluxLake"
+      },
+      "nonblank": true,
+      "console_errors": [],
+      "two_run_selection": true,
+      "download": "fluxlake-replay-bundle.json",
+      "downloaded_events": 200,
+      "publication_status": "consistent",
+      "horizontal_overflow": false,
+      "screenshot": "C:\\Users\\BHAVIC~1\\AppData\\Local\\Temp\\fluxlake-bundle-browser-uewal6_o\\replay-1440.png"
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "page_identity": {
+        "url": "http://127.0.0.1:50416/workspace/replay",
+        "title": "Replay audit \u00b7 FluxLake"
+      },
+      "nonblank": true,
+      "console_errors": [],
+      "two_run_selection": true,
+      "download": "fluxlake-replay-bundle.json",
+      "downloaded_events": 200,
+      "publication_status": "consistent",
+      "horizontal_overflow": false,
+      "screenshot": "C:\\Users\\BHAVIC~1\\AppData\\Local\\Temp\\fluxlake-bundle-browser-uewal6_o\\replay-390.png"
+    }
+  ],
+  "artifact_directory": "C:\\Users\\BHAVIC~1\\AppData\\Local\\Temp\\fluxlake-bundle-browser-uewal6_o"
+}

@@ -265,6 +265,22 @@ def install_workspace(app, authorize):
             )
         return report
 
+    @app.get("/api/workspace/replay/bundle")
+    def replay_bundle(
+        response: Response,
+        run: list[UUID] | None = Query(None, min_length=1, max_length=2),
+    ):
+        selected = [str(identity) for identity in run] if run is not None else None
+        if selected and len(set(selected)) != len(selected):
+            raise HTTPException(422, "Choose one or two distinct acquisitions")
+        result = query(lambda: store.replay(selected, bundle=True))
+        if result is None or result.get("status") == "no_acquisitions":
+            raise HTTPException(404, "Selected acquisition is not retained")
+        response.headers["Content-Disposition"] = (
+            'attachment; filename="fluxlake-replay-bundle.json"'
+        )
+        return result
+
     @app.get("/api/workspace/drift")
     def drift(
         baseline: str | None = Query(None, max_length=36),
